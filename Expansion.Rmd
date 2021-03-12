@@ -14,6 +14,11 @@ output:
 knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
 ```
 
+```{css color, echo=FALSE}
+.columns {display: flex;}
+h1 {color: #3366CC;}
+```
+
 # Introducción
 
 En este documento se explicará cómo introducir el factor de expansión y las ponderaciones en los cálculos estadísticos usando los datos del Barómetro de las Américas. Seguiremos lo que se trabajó en el documento de "Manipulación de datos", disponible [aquí](https://rpubs.com/arturo_maldonado/727887). 
