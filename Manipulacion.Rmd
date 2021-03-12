@@ -1,5 +1,5 @@
 ---
-title: "Manipulación de datos usando el Barómetro de las Américas"
+title: "Manejo de datos usando el Barómetro de las Américas"
 output:
   html_document:
     toc: true
@@ -21,7 +21,7 @@ h1 {color: #3366CC;}
 
 # Introducción
 
-En este documento se verán aspectos básico de la manipulación de datos, como la recodificación de una variable, la selección de datos y el cálculo de una nueva variable.
+En este documento se verán aspectos básico del manejo de datos, como la recodificación de una variable, la selección de datos y el cálculo de una nueva variable.
 
 # Sobre la base de datos
 

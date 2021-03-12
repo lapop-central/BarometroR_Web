@@ -4,7 +4,7 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Manipulación de datos"
+    - text: "Manejo de datos"
       href: Manipulacion.html
     - text: "Factor de expansión"
       href: Expansion.html
