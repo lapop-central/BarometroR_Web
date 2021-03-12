@@ -1,5 +1,5 @@
 ---
-title: "Journal"
+title: "Manipulación de datos usando el Barómetro de las Américas"
 output:
   html_document:
     toc: true

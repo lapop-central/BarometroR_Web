@@ -4,8 +4,8 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Temas"
-      href: Journal.html
+    - text: "Manipulación de datos"
+      href: Manipulacion.html
     - text: "Links"
       href: Links.html
 output_dir: "docs"
