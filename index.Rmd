@@ -19,23 +19,24 @@ output: html_document
 
 # **Usando los datos del Barómetro de las Américas**
 
-This is a template example for lab journaling. Students in Matt Crump's Human Cognition and Performance Lab will use this template to learn R, and other things. Students can replace this text with more fun things. People not in my lab can use this too.
+En esta web encontrará secciones donde se usan los datos del Barómetro de las Américas en R y RStudio. Se replicarán resultados de varios informes producidos por LAPOP que tienen por objetivo dar un panorama de cómo usar nuestros datos para producir resultados estadísticos.
 
-## How to use
+## Temas
 
-1. fork the repo for this website and follow instructions on read me to get set up. [https://github.com/CrumpLab/LabJournalWebsite](https://github.com/CrumpLab/LabJournalWebsite)
+1. Manipulación de datos del Barómetro de las Américas
 
-2. Blog/journal what you are doing in R, by editing the Journal.Rmd. See the [Journal page](https://crumplab.github.io/LabJournalWebsite/Journal.html) for an example of what to do to get started learning R.
+2. Uso de factores de expansión
 
-3. See the [links page](https://crumplab.github.io/LabJournalWebsite/Links.html) for lots of helpful links on learning R.
+3. Descrictivos básicos y gráficos de variables nominales
 
-4. Change everything to make it your own.
+4. Descriptivos básicos y gráficos de variables ordinales
 
+5. Descriptivos básicos y gráficos de variables numéricas
 
 </div>
 <div class="col-sm-6">
 
-### [Crump Lab: Human Cognition and Performance](https://crumplab.github.io)
+### [The Latin American Public Opinion Project](https://www.vanderbilt.edu/lapop/)
 
 <a href = "https://crumplab.github.io">
 ![](images/logo.png)
