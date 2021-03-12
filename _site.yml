@@ -8,6 +8,8 @@ navbar:
       href: Manipulacion.html
     - text: "Factor de expansión"
       href: Expansion.html
+    - text: "Descriptivos variables nominales"
+      href: Descriptivos.html
     - text: "Links"
       href: Links.html
 output_dir: "docs"
