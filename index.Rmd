@@ -23,7 +23,7 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 
 ## Temas
 
-1. Manipulación de datos del Barómetro de las Américas
+1. Manejo de datos del Barómetro de las Américas
 
 2. Uso de factores de expansión
 

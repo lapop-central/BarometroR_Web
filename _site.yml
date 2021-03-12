@@ -4,6 +4,12 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "Básico"
+      menu:
+      - text: "Instalando R y RStudio"
+        href: instalando.html
+      - text: "Bases de datos"
+        href: bases.html
     - text: "Manejo de datos"
       href: Manipulacion.html
     - text: "Factor de expansión"

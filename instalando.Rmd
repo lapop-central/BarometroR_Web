@@ -1,0 +1,31 @@
+---
+title: "Instalando R y RStudio"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    collapsed: false
+    number_sections: false
+    toc_depth: 1
+    #code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(message=FALSE,warning=FALSE, cache=TRUE)
+```
+
+```{css color, echo=FALSE}
+.columns {display: flex;}
+h1 {color: #3366CC;}
+```
+
+# ¿Cómo instalar ambas aplicaciones?
+
+[R](http://www.r-project.org) es un programa de software libre que puede ser usado para el análisis estadístico, gráficos y muchas otras cosas. En este caso lo usaremos para el análisis de datos de opinión pública, del Proyecto de Opinión Pública en América Latina, [LAPOP](https://www.vanderbilt.edu/lapop/) por sus siglas en inglés.
+
+Otro programa de software libre es [R-studio](http://www.rstudio.com), que es una interface gráfica para R. En estos enlaces se pueden descargar estos programas. Primero descargue R y luego RStudio. Ambos tiene versiones para Windows, IOS o Linux. 
+
+# Recursos
+
+1. Google es la principal fuente para resolver cualquier problema que tenga en R.
+2. [Stackoverflow](https://stackoverflow.com) es un foro especializado donde seguramente encontrará a una entrada de alguien que se ha hecho la misma pregunta que ustes y que ha sido respondida por muchas personas. Tome en cuenta que en R pueden haber muchas respuestas para la misma pregunta, es decir, muchas maneras de realizar una misma operación.

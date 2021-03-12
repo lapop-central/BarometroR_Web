@@ -11,7 +11,7 @@
 
 
 
-<title>Usando los datos del Barómetro de las Américas</title>
+<title>Instalando R y RStudio</title>
 
 <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
@@ -29,6 +29,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -218,6 +221,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -225,6 +291,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
 
 
 
@@ -283,43 +359,32 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Usando los datos del Barómetro de las Américas</h1>
+<h1 class="title toc-ignore">Instalando R y RStudio</h1>
 
 </div>
 
 
 <style type="text/css">
-.title {
-  display: none;
-}
-
-#getting-started img {
-  margin-right: 10px;
-}
-
+.columns {display: flex;}
+h1 {color: #3366CC;}
 </style>
-<div class="row" style="padding-top: 30px;">
-<div id="usando-los-datos-del-barómetro-de-las-américas" class="section level1 col-sm-6">
-<h1><strong>Usando los datos del Barómetro de las Américas</strong></h1>
-<p>En esta web encontrará secciones donde se usan los datos del Barómetro de las Américas en R y RStudio. Se replicarán resultados de varios informes producidos por LAPOP que tienen por objetivo dar un panorama de cómo usar nuestros datos para producir resultados estadísticos.</p>
-<div id="temas" class="section level2">
-<h2>Temas</h2>
+<div id="cómo-instalar-ambas-aplicaciones" class="section level1">
+<h1>¿Cómo instalar ambas aplicaciones?</h1>
+<p><a href="http://www.r-project.org">R</a> es un programa de software libre que puede ser usado para el análisis estadístico, gráficos y muchas otras cosas. En este caso lo usaremos para el análisis de datos de opinión pública, del Proyecto de Opinión Pública en América Latina, <a href="https://www.vanderbilt.edu/lapop/">LAPOP</a> por sus siglas en inglés.</p>
+<p>Otro programa de software libre es <a href="http://www.rstudio.com">R-studio</a>, que es una interface gráfica para R. En estos enlaces se pueden descargar estos programas. Primero descargue R y luego RStudio. Ambos tiene versiones para Windows, IOS o Linux.</p>
+</div>
+<div id="recursos" class="section level1">
+<h1>Recursos</h1>
 <ol style="list-style-type: decimal">
-<li><p>Manejo de datos del Barómetro de las Américas</p></li>
-<li><p>Uso de factores de expansión</p></li>
-<li><p>Descrictivos básicos y gráficos de variables nominales</p></li>
-<li><p>Descriptivos básicos y gráficos de variables ordinales</p></li>
-<li><p>Descriptivos básicos y gráficos de variables numéricas</p></li>
+<li>Google es la principal fuente para resolver cualquier problema que tenga en R.</li>
+<li><a href="https://stackoverflow.com">Stackoverflow</a> es un foro especializado donde seguramente encontrará a una entrada de alguien que se ha hecho la misma pregunta que ustes y que ha sido respondida por muchas personas. Tome en cuenta que en R pueden haber muchas respuestas para la misma pregunta, es decir, muchas maneras de realizar una misma operación.</li>
 </ol>
 </div>
+
+
+
 </div>
-<div id="the-latin-american-public-opinion-project" class="section level3 col-sm-6">
-<h3><a href="https://www.vanderbilt.edu/lapop/">The Latin American Public Opinion Project</a></h3>
-<p><a href = "https://crumplab.github.io"> <img src="images/logo.png" /> </a></p>
 </div>
-
-
-
 
 </div>
 
@@ -352,6 +417,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
