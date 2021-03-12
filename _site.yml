@@ -6,6 +6,8 @@ navbar:
       href: index.html
     - text: "Manipulación de datos"
       href: Manipulacion.html
+    - text: "Factor de expansión"
+      href: Expansion.html
     - text: "Links"
       href: Links.html
 output_dir: "docs"

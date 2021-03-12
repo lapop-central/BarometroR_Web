@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Factor de expansión usando el Barómetro de las Américas</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">LAPOP_edu</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Manipulacion.html">Manipulación de datos</a>
+</li>
+<li>
+  <a href="Expansion.html">Factor de expansión</a>
+</li>
+<li>
+  <a href="Links.html">Links</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Factor de expansión usando el Barómetro de las Américas</h1>
+
+</div>
+
+
+<div id="introducción" class="section level1">
+<h1>Introducción</h1>
+<p>En este documento se explicará cómo introducir el factor de expansión y las ponderaciones en los cálculos estadísticos usando los datos del Barómetro de las Américas. Seguiremos lo que se trabajó en el documento de “Manipulación de datos”, disponible <a href="https://rpubs.com/arturo_maldonado/727887">aquí</a>.</p>
+</div>
+<div id="sobre-la-base-de-datos" class="section level1">
+<h1>Sobre la base de datos</h1>
+<p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org. Pueden descargar los datos de manera libre <a href="http://datasets.americasbarometer.org/database/login.php">aquí</a> En este enlace, se pueden registrar o entrar como “Free User”. En el buscador, se puede ingresar el texto “2018”. Ahí se tendrá acceso a la base de datos completa “2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos recortada. Esta base de datos se encuentra alojada en el repositorio”materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código.</p>
+<pre class="r"><code>library(rio)
+lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav&quot;)</code></pre>
+</div>
+<div id="sobre-el-uso-de-los-factores-de-expansión" class="section level1">
+<h1>Sobre el uso de los factores de expansión</h1>
+<p>Cuando un investigador abre una base de datos en cualquier programa estadístico, el software asume que los datos provienen de un muestro simple aleatorio. Cuando se trabaja con datos de opinión pública, como los datos del Barómetro de las Américas, el diseño muestral generalmente no es un muestreo simple aleatorio, sino un diseño complejo, con estratificaciones, segmentaciones, cuotas, en diferentes etapas. Como indica el reporte técnico de la ronda 2018/19 del Barómetro de las Américas, disponible <a href="https://www.vanderbilt.edu/lapop/ab2018/AmericasBarometer_2018-19_Technical_Report_W_102919.pdf">aquí</a>, las muestras en cada país fueron diseñadas usando un diseño probabilístico multietapa (con cuotas al nivel de hogares para la mayoría de países), y fueron estratificadas por regiones principales en el país, tamaño de la municipalidad y por áreas urbanas y rurales dentro de las municipalidades. Este diseño muestral complejo se tiene que incorporar generalmente en los cálculos. En ciertas ocasiones si no se incopora puede llevar a diferencias en los resultados. Una explicación más detallada sobre el uso de los factores de expansión y las potenciales consecuencias de no usarlos con los datos del Barómetro de las Américas puede ser leída en la Nota Metodológica 007 (Castorena, 2021), disponible <a href="https://www.vanderbilt.edu/lapop/insights/IMN007es.pdf">aquí</a>. Esta Nota Metodológica describe tres escenarios de usos de factores de expansión:</p>
+<ol style="list-style-type: decimal">
+<li>Ajuste post estratificación: cuando la muestra no es autoponderada y se desvía de ciertas características sociodemográficas importantes. En la base de datos, esta característica se ajusta con la variable “estratopri”.</li>
+<li>Ajuste por sobremuestreo: cuando la muestra incluye una sobremuestra de subpoblaciones de interés. En la base de datos, esta característica se ajusta con la variable “wt”.</li>
+<li>Ajuste de múltiples encuestas: cuando se analiza datos de varios países o diferentes rondas. La variable ponderadora en la base de datos es “weight1500”, que estandariza las muestras de cada país a 1,500 observaciones.</li>
+</ol>
+</div>
+<div id="consecuencias-de-no-usar-factores-de-expansión" class="section level1">
+<h1>Consecuencias de no usar factores de expansión</h1>
+<p>Como indica la Nota metodológica, “los análisis sin ponderar pueden resultar en estimaciones sesgadas” (p.9). Por ejemplo, en el documento sobre manipulación de datos replicamos los resultados sobre el apoyo a la democracia en Honduras (45%) y Uruguay (76.2%), para lo que se calculó la variable recodificada y se describió.</p>
+<pre class="r"><code>lapop18$ing4rec &lt;- car::recode(lapop18$ing4, &quot;1:4=0; 5:7=1&quot;)
+table(lapop18$ing4rec)</code></pre>
+<pre><code>## 
+##     0     1 
+## 12261 17828</code></pre>
+<p>En este dataframe se puede calcular la distribución del apoyo a la democracia en estos dos países y se puede reportar los porcentajes redondeado.</p>
+<pre class="r"><code>round(prop.table(table(lapop18$ing4rec[lapop18$pais==4]))*100, 1)</code></pre>
+<pre><code>## 
+##  0  1 
+## 55 45</code></pre>
+<pre class="r"><code>round(prop.table(table(lapop18$ing4rec[lapop18$pais==14]))*100, 1)</code></pre>
+<pre><code>## 
+##    0    1 
+## 23.8 76.2</code></pre>
+<p>Se observa que estos resultados son iguales a los que aparecen en el Gráfico 1.2 del reporte “El Pulso de la Democracia” (p.12), disponible <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>. Esto es esperable porque, como indica la Tabla 5 de la Nota Metodológica, ambos países tienen un diseño muestral autoponderado, por lo que estos cálculos aquí, que no incluyen el diseño, coinciden con los del reporte, que sí incluyen el factor de expansión. Un caso diferente es el de Brasil que, según la Nota Metodológica, tiene un diseño muestral ponderado, por lo que sí requeriría usar el factor de expansión para ajustar la sobremuestra en el diseño. Si se calcula el descriptivo del apoyo a la democracia en Brasil sin incluir el factor de expansión se obtiene un resultado distinto al del reporte.</p>
+<pre class="r"><code>round(prop.table(table(lapop18$ing4rec[lapop18$pais==15]))*100, 1)</code></pre>
+<pre><code>## 
+##    0    1 
+## 40.2 59.8</code></pre>
+<p>En este cálculo obtenemos 59.8%, mientras que en el Gráfico 1.2 del reporte se observa 60.0%. Esta diferencia es debida a que el comando <code>table</code>, y luego <code>prop.table</code>, no incluyen el factor de expansión.</p>
+</div>
+<div id="incluyendo-el-factor-de-expansión" class="section level1">
+<h1>Incluyendo el factor de expansión</h1>
+<p>Algunos comandos en R permiten la inclusión de una variable de expansión en los cálculos. El paquete <code>descr</code>, por ejemplo, incluye varios comandos, como <code>compmeans</code> o <code>crosstab</code> que permiten esta inclusión del factor de expansión. Para reproducir los datos que se observan en el Gráfico 1.2 del reporte, se puede usar el comando <code>compmeans</code> que permite calcular la media de una variable (como ing4rec, cuya media es igual a la proporción) por grupos de una variable factor, como “pais”, ponderando los resultados por una variable, como “weight1500”. Se agrega la especificación <code>plot=FALSE</code> para desactivar la producción del gráfico.</p>
+<pre class="r"><code>library(descr)
+compmeans(lapop18$ing4rec, lapop18$pais, lapop18$weight1500, plot=FALSE)</code></pre>
+<pre><code>## Mean value of &quot;La democracia es mejor que cualquier otra forma de gobierno&quot; 
+## according to &quot;País&quot;
+##            Mean     N Std. Dev.
+## 1     0.6272307  1436 0.4837099
+## 2     0.4888451  1432 0.5000501
+## 3     0.5856655  1454 0.4927762
+## 4     0.4501005  1436 0.4976772
+## 5     0.5153743  1451 0.4999359
+## 6     0.7235940  1457 0.4473736
+## 7     0.5380612  1479 0.4987179
+## 8     0.5978999  1460 0.4904899
+## 9     0.5443122  1479 0.4982010
+## 10    0.4914110  1454 0.5000983
+## 11    0.4926471  1475 0.5001155
+## 12    0.5121786  1463 0.5000225
+## 13    0.6387097  1419 0.4805438
+## 14    0.7619359  1451 0.4260454
+## 15    0.5999750  1470 0.4900697
+## 17    0.7110368  1468 0.4534353
+## 21    0.5922659  1458 0.4915818
+## 23    0.5118871  1334 0.5000461
+## 40    0.7173120  1496 0.4504565
+## 41    0.7430692  1497 0.4370869
+## Total 0.5928825 29072 0.4913055</code></pre>
+<p>De acuerdo a estos resultados, vemos que Brasil, pais 15, tiene un apoyo a la democracia de 0.599975. Si transformamos este número en porcentaje, aproximando a 1 decimal, reproducimos el valor de 60% que se observa en el Gráfico 1.2 del reporte. No solo eso, además, se observa que para el resto de países, los datos se replican. Por ejemplo, para México, país 1, esta tabla muestra un apoyo a la democracia de 0.6272307, o, en porcentaje aproximado a 1 decimal, 62.7%, igual al dato del reporte.</p>
+<p>Otra forma de replicar los resultados incorporando el efecto de diseño es usando el paquete <code>survey</code>, paquete especialmente desarrollado para trabajar con diseños muestrales complejos. La Nota Metodológica incluye un apéndice con el código de STATA para usar los factores de expansión en los datos del Barómetro de las Américas. Aquí haremos lo mismo en R, para lo cual usaremos el comando <code>svydesign</code> (similar al comando svyset en STATA). Con este comando se crea un nuevo objeto llamado “lapop.design”, que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión. Por tanto, si luego se creara una nueva variable, se tendría que correr nuevamente esté comando para que este objeto “lapop.design” incluya esta nueva variable.</p>
+<pre class="r"><code>library(survey)
+lapop.design&lt;-svydesign(ids =~upm, strata =~ estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)</code></pre>
+<p>Una vez creado los datos con el factor de expansión en el objeto “lapop.design”, se puede usar los comandos nativos del paquete <code>survey</code> para realizar cálculos. Por ejemplo, para calcular la media de la variable “ing4rec” (apoyo a la democracia) en toda la base de datos de la ronda 2018/19, se puede usar el comando <code>svymean</code>.</p>
+<pre class="r"><code>svymean(~ing4rec, lapop.design, na.rm=T)</code></pre>
+<pre><code>##            mean    SE
+## ing4rec 0.59288 0.003</code></pre>
+<p>De esta manera se reproduce el valor de la última fila de resultados del comando <code>compmeans</code>, que corresponde al promedio de toda la muestra. Es decir, de ambas maneras se está encontrando el mismo resultado. Para reproducir los resultados por país, se puede usar el comando <code>svyby</code> que permite hallar resultados (como la media, usando <code>svymean</code>) de una variable (“ing4rec”), por valores de otra variable (“pais”).</p>
+<pre class="r"><code>svyby(~ing4rec, ~pais, design=lapop.design, svymean, na.rm=T)</code></pre>
+<pre><code>##    pais   ing4rec         se
+## 1     1 0.6272307 0.01245940
+## 2     2 0.4888451 0.01358318
+## 3     3 0.5856655 0.01267273
+## 4     4 0.4501005 0.01197688
+## 5     5 0.5153743 0.01419558
+## 6     6 0.7235940 0.01512205
+## 7     7 0.5380612 0.01372306
+## 8     8 0.5978999 0.01212261
+## 9     9 0.5443122 0.01357881
+## 10   10 0.4914110 0.01374835
+## 11   11 0.4926471 0.01337323
+## 12   12 0.5121786 0.01624846
+## 13   13 0.6387097 0.01161029
+## 14   14 0.7619359 0.01240878
+## 15   15 0.5999750 0.01556882
+## 17   17 0.7110368 0.01415857
+## 21   21 0.5922659 0.01050698
+## 23   23 0.5118871 0.01325745
+## 40   40 0.7173120 0.01261872
+## 41   41 0.7430692 0.01189836</code></pre>
+<p>En este caso, vemos que esta tabla es exactamente igual a la reportada con <code>compmeans</code>, pues ambas usan el factor de expansión. De esta manera, hemos visto dos maneras de incorporar el efecto de diseño muestral en los cálculos básicos con los datos del Barómetro de las Américas. Más adelante, se verá la inclusión del factor de expansión en otros cálculos más complejos, como el cálculo de intervalos de confianza o de regresiones. En estos documentos se trabajará la versión simple, sin incluir estos efectos y con los comandos más básicos de R, y luego la versión compleja, incluyendo el factor de expansión en los cálculos.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
