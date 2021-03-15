@@ -16,6 +16,6 @@ navbar:
       href: Expansion.html
     - text: "Descriptivos variables nominales"
       href: Descriptivos.html
-    - text: "Links"
+    - text: "Contacto"
       href: Links.html
 output_dir: "docs"
