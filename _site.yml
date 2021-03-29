@@ -4,20 +4,26 @@ navbar:
   left:
     - text: "Home"
       href: index.html
-    - text: "Básico"
+    - text: "Preparación"
       menu:
       - text: "Instalando R y RStudio"
         href: instalando.html
       - text: "Bases de datos"
         href: bases.html
-    - text: "Manejo de datos"
-      href: Manipulacion.html
-    - text: "Factor de expansión"
-      href: Expansion.html
-    - text: "Descriptivos variables nominales"
-      href: Descriptivos.html
-    - text: "Descriptivos variables ordinales"
-      href: Descriptivos2.html
+    - text: "Aspectos básicos"
+      menu:
+      - text: "Manejo de datos"
+        href: Manipulacion.html
+      - text: "Factor de expansión"
+        href: Expansion.html
+    - text: "Describiendo y graficando"
+      menu:
+      - text: "Descriptivos variables nominales"
+        href: Descriptivos.html
+      - text: "Descriptivos variables ordinales"
+        href: Descriptivos2.html
+      - text: "Descriptivos variables numéricas"
+        href: Descriptivos3.html  
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"

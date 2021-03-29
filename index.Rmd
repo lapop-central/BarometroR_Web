@@ -1,6 +1,8 @@
 ---
 title: "Usando los datos del Barómetro de las Américas"
-output: html_document
+output: 
+  html_document:
+    theme: flatly
 ---
 
 <style type="text/css">

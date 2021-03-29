@@ -7,6 +7,8 @@ output:
     collapsed: false
     number_sections: false
     toc_depth: 1
+    code_download: true
+    theme: flatly
     #code_folding: hide
 ---
 

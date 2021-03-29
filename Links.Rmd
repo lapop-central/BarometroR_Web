@@ -1,6 +1,8 @@
 ---
 title: "Contacto"
-output: html_document
+output: 
+  html_document:
+    theme: flatly
 ---
 
 ### LAPOP Lab en Redes Sociales
