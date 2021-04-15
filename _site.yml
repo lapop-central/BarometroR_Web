@@ -10,20 +10,24 @@ navbar:
         href: instalando.html
       - text: "Bases de datos"
         href: bases.html
-    - text: "Aspectos básicos"
+    - text: "Aspectos iniciales"
       menu:
       - text: "Manejo de datos"
         href: Manipulacion.html
       - text: "Factor de expansión"
         href: Expansion.html
-    - text: "Describiendo y graficando"
+    - text: "Describir y graficar"
       menu:
       - text: "Descriptivos variables nominales"
         href: Descriptivos.html
       - text: "Descriptivos variables ordinales"
         href: Descriptivos2.html
       - text: "Descriptivos variables numéricas"
-        href: Descriptivos3.html  
+        href: Descriptivos3.html
+    - text: "Inferencia básica"
+      menu:
+      - text: "Intervalos de confianza"
+        href: IC.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"
