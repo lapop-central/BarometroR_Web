@@ -28,6 +28,8 @@ navbar:
       menu:
       - text: "Intervalos de confianza"
         href: IC.html
+      - text: "Comparación de 2 medias"
+        href: pruebat.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"
