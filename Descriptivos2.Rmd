@@ -100,8 +100,7 @@ formattable(tabla)
 
 Para graficar, se replica el código usado en el documento anterior (que se puede ver [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos.html)) para hacer la tabla resumen y el gráfico de pie. En este caso se trabajará con la variable de frecuencia de uso de Facebook ("smedia2r"). 
 En primer lugar, se construye un dataframe "df" con la modalidad "pipe" (`%>%`) de la librería `dplyr` (parte del Tidyverse). Se declara el dataframe original con el que se trabajará ("lapop18"). Con el comando `filter` se le indique que internamente no tome en cuenta en los cálculos los valores perdidos de la variable "smedia2r", usando la especificación `!is.na(...)`. Se indica, luego, que se agrupen los resultados posteriores por categorías de la variable "smedia2r" con el comando `group_by(...)`. En cada categoría se calcula el número de observaciones con el comando `summarise(n=n())`. Finalmente, con el número de observaciones por categoría, se calcula el porcentaje y se guarda en una nueva columna de "df". Esto se calcula con el comando `mutate`, donde se especifica que la columna se llame "per" y se calcula el porcentaje redondeado.
-En segundo lugar, se activa la librería `ggplot2` para graficar los datos guardados en "df" con el comando `ggplot`. Dentro de este comando se especifica que se trabajará con el dataframe "df" (no con lapop18) y se especifica la "estética", es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de "per" del dataframe "df" y que se dividirá por categorías de la variable "smedia2r". Luego se añade la capa `geom_bar` para indicar que se graficará en barras de ancho (`width`) 1 y que la barra replicará lo especificado en la estética (`stat="identity"`). Con `geom_text` se agrega las etiquetas de los datos y con `coord_polar` se transforma las barras en un gráfico circular de sectores. Finalmente, se define el "tema" con `theme_void` indicando un fondo blanco y se modifica la etiqueta de la leyenda con `scale_fill_discrete`.
-```{r tabla y gráfico}
+```{r tabla}
 library(dplyr)
 df <- lapop18 %>%
       filter(!is.na(smedia2r)) %>%
@@ -109,6 +108,10 @@ df <- lapop18 %>%
       dplyr::summarise(n = n()) %>%
       mutate(per=round(n/sum(n), 3)*100) 
 df
+```
+
+En segundo lugar, se activa la librería `ggplot2` para graficar los datos guardados en "df" con el comando `ggplot`. Dentro de este comando se especifica que se trabajará con el dataframe "df" (no con lapop18) y se especifica la "estética", es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de "per" del dataframe "df" y que se dividirá por categorías de la variable "smedia2r". Luego se añade la capa `geom_bar` para indicar que se graficará en barras de ancho (`width`) 1 y que la barra replicará lo especificado en la estética (`stat="identity"`). Con `geom_text` se agrega las etiquetas de los datos y con `coord_polar` se transforma las barras en un gráfico circular de sectores. Finalmente, se define el "tema" con `theme_void` indicando un fondo blanco y se modifica la etiqueta de la leyenda con `scale_fill_discrete`.
+```{r gráfico}
 library(ggplot2)
 ggplot(data=df, aes(x="", y=per, fill=smedia2r))+
   geom_bar(width=1, stat="identity")+
