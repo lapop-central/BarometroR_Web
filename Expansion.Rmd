@@ -23,14 +23,14 @@ h1 {color: #3366CC;}
 
 # Introducción
 
-En este documento se explicará cómo introducir el factor de expansión y las ponderaciones en los cálculos estadísticos usando los datos del Barómetro de las Américas. Seguiremos lo que se trabajó en el documento de "Manipulación de datos", disponible [aquí](https://rpubs.com/arturo_maldonado/727887). 
+En este documento se explicará cómo introducir el factor de expansión y las ponderaciones en los cálculos estadísticos usando los datos del Barómetro de las Américas. Seguiremos lo que se trabajó en el documento de "Manejo de datos", disponible [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Manipulacion.html). 
 
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera:
 Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre  [aquí](http://datasets.americasbarometer.org/database/login.php)
-En este enlace, se pueden registrar o entrar como "Free User". En el buscador, se puede ingresar el texto "2018". Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
+En este enlace se pueden registrar o entrar como "Free User". En el buscador se puede ingresar el texto "2018". Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
 Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. 
 En este documento se carga una base de datos recortada. Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
@@ -43,7 +43,7 @@ lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP
 
 Cuando un investigador abre una base de datos en cualquier programa estadístico, el software asume que los datos provienen de un muestro simple aleatorio. Cuando se trabaja con datos de opinión pública, como los datos del Barómetro de las Américas, el diseño muestral generalmente no es un muestreo simple aleatorio, sino un diseño complejo, con estratificaciones, segmentaciones, cuotas, en diferentes etapas. 
 Como indica el reporte técnico de la ronda 2018/19 del Barómetro de las Américas, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/AmericasBarometer_2018-19_Technical_Report_W_102919.pdf), las muestras en cada país fueron diseñadas usando un diseño probabilístico multietapa (con cuotas al nivel de hogares para la mayoría de países), y fueron estratificadas por regiones principales en el país, tamaño de la municipalidad y por áreas urbanas y rurales dentro de las municipalidades.
-Este diseño muestral complejo se tiene que incorporar generalmente en los cálculos. En ciertas ocasiones si no se incopora puede llevar a diferencias en los resultados. Una explicación más detallada sobre el uso de los factores de expansión y las potenciales consecuencias de no usarlos con los datos del Barómetro de las Américas puede ser leída en la Nota Metodológica 007 (Castorena, 2021), disponible [aquí](https://www.vanderbilt.edu/lapop/insights/IMN007es.pdf).
+Este diseño muestral complejo se tiene que incorporar generalmente en los cálculos. En ciertas ocasiones si no se incorpora puede llevar a diferencias en los resultados. Una explicación más detallada sobre el uso de los factores de expansión y las potenciales consecuencias de no usarlos con los datos del Barómetro de las Américas puede ser leída en la Nota Metodológica 007 (Castorena, 2021), disponible [aquí](https://www.vanderbilt.edu/lapop/insights/IMN007es.pdf).
 Esta Nota Metodológica describe tres escenarios de usos de factores de expansión:
 
 1. Ajuste post estratificación: cuando la muestra no es autoponderada y se desvía de ciertas características sociodemográficas importantes. En la base de datos, esta característica se ajusta con la variable "estratopri".
@@ -52,7 +52,7 @@ Esta Nota Metodológica describe tres escenarios de usos de factores de expansi�
 
 # Consecuencias de no usar factores de expansión
 
-Como indica la Nota metodológica, "los análisis sin ponderar pueden resultar en estimaciones sesgadas" (p.9). Por ejemplo, en el documento sobre manipulación de datos replicamos los resultados sobre el apoyo a la democracia en Honduras (45%) y Uruguay (76.2%), para lo que se calculó la variable recodificada y se describió.
+Como indica la Nota metodológica, "los análisis sin ponderar pueden resultar en estimaciones sesgadas" (p.9). Por ejemplo, en el documento sobre manejo de datos replicamos los resultados sobre el apoyo a la democracia en Honduras (45%) y Uruguay (76.2%), para lo que se calculó la variable recodificada y se describió.
 ```{r manipulación}
 lapop18$ing4rec <- car::recode(lapop18$ing4, "1:4=0; 5:7=1")
 table(lapop18$ing4rec)

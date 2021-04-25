@@ -23,17 +23,28 @@ output:
 
 En esta web encontrará secciones donde se usan los datos del Barómetro de las Américas en R y RStudio. Se replicarán resultados de varios informes producidos por LAPOP que tienen por objetivo dar un panorama de cómo usar nuestros datos para producir resultados estadísticos.
 
-## Temas
+# Temas
+
+## Preparación
+
+1. Instalando R y RStudio
+2. Bases de datos
+
+## Aspectos iniciales
 
 1. Manejo de datos del Barómetro de las Américas
-
 2. Uso de factores de expansión
 
-3. Descrictivos básicos y gráficos de variables nominales
+## Describir y graficar
 
-4. Descriptivos básicos y gráficos de variables ordinales
+1. Descrictivos básicos y gráficos de variables nominales
+2. Descriptivos básicos y gráficos de variables ordinales
+3. Descriptivos básicos y gráficos de variables numéricas
 
-5. Descriptivos básicos y gráficos de variables numéricas
+## Inferencia básica
+
+1. Intervalo de confianza
+2. Comparación de 2 medias
 
 </div>
 <div class="col-sm-6">

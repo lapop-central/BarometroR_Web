@@ -37,7 +37,7 @@ lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
-En el documento 1 sobre estadística descriptiva, que se puede ver [aquí](https://rpubs.com/arturo_maldonado/696770), se trabajó con variables nominales, con opciones de respuesta dicotómica (Sí/No). En este documento se va a trabajar con variables ordinales. De esta manera, se va a usar la variable SMEDIA2.¿Con qué frecuencia ve contenido en Facebook?, SMEDIA5.¿Con qué frecuencia ve contenido en Twitter? y SMEDIA8.¿Con qué frecuencia usa Whatsapp?. Estas variables tienen como opciones de respuesta:
+En el documento sobre estadística descriptiva, que se puede ver [aquí](https://rpubs.com/arturo_maldonado/696770), se trabajó con variables nominales, con opciones de respuesta dicotómica (Sí/No). En este documento se va a trabajar con variables ordinales. De esta manera, se va a usar la variable SMEDIA2.¿Con qué frecuencia ve contenido en Facebook?, SMEDIA5.¿Con qué frecuencia ve contenido en Twitter? y SMEDIA8.¿Con qué frecuencia usa Whatsapp? Estas variables tienen como opciones de respuesta:
 
  1. Diariamente
  2. Algunas veces a la semana
@@ -54,14 +54,14 @@ lapop18$smedia5r = as.factor(lapop18$smedia5)
 lapop18$smedia8r = as.factor(lapop18$smedia8)
 ```
 
-La nota a pie 15 indica que "los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales" (p. 64). Por este motivo, los gráficos circulares de frecuencia de uso de redes sociales (Gráfico 3.3) solo incluyen las categorías "Diariamente", "Algunas veces a la semana", "Algunas veces al mes" y "Algunas veces al año". Se excluya la categoría "Nunca".
+La nota a pie 15 indica que "los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales" (p. 64). Por este motivo, el gráfico 3.3 de frecuencia de uso de redes sociales (pag. 57) solo incluyen las categorías "Diariamente", "Algunas veces a la semana", "Algunas veces al mes" y "Algunas veces al año". Se excluya la categoría "Nunca". En las nuevas variables vamos a declarar el valor 5, correspondiente a "nunca", como "NA", es decir, como valor perdido en R.
 ```{r eliminar nunca}
 lapop18$smedia2r = car::recode(lapop18$smedia2r, "5=NA")
 lapop18$smedia5r = car::recode(lapop18$smedia5r, "5=NA")
 lapop18$smedia8r = car::recode(lapop18$smedia8r, "5=NA")
 ```
 
-Luego se tienen que etiquetar y generar las tablas descriptivas básicas.
+Luego, estas varuiables se tienen que etiquetar y generar las tablas descriptivas básicas, con el comando `table`.
 ```{r etiqueta}
 levels(lapop18$smedia2r) <- c("Diariamente", "Algunas veces a la semana", 
                             "Algunas veces al mes", "Algunas veces al año")
@@ -74,7 +74,7 @@ table(lapop18$smedia5r)
 table(lapop18$smedia8r)
 ```
 
-Para producir las tablas con porcentajes, redondeados a un decimal, usamos el siguiente código.
+Para calcular las tablas con porcentajes, redondeados a un decimal, usamos `prop.table` y `round`. Nuevamente, estos porcentajes no son exactamente iguales a los presentados en el reporte debido a que estos cálculos no incluyen el factor de expansión.
 ```{r porcentajes}
 round(prop.table(table(lapop18$smedia2r)), 3)*100
 round(prop.table(table(lapop18$smedia5r)), 3)*100
@@ -98,8 +98,8 @@ library(formattable)
 formattable(tabla)
 ```
 
-Para graficar, se replica el código usado en el documento anterior para hacer la tabla resumen y el gráfico de pie. En este caso se trabajará con la variable de frecuencia de uso de Facebook ("smedia2r"). 
-En primer lugar, se construye un dataframe "df" con la modalidad "pipe" (`%>%`) de la librería `dplyr`. Se declara el dataframe original con el que trabajará ("lapop18"). Con el comando `filter` se le indique que internamente no tome en cuenta en los cálculos los valores perdidos de la variable "smedia2r", usando la especificación `!is.na(...)`. Se indica, luego, que se agrupen los resultados posteriores por categorías de la variable "smedia2r" con el comando `group_by(...)`. En cada categoría se calcula el número de observaciones con el comando `summarise(n=n())`. Finalmente, con el número de observaciones por categoría, se calcula el porcentaje y se guarda en una nueva columna de "df". Esto se calcula con el comando `mutate`. Dentro se especifica que la columna se llame "per" y que calcula el porcentaje redondeado.
+Para graficar, se replica el código usado en el documento anterior (que se puede ver [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos.html)) para hacer la tabla resumen y el gráfico de pie. En este caso se trabajará con la variable de frecuencia de uso de Facebook ("smedia2r"). 
+En primer lugar, se construye un dataframe "df" con la modalidad "pipe" (`%>%`) de la librería `dplyr` (parte del Tidyverse). Se declara el dataframe original con el que se trabajará ("lapop18"). Con el comando `filter` se le indique que internamente no tome en cuenta en los cálculos los valores perdidos de la variable "smedia2r", usando la especificación `!is.na(...)`. Se indica, luego, que se agrupen los resultados posteriores por categorías de la variable "smedia2r" con el comando `group_by(...)`. En cada categoría se calcula el número de observaciones con el comando `summarise(n=n())`. Finalmente, con el número de observaciones por categoría, se calcula el porcentaje y se guarda en una nueva columna de "df". Esto se calcula con el comando `mutate`, donde se especifica que la columna se llame "per" y se calcula el porcentaje redondeado.
 En segundo lugar, se activa la librería `ggplot2` para graficar los datos guardados en "df" con el comando `ggplot`. Dentro de este comando se especifica que se trabajará con el dataframe "df" (no con lapop18) y se especifica la "estética", es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de "per" del dataframe "df" y que se dividirá por categorías de la variable "smedia2r". Luego se añade la capa `geom_bar` para indicar que se graficará en barras de ancho (`width`) 1 y que la barra replicará lo especificado en la estética (`stat="identity"`). Con `geom_text` se agrega las etiquetas de los datos y con `coord_polar` se transforma las barras en un gráfico circular de sectores. Finalmente, se define el "tema" con `theme_void` indicando un fondo blanco y se modifica la etiqueta de la leyenda con `scale_fill_discrete`.
 ```{r tabla y gráfico, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -142,7 +142,7 @@ graf1 <- ggplot(df, aes(x=smedia2r, y=per))+
 graf1
 ```
 
-Guardar un gráfico en un objeto nos permite luego incorporar más capas o mejoras en el gráfico. El gráfico anterior, por ejemplo, tiene las etiquetas de "Frecuencia de uso" superpuestas, por lo que no se pueden leer. Para mejorar esta visualización se puede inclinar estas etiquetas, pero si se quisiera mantener la horizontalidad para facilitar la lectura, lo que se puede hacer es separar las etiquetas largas en dos o más líneas. Esto se puede hacer, por ejemplo, creando un vector con las nuevas etiquetas. Las etiquetas largas se pueden partir en líneas mediante la inclusión de `\n` entre los textos que se quiera separar. 
+Guardar un gráfico en un objeto nos permite luego incorporar más capas o mejoras en el gráfico. El gráfico anterior, por ejemplo, tiene las etiquetas de "Frecuencia de uso" en una sola línea, por lo se podrían trasponer. Para mejorar esta visualización se puede inclinar estas etiquetas, pero si se quisiera mantener la horizontalidad para facilitar la lectura, lo que se puede hacer es separar las etiquetas largas en dos o más líneas. Esto se puede hacer, por ejemplo, creando un vector con las nuevas etiquetas. Las etiquetas largas se pueden partir en líneas mediante la inclusión de `\n` entre los textos que se quiera separar. 
 Luego, al objeto "graf1" se le puede agregar una nueva capa para reemplazar las etiquetas con las nuevas divididas en líneas. Esto se hace con la especificación `scale_x_discrete` donde se indica que las etiquetas usen el vector creado.
 ```{r etiquetas superpuestas}
 etiq <- c("Diariamente", "Algunas veces\na la semana", "Algunas veces\nal mes", 
@@ -178,8 +178,8 @@ Estas tablas también se pueden guardar en objetos y crear un dataframe con esto
 
 # Cruce de variables
 
-En la página 55 del reporte "El pulso de la democracia" se presenta los porcentajes de uso de las redes sociales por país. Para replicar esta tabla primero se tiene que definir la variable "pais" y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).
-Luego, en la página 56 se presenta un cuadro con el % de usuarios de redes sociales por características sociodemográficas, por ejemplo, urbano/rural, hombre, edad promedio, riqueza promedio y años de estudio. 
+En la tabla 3.1 (pag. 55) del reporte "El pulso de la democracia" se presenta los porcentajes de uso de las redes sociales por país. Para replicar esta tabla primero se tiene que definir la variable "pais" y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).
+Luego, en la página 56 se presenta un cuadro con el porcentaje de usuarios de redes sociales por características sociodemográficas, por ejemplo, urbano/rural, hombre, edad promedio, riqueza promedio y años de estudio. 
 Empezaremos replicando los datos generales del uso de redes sociales que se reporta en el gráfico 3.1.
 ```{r país}
 lapop18$smedia1r = as.factor(lapop18$smedia1)
@@ -207,7 +207,7 @@ lapop18$tw_user <- ifelse(lapop18$smedia4==1 & lapop18$smedia5<=4, 1, 0)
 lapop18$wa_user <- ifelse(lapop18$smedia7==1 & lapop18$smedia8<=4, 1, 0)
 ```
 
-Esta variables son graficadas en el reporte en el Gráfico 3.1. Para reporducir estos datos, se puede describir estas variables.
+Esta variables son graficadas en el reporte en el Gráfico 3.1. Para reproducir estos datos, se puede describir estas variables.
 ```{r}
 prop.table(table(lapop18$fb_user))*100
 prop.table(table(lapop18$tw_user))*100
@@ -222,11 +222,8 @@ descr::freq(lapop18$tw_user, lapop18$weight1500, plot=F)
 descr::freq(lapop18$wa_user, lapop18$weight1500, plot=F)
 ```
 
-Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas entre cada red social y país. Estas tablas presentan el % de quienes usan y el % de los que no usan cada red social en cada país.
-Estas tablas se guardan en objetos de R. Luego se unen estos objetos usando los comandos `as.data.frame` para unir las tablas como un dataframe y `cbind` para juntar las columnas.
-Esta tabla presenta datos de países que no tienen información de las variables sobre redes sociales. Para presentar una tabla que incluya solo a los países que tienen información en estas variables, se eliminan estas filas de país sin información y también se eliminan las columnas que registran los % de los que No usan estas redes sociales.
-Finalmente, se cambia el nombre de las columnas del dataframe.
-
+Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas entre cada red social y país. Estas tablas presentan el porcentaje de quienes usan y el porcentaje de los que no usan cada red social en cada país. Estas tablas se guardan en objetos de R. Luego se unen estos objetos usando los comandos `cbind` para juntar las columnas y `as.data.frame` para unir las tablas como un dataframe.
+Esta tabla presenta también los porcentajes de los que No usan estas redes sociales. Para presentar una tabla que incluya solo a los que sí usan las redes sociales, se eliminan estas columnas, usando la especificación `[, c(-1,-3,-5)]`, que indica que no se eliminan filas y que sí se eliminen las columnas 1, 3 y 5.Finalmente, se cambia el nombre de las columnas del dataframe.
 ```{r tabla por país}
 fbpais <- round(prop.table(table(lapop18$pais, lapop18$fb_user), 1), 3)*100
 twpais <- round(prop.table(table(lapop18$pais, lapop18$tw_user), 1), 3)*100
@@ -254,21 +251,19 @@ La variable "q1" registra el género del entrevistado. Esta variable está codif
  1. Hombre
  2. Mujer
 
-Para construir una variable "dummy" llamada "hombre", de tal manera que hombre sea 1 y mujer sea 0, una forma de hacerlo es de manera algebraica. Luego, se transforma esta misma variable en un factor y se etiqueta.
+Para construir una variable "dummy" llamada "hombre", de tal manera que hombre sea 1 y mujer sea 0, una forma de hacerlo es de manera algebraica (2-variable q1). De esta manera, ahora los hombres mantiene el valor 1 (2-1) y las mujeres pasar a ser 0 (2-2). En este caso, la nueva variable "hombre" se crea como una una variable numérica. Vamos a manterner a la variable como "num" para, más abajo, poder calcular la media de esta variable (cosa que no se puede hacer de una variable declarada como factor).
 ```{r hombre}
 lapop18$hombre <- 2-lapop18$q1
-lapop18$hombre = as.factor(lapop18$hombre)
-levels(lapop18$hombre) = c("Mujer", "Hombre")
 table(lapop18$hombre)
 ```
 
-De esta manera, ahora los hombres mantiene el valor 0 (2-1) y las mujeres pasar a ser 0 (2-2).
+
 La variable urbano/rural se llama "ur" en la base de datos y está codificada de la siguiente manera:
 
  1. Urbano
  2. Rural
 
-De la misma manera que con género, se usa la fórmula 2-ur. Esta variable también se convierte en factor y se etiqueta.
+De la misma manera que con género, se usa la fórmula 2- variable ur, pero esta variable  se convierte en factor y se etiqueta.
 ```{r urbano}
 lapop18$urban <- 2-lapop18$ur
 lapop18$urban = as.factor(lapop18$urban)
@@ -287,22 +282,22 @@ t1
 
 La filas correspondientes a "Urbano" de esta tabla reproducen los datos de la Tabla 3.2: 62.1% son urbanos entre los no usuarios de Whatsapp y 76.7% son urbanos entre los usuarios.
 
-Ahora se presentará la tabla entre usuarios de Facebook (variable "fb_user") y hombre (variable "hombre"), pero presentando solo los % usado en la tabla y ahora usando el estilo de código "pipe".
+Ahora se presentará la tabla entre usuarios de Facebook (variable "fb_user") y hombre (variable "hombre"), pero presentando solo los porcentajes usados en la tabla y ahora usando el estilo de código del Tidyverse, usando el operador "pipe".
 Lo primero es definir la variable "fb_user" como un factor y etiquetarla. Luego, se usa el comando `subset` para filtrar los casos perdidos en la variable "fb_user". Luego se pide que los resultados se agrupen por categorías de la variable "fb_user". Con el comando `summarise` se guarda en la columna "hombre" el promedio de la variable "hombre", con el comando `mean` que incluye la especificación `na.rm=T` para no incluir en el cálculo los valores perdidos. En este caso se aprovecha que la variable "hombre" es una variable dummy, de tal manera que el promedio corresponde a la proporción de hombres. 
 ```{r tabl FbxHombre, message=FALSE, warning=FALSE}
 lapop18$fb_user = as.factor(lapop18$fb_user)
 levels(lapop18$fb_user) <- c("No usuario", "Usuario")
 tabla1 <- subset(lapop18, !is.na(fb_user)) %>% #Para no incluir al grupo de NA de usuarios de Facebook
   group_by(fb_user) %>%
-  summarise(hombre=mean(hombre, na.rm=T)*100) #Se incluye na.rm=T porque hombre tiene NAs
+  summarise(Hombre=mean(hombre, na.rm=T)*100) #Se incluye na.rm=T porque hombre tiene NAs
 tabla1
 ```
-Estos son los porcentajes para los usuarios de Facebook, en la fila de la variable Himbre de la Tabla 3.2. Es decir, entre los no usuarios, 49.9% son hombres y entre los usuarios este porcentaje es 49.7%.
+Estos son los porcentajes para los usuarios de Facebook, en la fila de la variable Hombre de la Tabla 3.2. Es decir, entre los no usuarios, 49.9% son hombres y entre los usuarios este porcentaje es 49.7%.
 
 # Gráfico de barras de dos variables
 
-Este cruce entre usuarios de Whatsapp y la variable urbano se puede ver mejor en un gráfico de barras agrupadas. Lo primero que haremos es definir la variable "wa_user" como factor y etiquetarla. Luego, se requiere crear una tabla con los datos agrupados. Se puede usar el dataframe "t1" creado anteriormente, pero aquí usaremos nuevamente la forma "pipe" para recrear los datos.
-Para esto, se agrupa tanto por uso de Whatsapp como por urbano/rural, es decir, en cuatro combinaciones. En cada subgrupo se calcula el n. Dado que los % se tienen que calcular por cada grupo de "wa_user", se vuelve a agrupar y se calcula los % de cada subgrupo, de tal manera que los % sumen 100% en cada subgrupo de "wa_user".
+Elcruce entre usuarios de Whatsapp y la variable urbano se puede ver mejor en un gráfico de barras agrupadas. Lo primero que haremos es definir la variable "wa_user" como factor y etiquetarla. Luego, se requiere crear una tabla con los datos agrupados. Se puede usar el dataframe "t1" creado anteriormente, pero aquí usaremos nuevamente el operador "pipe" para recrear los datos.
+Para esto, se agrupa tanto por uso de Whatsapp como por urbano/rural, es decir, en cuatro combinaciones. En cada subgrupo se calcula el n. Dado que los % se tienen que calcular por cada grupo de "wa_user", se vuelve a agrupar y se calcula los % de cada subgrupo, de tal manera que los porcentajes sumen 100% en cada subgrupo de "wa_user".
 ```{r tabla wa}
 lapop18$wa_user = as.factor(lapop18$wa_user)
 levels(lapop18$wa_user) <- c("No usuario", "Usuario")
@@ -314,7 +309,7 @@ face <- subset(lapop18, !is.na(wa_user)) %>% #Se usa !is.na para que no se repor
 face
 ```
 
-Los datos se esta nueva tabla son exactamente iguales a los de "t1". Con la tabla lista, se usa el comando `ggplot` definiendo que "wa_user" sea la variable en el eje X, que el eje Y sea el % y que los subgrupos se formen por la variable "urbano" con la especificación `fill`. Se usa la especificación `dodge` en `geom_bar` para tener las barras separadas por cada grupo.
+Los datos se esta nueva tabla son exactamente iguales a los de "t1". Con la tabla lista, se usa el comando `ggplot` definiendo que "wa_user" sea la variable en el eje X, que el eje Y sea el porcentaje y que los subgrupos se formen por la variable "urban" con la especificación `fill`. Se usa la especificación `dodge` en `geom_bar` para tener las barras separadas por cada grupo.
 ```{r gráfico agrupado}
 ggplot(data=face, aes(x=wa_user, y=porcentaje, fill=urban, ymax=100))+
   geom_bar(position="dodge", stat="identity")+

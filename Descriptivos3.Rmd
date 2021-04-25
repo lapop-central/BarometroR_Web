@@ -29,7 +29,6 @@ Una de las secciones de este informe, reporta los datos sobre redes sociales y a
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera:
-Los datos que vamos a usar deben citarse de la siguiente manera:
 Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre  [aquí](http://datasets.americasbarometer.org/database/login.php). En este enlace, se pueden registrar o entrar como "Free User". En el buscador, se puede ingresar el texto "2018". Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos recortada. Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio. Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
 ```{r base}
@@ -56,7 +55,7 @@ mean(lapop18$hombre, na.rm=T)*100
 mean(lapop18$urban, na.rm=T)*100
 ```
 
-Estos son los datos que se presentan en la primera columna de resultados de la población general, excepto para la variable riqueza ( "quintall") que no está disponible en esta versión recortada de la base de datos.
+Estos son los datos que se presentan en la primera columna de resultados de la población general, excepto para la variable riqueza ("quintall") que no está disponible en esta versión recortada de la base de datos.
 Aquí se puede incluir algunas gráficas básicas, por ejemplo, usando el comando `hist` se puede reproducir el histograma de la variable "años de educación" (ed).
 ```{r histograma simple}
 hist(lapop18$ed)
@@ -74,7 +73,7 @@ ggplot(lapop18, aes(x=ed))+
 
 # Media por grupos
 
-En la página 56 del reporte, se presentan la media de estas variables numéricas por grupos de las variables relacionadas a las redes sociales. Es decir, por ejemplo, el promedio de años de estudio para los usarios de Facebook y para los  no usuarios de Facebook.
+En la página 56 del reporte, se presentan la media de estas variables numéricas por grupos de las variables relacionadas a las redes sociales. Es decir, por ejemplo, el promedio de años de estudio para los usuarios de Facebook y para los no usuarios de Facebook.
 Si queremos calcular el promedio de años de estudio para los usuarios de Facebook, primero se calcula esta variable, de la misma manera que en secciones anteriores, con el comando `ifelse`.
 ```{r usuarios}
 lapop18$fb_user <- ifelse(lapop18$smedia1==1 & lapop18$smedia2<=4, 1, 0)
@@ -82,7 +81,7 @@ lapop18$tw_user <- ifelse(lapop18$smedia4==1 & lapop18$smedia5<=4, 1, 0)
 lapop18$wa_user <- ifelse(lapop18$smedia7==1 & lapop18$smedia8<=4, 1, 0)
 ```
 
-El cálculo del promedio de años para los usuarios y no usuarios de Facebook se puede hacer de muchas maneras. Una primera es usando los [].
+El cálculo del promedio de años para los usuarios y no usuarios de Facebook se puede hacer de muchas maneras. Una primera es usando los corchetes `[...]`. En este caso, calcularemos el promedio de años de estudio por grupos de usuarios `[lapop18$fb_user==1]` y no usuarios de Facebook `[lapop18$fb_user==0]`.
 ```{r años de estudio de Fb}
 mean(lapop18$ed[lapop18$fb_user==0], na.rm=T)
 mean(lapop18$ed[lapop18$fb_user==1], na.rm=T)
@@ -90,21 +89,21 @@ mean(lapop18$ed[lapop18$fb_user==1], na.rm=T)
 
 # Descriptivos de una variable numérica
 
-Otra manera de describir una variable numérica, descripción que incluye la media, es usando el comando `summary`. Este comando reporta los estadísticos descriptivos más usados para una variable numérica: mínimo, máximo, cuartiles, media y mediana. Todos estos estadísticos permiten una comparaciónmejor  entre ambos grupos. 
-Dentro de este comando se puede incluir la especificación `digits=2` para redondear los resultados, lo que evita tener que usar `round`, por ejemplo.
+Otra manera de describir una variable numérica, descripción que incluye la media, es usando el comando `summary`. Este comando reporta los estadísticos descriptivos más usados para una variable numérica: mínimo, máximo, cuartiles, media y mediana. Todos estos estadísticos permiten una comparación mejor entre ambos grupos, de usuarios y no usuarios de Facebook. 
+Dentro de este comando se puede incluir la especificación `digits=3` para redondear los resultados, lo que evita tener que usar `round`, por ejemplo.
 ```{r}
-summary(lapop18$ed[lapop18$fb_user==0], na.rm=T, digits=2)
-summary(lapop18$ed[lapop18$fb_user==1], na.rm=T, digits=2)
+summary(lapop18$ed[lapop18$fb_user==0], na.rm=T, digits=3)
+summary(lapop18$ed[lapop18$fb_user==1], na.rm=T, digits=3)
 ```
 
-Sin embargo, el comado `summary` no brinda un estadística importante como la desviación estándar, una medida de dispersión o heterogeneidad. Para poder tener los estadísticos anteriores y que se incluya la desviación estándar, entre otras medidas adicionales, se puede usar el comando `describeBy`, que es parte de la librería `psych`. Este comando pide la variable a describir ("ed") y la variable que forma los grupos ("fb_user") y brinda la media, la desviación estándar, la mediana, la media recortada, la desviación absoluta de la mediana, el mínimo y máximo.
+Sin embargo, el comando `summary` no brinda un estadística importante como la desviación estándar, una medida de dispersión o heterogeneidad. Para poder tener los estadísticos anteriores y que se incluya la desviación estándar, entre otras medidas adicionales, se puede usar el comando `describeBy`, que es parte de la librería `psych`. Este comando pide la variable a describir ("ed") y la variable que forma los grupos ("fb_user") y brinda la media, la desviación estándar, la mediana, la media recortada, la desviación absoluta de la mediana, el mínimo y máximo.
 ```{r media años de estudio por FB, message=FALSE, warning=FALSE}
 library(psych)
 describeBy(lapop18$ed, lapop18$fb_user)
 ```
 
-Esta misma información se puede obtener usando el modo de códigos del tidyverse (pype `%>%`) y se puede guardar en una tabla. Esta tabla puede guardar los datos de la edad promedio para los usuarios y no usuarios de Whatsapp y además la desviación estándar de cada grupo.
-En primer lugar definimos con qué dataframe se trabaja. Luego, se indica que no se usen los valores perdidos de la variable usuarios de Whatsapp con `filter(!is.na(wa_user))`. A continuación se indica que se va a trabajar en grupos de la variable usuarios de Whatsapp con `group_by(wa_user)`. Finalmente, se indica que en cada grupo se calculará la media y la desviación estándar, con `summarise`.
+Esta misma información se puede obtener usando el modo de códigos del tidyverse (con el operador pype `%>%`) y se puede guardar en una tabla. Esta tabla puede guardar los datos de la edad promedio para los usuarios y no usuarios de Whatsapp y además la desviación estándar de cada grupo.
+En primer lugar definimos con qué dataframe se trabaja. Luego, se indica que no se usen internamente los valores perdidos de la variable usuarios de Whatsapp con `filter(!is.na(wa_user))`. A continuación se indica que se va a trabajar en grupos de la variable usuarios de Whatsapp con `group_by(wa_user)`. Finalmente, se indica que en cada grupo se calculará la media y la desviación estándar, con `summarise`.
 ```{r media años x Whatsapp, message=FALSE, warning=FALSE}
 library(dplyr)
 whatxedad <- lapop18 %>%
@@ -115,6 +114,7 @@ whatxedad
 ```
 
 # Gráficos descriptivos por grupos
+
 El reporte no lo muestra, pero se pueden presentar gráficos para cada grupo para facilitar la comparación de una variable.
 Para hacer estos gráficos comparativos por grupo, vamos a seguir usando el tidyverse. Igual que en la tabla anterior, se define el dataframe y se indica que no se tome en cuenta los valores perdidos de la variable "wa_user". Luego, se indica que se haga un gráfico, con `ggplot` que tenga la variable "q2" en el eje X. Se define que este gráfico sea un histograma con `geom_histogram()`. Una novedad es que, con la especificación `facet_wrap(~wa_user)` se puede indicar que se hagan gráficos por cada grupo de esa variable. Finalmente, se etiquetan los ejes.
 ```{r hist media años x Whatsapp, message=FALSE, warning=FALSE}
@@ -127,8 +127,7 @@ lapop18 %>%
   ylab("Frecuencia")
 ```
 
-Este gráfico, sin embargo, muestra los valores 0 y 1 de la variable "wa_user" en el encabezado de ambos gráficos. Esto es debido a que esta variable, cuando se creó, se definió por defecto como numérica.
-Para que aparezcan las etiquetas de la variable, se tiene que transformar "wa_user" en factor y etiquetarla.
+Este gráfico, sin embargo, muestra los valores 0 y 1 de la variable "wa_user" en el encabezado de ambos gráficos. Esto es debido a que esta variable, cuando se creó, se definió por defecto como numérica. Para que aparezcan las etiquetas de la variable, se tiene que transformar "wa_user" en factor y etiquetarla.
 ```{r wa factor}
 lapop18$wa_user = as.factor(lapop18$wa_user)
 levels(lapop18$wa_user) <- c("No usuario", "Usuario")
