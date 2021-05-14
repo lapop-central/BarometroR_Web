@@ -30,6 +30,8 @@ navbar:
         href: IC.html
       - text: "Comparación de 2 medias"
         href: pruebat.html
+      - text: "Comparación de varias medias"
+        href: anova.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"

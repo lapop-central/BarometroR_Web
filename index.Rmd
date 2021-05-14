@@ -46,6 +46,7 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 
 1.  [Intervalos de confianza](https://arturomaldonado.github.io/BarometroEdu_Web/IC.html)
 2.  [Comparación de 2 medias](https://arturomaldonado.github.io/BarometroEdu_Web/pruebat.html)
+3.  [Comparación de varias medias](https://arturomaldonado.github.io/BarometroEdu_Web/anova.html)
 :::
 
 ::: {.col-sm-6}
