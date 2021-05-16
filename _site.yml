@@ -32,6 +32,8 @@ navbar:
         href: pruebat.html
       - text: "Comparación de varias medias"
         href: anova.html
+      - text: "Tablas cruzadas y chi-cuadrado"
+        href: chi.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"
