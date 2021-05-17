@@ -525,7 +525,7 @@ whatxedad</code></pre>
   facet_wrap(~wa_user)+
   xlab(&quot;Edad&quot;)+
   ylab(&quot;Frecuencia&quot;)</code></pre>
-<p><img src="Descriptivos3_files/figure-html/hist%20media%20años%20x%20Whatsapp-1.png" /><!-- --></p>
+<p><img src="Descriptivos3_files/figure-html/hist%20media%20an%CC%83os%20x%20Whatsapp-1.png" /><!-- --></p>
 <p>Este gráfico, sin embargo, muestra los valores 0 y 1 de la variable “wa_user” en el encabezado de ambos gráficos. Esto es debido a que esta variable, cuando se creó, se definió por defecto como numérica. Para que aparezcan las etiquetas de la variable, se tiene que transformar “wa_user” en factor y etiquetarla.</p>
 <pre class="r"><code>lapop18$wa_user = as.factor(lapop18$wa_user)
 levels(lapop18$wa_user) &lt;- c(&quot;No usuario&quot;, &quot;Usuario&quot;)</code></pre>
