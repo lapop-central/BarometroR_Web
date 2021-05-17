@@ -172,7 +172,7 @@ Se define que este gráfico sea un histograma con `geom_histogram()`.
 Una novedad es que, con la especificación `facet_wrap(~wa_user)` se puede indicar que se hagan gráficos por cada grupo de esa variable.
 Finalmente, se etiquetan los ejes.
 
-```{r hist media años x Whatsapp, message=FALSE, warning=FALSE}
+```{r hist edadxwhat, message=FALSE, warning=FALSE}
 lapop18 %>%
   filter(!is.na(wa_user)) %>%
   ggplot(aes(x=q2))+
@@ -196,7 +196,7 @@ Con el comando `boxplot` se puede hacer estos gráficos.
 El comando pide primero la variable en el eje Y, luego la variable que define los grupos y el dataframe.
 Se puede etiquetar el eje X y Y con los nombres de las variables.
 
-```{r boxplot edad x Whatsapp, message=FALSE, warning=FALSE}
+```{r boxplot edadxWha, message=FALSE, warning=FALSE}
 boxplot(q2 ~ wa_user, data=lapop18, xlab ="Usuario de Whatsapp", ylab="Edad")
 ```
 

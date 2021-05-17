@@ -259,7 +259,7 @@ lapop18 %>%
   ylab("Frecuencia")
 ```
 
-![](Descriptivos3_files/figure-html/hist media años x Whatsapp-1.png)<!-- -->
+![](Descriptivos3_files/figure-html/hist edadxwhat-1.png)<!-- -->
 
 Este gráfico, sin embargo, muestra los valores 0 y 1 de la variable "wa_user" en el encabezado de ambos gráficos.
 Esto es debido a que esta variable, cuando se creó, se definió por defecto como numérica.
@@ -281,7 +281,7 @@ Se puede etiquetar el eje X y Y con los nombres de las variables.
 boxplot(q2 ~ wa_user, data=lapop18, xlab ="Usuario de Whatsapp", ylab="Edad")
 ```
 
-![](Descriptivos3_files/figure-html/boxplot edad x Whatsapp-1.png)<!-- -->
+![](Descriptivos3_files/figure-html/boxplot edadxWha-1.png)<!-- -->
 
 # Resumen
 
