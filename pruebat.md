@@ -1,0 +1,272 @@
+---
+title: "Comparación de 2 medias con el Barómetro de las Américas"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    collapsed: false
+    number_sections: false
+    toc_depth: 1
+    code_download: true
+    theme: flatly
+    df_print: paged
+    self_contained: no
+    keep_md: yes
+    #code_folding: hide
+editor_options: 
+  markdown: 
+    wrap: sentence
+---
+
+
+
+<style type="text/css">
+.columns {display: flex;}
+h1 {color: #3366CC;}
+</style>
+
+# Introducción
+
+En este documento veremos como comparar dos medias y saber si las diferencias se pueden inferir a la población, mediante la prueba t de comparación de medias.
+Para eso, vamos a seguir usando el último informe regional "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas.
+En este informe se reportan los resultados sobre apoyo a la democracia electoral, variable que se cruza con algunas otras variables sociodemográficas como sexo o lugar de residencia (ver Gráfico 1.5).
+
+# Sobre la base de datos
+
+Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
+Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
+En este enlace, se pueden registrar o entrar como "Free User".
+En el buscador, se puede ingresar el texto "2018".
+Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
+Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
+Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
+En este documento se carga una base de datos recortada.
+Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
+Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
+
+
+```r
+library(rio)
+lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav")
+lapop18 <- subset(lapop18, pais<=35)
+```
+
+# Descriptivos del apoyo a la democracia
+
+El apoyo a la democracia, variable "ING4", medida en una escala del 1 al 7 donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo", se tiene que recodificar.
+De acuerdo al reporte "Se consideran las respuestas en la porción de la escala que indica estar de acuerdo, esto es los valores de 5 a 7, para indicar el porcentaje que apoya a la democracia" (p. 11).
+Se usa el comando `mean` para reportar el promedio regional de apoyo a la democracia.
+Se especifica `na.rm=T` para que el comando no tome en cuenta los valores perdidos en el cálculo.
+
+
+```r
+library(car)
+table(lapop18$ing4)
+```
+
+```
+## 
+##    1    2    3    4    5    6    7 
+## 1628 1397 2859 5579 5968 4007 5648
+```
+
+```r
+lapop18$ing4r <- recode(lapop18$ing4, "1:4=0; 5:7=100")
+mean(lapop18$ing4r, na.rm=T)
+```
+
+```
+## [1] 57.67924
+```
+
+Se observa que en general, el 57.7% de entrevistados apoyo a la democracia en el 2018.
+
+# Factores asociados al apoyo a la democracia
+
+El gráfico 1.5 muestra cómo varía el apoyo a la democracia por grupos demográficos y socioeconómicos.
+En particular, se presenta los resultados para la variable lugar de residencia que distingue el ámbito urbano y rural, y para la variable género, que distingue hombre y mujeres.
+Como vimos en la sección sobre intervalos de confianza, se puede calcular el porcentaje de apoyo por cada grupo.
+En primer lugar, vamos a crear nuevas variables de factor para lugar de residencia y género.
+
+
+```r
+lapop18$genero <- as.factor(lapop18$q1)
+levels(lapop18$genero) <- c("Hombre", "Mujer")
+lapop18$ambito <- as.factor(lapop18$ur)
+levels(lapop18$ambito) <- c("Urbano", "Rural")
+```
+
+De la misma manera que en el documento sobre intervalos de confianza, usamos el comando `tapply` para calcular el apoyo a la democracia promedio por grupos de género y de ámbito.
+
+
+```r
+tapply(lapop18$ing4r, lapop18$genero, mean, na.rm=T) #Para urbano rural
+```
+
+```
+##   Hombre    Mujer 
+## 59.42899 55.90933
+```
+
+```r
+tapply(lapop18$ing4r, lapop18$ambito, mean, na.rm=T) #Para género
+```
+
+```
+##   Urbano    Rural 
+## 58.71664 55.07453
+```
+
+Se puede reporducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
+
+
+```r
+library(Rmisc)
+apxgen <- group.CI(ing4r~genero, lapop18)
+library(ggplot2)
+graf1.5 <- ggplot(apxgen, aes(x=genero, y=ing4r.mean))+
+  geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=ing4r.lower, ymax=ing4r.upper), width=0.2)+
+  geom_text(aes(label=paste(round(ing4r.mean, 1), "%")), vjust=-1.5, size=4)+
+  xlab("Género") + ylab("Apoyo a la democracia (%)")+
+  ylim(0, 70)
+graf1.5
+```
+
+![](pruebat_files/figure-html/apoyo x género-1.png)<!-- -->
+
+Se puede general un gráfico similar que presente el porcentaje de apoyo a la democracia y los intervalos de confianza por grupos urbano y rural.
+
+
+```r
+apxamb <- group.CI(ing4r~ambito, lapop18)
+library(ggplot2)
+graf1.5_2 <- ggplot(apxamb, aes(x=ambito, y=ing4r.mean))+
+  geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=ing4r.lower, ymax=ing4r.upper), width=0.2)+
+  geom_text(aes(label=paste(round(ing4r.mean, 1), "%")), vjust=-1.5, size=4)+
+  xlab("Lugar de residencia") + ylab("Apoyo a la democracia (%)")+
+  ylim(0, 70)
+graf1.5_2
+```
+
+![](pruebat_files/figure-html/apoyo x ámbito-1.png)<!-- -->
+
+LAPOP Lab generalmente presenta en sus gráficos los intervalos de confianza de cada grupo.
+Estas barras grises en el reporte sirven como un heurístico de comparación.
+Si las barras se traslapan, eso significaría que no habrían diferencias estadísticamente significativas entre los grupos.
+Por el contrario, si las barras grises no se traslapan, se podría decir que la diferencia entre los grupos es significativa al 95% de confianza.
+Sin embargo, para comprobar estas observaciones se tiene que correr una prueba estadística.
+Cuando la comparación es entre las medias de dos grupos, la prueba estadística apropiada es la prueba t de diferencias de medias.
+
+# Prueba t
+
+La prueba t de Student pone a prueba las siguientes hipótesis:
+
+$$
+H_0: µ_1 = µ_2
+$$
+
+$$
+H_a: µ_1 ≠ µ_2
+$$
+
+El estadístico de la prueba t se calcula con un error estándar que depende de si las varianzas parecen diferentes o de si las varianzas parecen iguales.
+Para determinar esta condición, lo primero es calcular una prueba de igualdad de varianzas entre los grupos, llamada prueba de Levene.
+
+$$
+H_0: var_1 = var_2
+$$
+
+$$
+H_a: var_1 ≠ var_2
+$$
+
+## Prueba t para la diferencia de medias de apoyo a la democracia por género
+
+El primer paso es hacer la prueba de Levene.
+Para correr este test, se usa la librería `DescTools`, que incluye el comando `LeveneTest`.
+
+
+```r
+library(DescTools)
+LeveneTest(lapop18$ing4r, lapop18$genero)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["F value"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"34.38526","3":"4.573811e-09","_rn_":"group"},{"1":"27069","2":"NA","3":"NA","_rn_":""}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Como el p-value (Pr(\>F) es menor a 0.05, se rechaza la hipótesis cero y se afirma que las varianzas son diferentes.
+Con este resultado, se puede correr el comando `t.test`, cuya hipótesis cero indica que las medias de apoyo a la democracia son iguales entre hombre y mujeres y la hipótesis alternativa indica que ambas medias son diferentes.
+Se incluye la especificación `var.equal=F` debido al resultado de la prueba de Levene que indica que las varianzas parecen diferentes.
+
+
+```r
+t.test(ing4r ~ genero, data = lapop18, var.equal=F)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  ing4r by genero
+## t = 5.8633, df = 27046, p-value = 4.59e-09
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  2.343068 4.696255
+## sample estimates:
+## mean in group Hombre  mean in group Mujer 
+##             59.42899             55.90933
+```
+
+El valor del p-value (4.59e-09) es menor a 0.05, por lo que se rechaza la hipótesis cero y se afirma la alternativa, llegando a la conclusión que las diferencias son diferentes en la población al 95% de confianza.
+
+## Prueba t para la diferencia de medias de apoyo a la democracia por grupos de ámbito
+
+En primer lugar se corre la prueba de Levene para analizar la igualdad de varianzas.
+
+
+```r
+LeveneTest(lapop18$ing4r, lapop18$ambito)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["F value"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"30.01406","3":"4.327404e-08","_rn_":"group"},{"1":"27084","2":"NA","3":"NA","_rn_":""}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Nuevamente, el p-value es menor a 0.05, con lo que se rechaza la hipótesis de igualdad de varianzas.
+Luego se corre la prueba t con la especificación de varianzas diferentes.
+
+
+```r
+t.test(ing4r ~ ambito, data = lapop18, var.equal=F)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  ing4r by ambito
+## t = 5.4543, df = 14056, p-value = 5e-08
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  2.333228 4.950988
+## sample estimates:
+## mean in group Urbano  mean in group Rural 
+##             58.71664             55.07453
+```
+
+En esta comparación el p-value también es menor a 0.05, por lo que se rechaza la hipótesis cero y se encuentra que las diferencias en el apoyo a la democracia entre el ámbito urbano y rural son estadísticamente significativas al 95% de confianza.
+Tal como indica el reporte "Considerando la región en su conjunto, el Gráfico 1.5 muestra relaciones estadísticamente significativas entre cinco variables demográficas y grupos socioeconómicos (educación, riqueza, residencia urbana/rural, género y edad) y el apoyo a la democracia" (p. 13).
+En esta sección hemos comprobado estos resultados estadísticos para variables demográficas de dos grupos, como género y residencia urbana/rural.
+
+# Resumen
+
+En esta sección hemos descrito y graficado, como apoyo a la democracia, por grupos de otra variable.
+Partiendo de la comparación de intervalos de confianza, formalizamos esta comparación con una prueba estadística, como la prueba t, para concluir si las diferencias entre grupos son estadísticamente significativas.

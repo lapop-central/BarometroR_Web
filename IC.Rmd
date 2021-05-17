@@ -9,6 +9,9 @@ output:
     toc_depth: 1
     code_download: true
     theme: flatly
+    df_print: paged
+    self_contained: no
+    keep_md: yes
     #code_folding: hide
 editor_options: 
   markdown: 
