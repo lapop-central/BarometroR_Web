@@ -177,7 +177,7 @@ Con estos datos se podría replicar un gráfico de barras similar al 3.9.
 
 La forma más fácil de graficar los intervalos de confianza por grupos es usando el comando `plotmeans`.
 
-```{r gráficos por grupos, message=FALSE, warning=FALSE}
+```{r grafxgrup, message=FALSE, warning=FALSE}
 library(gplots)
 plotmeans(lapop18$pn4rr~lapop18$smedia5r,
           xlab="Tipo de usuario de Twitter",
@@ -196,7 +196,7 @@ Con esta librería se agrega la capa `geom_bar()` para definir que se quiere un 
 Luego, se agrega la capa `geom_errorbar()` para agregar las barras de error y luego los valores de la media con `geom_text()`.
 Finalmente, se etiqueta el eje X y Y con `xlab` y `ylab` y se define los límites del eje Y con `ylim`.
 
-```{r gráficos por grupos 2, message=FALSE, warning=FALSE}
+```{r grafxgrup2, message=FALSE, warning=FALSE}
 tw.uso <- group.CI(pn4rr~smedia5r, lapop18)
 library(ggplot2)
 graf1 <- ggplot(tw.uso, aes(x=smedia5r, y=pn4rr.mean))+

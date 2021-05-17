@@ -12,7 +12,6 @@ output:
     df_print: paged
     self_contained: no
     keep_md: yes
-    #code_folding: hide
 editor_options: 
   markdown: 
     wrap: sentence
@@ -339,7 +338,7 @@ plotmeans(lapop18$pn4rr~lapop18$smedia5r,
          )
 ```
 
-![](IC_files/figure-html/gráficos por grupos-1.png)<!-- -->
+![](IC_files/figure-html/grafxgrup-1.png)<!-- -->
 
 Esta opción muestra los intervalos de confianza pero se dificulta si se quiere graficar las barras.
 La librería `ggplot` nos brinda más opciones gráficas y nos permite graficar de manera similar al gráfico 3.9 del reporte, en barras, presentar los intervalos de confianza y agregar color a las barras.
@@ -362,7 +361,7 @@ graf1 <- ggplot(tw.uso, aes(x=smedia5r, y=pn4rr.mean))+
 graf1
 ```
 
-![](IC_files/figure-html/gráficos por grupos 2-1.png)<!-- -->
+![](IC_files/figure-html/grafxgrup2-1.png)<!-- -->
 
 Según estos resultados, la satisfacción con la democracia es más alta en aquellos que no son usuarios de Twitter, en comparación con los usuarios, aunque las diferencias no son estadísticamente significativas de una comparación visual entre los intervalos de confianza.
 
