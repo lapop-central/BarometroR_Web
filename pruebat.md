@@ -153,7 +153,7 @@ graf1.5_2
 ![](pruebat_files/figure-html/apoyoxamb-1.png)<!-- -->
 
 LAPOP Lab generalmente presenta en sus gráficos los intervalos de confianza de cada grupo.
-Estas barras grises en el reporte sirven como un heurístico de comparación.
+Estas barras grises en el reporte sirven como una forma de comparación rápida.
 Si las barras se traslapan, eso significaría que no habrían diferencias estadísticamente significativas entre los grupos.
 Por el contrario, si las barras grises no se traslapan, se podría decir que la diferencia entre los grupos es significativa al 95% de confianza.
 Sin embargo, para comprobar estas observaciones se tiene que correr una prueba estadística.

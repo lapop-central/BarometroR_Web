@@ -112,7 +112,7 @@ Se ajusta la posición de la etiqueta con `hjust` y el tamaño de la etiqueta co
 
 Finalmente, se indica que el eje X no tenga una etiqueta y que el eje Y se nombre como "Apoyo a la democracia según países. Se usa la especificación `coord_flip()` para girar el gráfico 90 grados y presentar las barras horizontales.
 
-```{r gráfico}
+```{r graf}
 library(ggplot2)
 graf1 <- ggplot(df, aes(x=reorder(paises, ing4r), y=ing4r))+
   geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
@@ -157,7 +157,7 @@ df2
 
 Con este nuevo dataframe "df2", que ya incluye el valor del intervalo de confianza, se puede reproducir el Gráfico 1.2, de manera muy similar al gráfico anterior, pero con los datos considerando el factor de expansión.
 
-```{r gráfico2}
+```{r graf2}
 graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
   geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
   geom_errorbar(aes(ymin=media-ci, ymax=media+ci), width=0.2)+

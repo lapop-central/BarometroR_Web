@@ -149,7 +149,7 @@ graf1 <- ggplot(df, aes(x=reorder(paises, ing4r), y=ing4r))+
 graf1
 ```
 
-![](anova_files/figure-html/gráfico-1.png)<!-- -->
+![](anova_files/figure-html/graf-1.png)<!-- -->
 
 # Considerando el factor de expansión
 
@@ -213,7 +213,7 @@ graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
 graf2
 ```
 
-![](anova_files/figure-html/gráfico2-1.png)<!-- -->
+![](anova_files/figure-html/graf2-1.png)<!-- -->
 
 Este estilo de gráficos es bastante usado en los reportes del Barómetro de las Américas y otros elaborados por LAPOP.
 Este gráfico muestra el valor promedio del apoyo a la democracia en cada país y una barra con los intervalos de confianza al 95%.
