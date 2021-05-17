@@ -586,7 +586,7 @@ plotmeans(lapop18$pn4rr~lapop18$smedia5r,
           mean.labels=T, digits=1,
           connect=F
          )</code></pre>
-<p><img src="IC_files/figure-html/gráficos%20por%20grupos-1.png" /><!-- --></p>
+<p><img src="IC_files/figure-html/gra%CC%81ficos%20por%20grupos-1.png" /><!-- --></p>
 <p>Esta opción muestra los intervalos de confianza pero se dificulta si se quiere graficar las barras. La librería <code>ggplot</code> nos brinda más opciones gráficas y nos permite graficar de manera similar al gráfico 3.9 del reporte, en barras, presentar los intervalos de confianza y agregar color a las barras. Para esto, primero se guarda un dataframe “tw.uso” con los datos de la media y los límites superior e inferior de cada grupo, usando el comando <code>group.CI</code>. Son los datos de este dataframe los que se usan con <code>ggplot</code> y se crea un gráfico que se guarda en un objeto “graf1”. Con esta librería se agrega la capa <code>geom_bar()</code> para definir que se quiere un gráfico de barras de las variables especificadas en <code>aes</code>. Luego, se agrega la capa <code>geom_errorbar()</code> para agregar las barras de error y luego los valores de la media con <code>geom_text()</code>. Finalmente, se etiqueta el eje X y Y con <code>xlab</code> y <code>ylab</code> y se define los límites del eje Y con <code>ylim</code>.</p>
 <pre class="r"><code>tw.uso &lt;- group.CI(pn4rr~smedia5r, lapop18)
 library(ggplot2)
@@ -597,7 +597,7 @@ graf1 &lt;- ggplot(tw.uso, aes(x=smedia5r, y=pn4rr.mean))+
   xlab(&quot;Tipo de usuario de Twitter&quot;) + ylab(&quot;Satisfacción con la democracia (%)&quot;)+
   ylim(0, 50)
 graf1</code></pre>
-<p><img src="IC_files/figure-html/gráficos%20por%20grupos%202-1.png" /><!-- --></p>
+<p><img src="IC_files/figure-html/gra%CC%81ficos%20por%20grupos%202-1.png" /><!-- --></p>
 <p>Según estos resultados, la satisfacción con la democracia es más alta en aquellos que no son usuarios de Twitter, en comparación con los usuarios, aunque las diferencias no son estadísticamente significativas de una comparación visual entre los intervalos de confianza.</p>
 </div>
 <div id="replicando-el-tipo-de-usuario-de-redes-sociales" class="section level1">
