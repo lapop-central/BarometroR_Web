@@ -226,7 +226,7 @@ ggplot(data=tabla, aes(x=Var1, y=Freq, fill=Var2, ymax=60))+
   xlab("Satisfacción con la democracia")
 ```
 
-![](chi_files/figure-html/gráfico barras-1.png)<!-- -->
+![](chi_files/figure-html/grafbar-1.png)<!-- -->
 
 Otra forma de mostrar estos datos es mediante barras apiladas.
 Es decir, por cada categoría de género se muestra la distribución de satisfacción con la democracia.
@@ -247,7 +247,7 @@ ggplot(data=tabla, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   xlab("Género")
 ```
 
-![](chi_files/figure-html/gráfico barras apiladas-1.png)<!-- -->
+![](chi_files/figure-html/grafbarapila-1.png)<!-- -->
 
 # Prueba de independencia de chi-cuadrado de satisfacción con la democracia según género
 
@@ -450,7 +450,7 @@ ggplot(data=tabla2, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   xlab("Nivel educativo")
 ```
 
-![](chi_files/figure-html/barras apiladas ed-1.png)<!-- -->
+![](chi_files/figure-html/barapiladased-1.png)<!-- -->
 
 En el Gráfico 1.14 se observa que se tiene un mayor porcentaje de satisfacción con la democracia entre los menos educados.
 Esta relación también puede observarse en este gráfico.

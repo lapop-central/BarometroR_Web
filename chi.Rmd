@@ -70,7 +70,7 @@ Por ejemplo, se reporta que entre los hombres, el 42.3% están satisfechos con l
 Aquí vamos a analizar estas mismas variables, pero usando la variable "pn4" en su forma original (como categórica ordinal).
 Antes de proceder, tenemos que recodificar las variables en forma de factor y etiquetarlas.
 
-```{r género}
+```{r genero}
 lapop18$genero <- as.factor(lapop18$q1)
 levels(lapop18$genero) <- c("Hombre", "Mujer")
 table(lapop18$genero)
@@ -151,7 +151,7 @@ Por defecto la leyenda incluye el nombre de la columna con los datos de género,
 Para cambiar este nombre, se usa el comando `labs(fill="Género")` para nombrar adecuadamente la leyenda.
 FInalmente, se etiqueta el eje Y y X con `ylab` y `xlab.`
 
-```{r gráfico barras}
+```{r grafbar}
 library(ggplot2)
 ggplot(data=tabla, aes(x=Var1, y=Freq, fill=Var2, ymax=60))+
   geom_bar(position="dodge", stat="identity")+
@@ -170,7 +170,7 @@ Ahora la variable "Var2" (con las categorías de género) se ubica en el eje X y
 El tipo de barra cambia en el comando `geom_bar` a `position="stack"`.
 De la misma manera, las etiquetas de datos tienen que considerar que la posición de cada sector, con `position=position_stack()`.
 
-```{r gráfico barras apiladas}
+```{r grafbarapila}
 ggplot(data=tabla, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   geom_bar(position="stack", stat="identity")+
   geom_text(aes(label=paste(round(Freq, 1), "%", sep="")),
@@ -294,7 +294,7 @@ addmargins(prop.table(table(lapop18$satis, lapop18$educ), 2)*100, 1)
 Para crear el gráfico se tiene que guardar la tabla como un dataframe.
 Se usa el comando `as.data.frame` para salvar los porcentajes y poder usarlos con el comando `ggplot`.
 
-```{r}
+```{r tabla5}
 tabla2 <- as.data.frame(prop.table(table(lapop18$satis, lapop18$educ), 2)*100)
 tabla2
 ```
@@ -302,7 +302,7 @@ tabla2
 En este caso, como tenemos 4 categorías para satisfacción con la democracia y otras 4 para nivele educativo, un gráfico de barras separadas crearía 16 barras, lo que complicaría la comparación.
 Por eso, en este caso, se prefiere el tipo de barras apiladas.
 
-```{r barras apiladas ed}
+```{r barapiladased}
 library(ggplot2)
 ggplot(data=tabla2, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   geom_bar(position="stack", stat="identity")+

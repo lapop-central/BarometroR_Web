@@ -1,12 +1,7 @@
 base
 rio
-dplyr
+ggplot2
+vcd
 carData
 car
-lattice
-plyr
-Rmisc
-ggplot2
-descr
-vcd
 oii

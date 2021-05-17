@@ -453,4 +453,4 @@ TukeyHSD(anova)
 
 En esta sección se ha expandido la comparación de medias de 2 grupos a más de 2 grupos.
 En primer lugar, se realizó una exploración visual, mediante un gráfico de barras con intervalos de confianza.
-Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post-hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas
+Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas
