@@ -354,4 +354,4 @@ Finalmente, el valor de las medidas de asociación son menores a 0.3, con lo que
 
 En esta sección hemos trabajado con relaciones bivariadas entre variables categóricas.
 Se ha calculado las tablas cruzadas y los gráficos de barras para mostrar los resultados descriptivos.
-Luego, se ha trabajado con la prueba de independencia de chi-cuadrado para inferir si existe una relación de dependencia entre las variables en la población y finalmente se evalúa la fuerza de la asociación entre las variables.
+Luego, se ha trabajado con la prueba de independencia de chi-cuadrado para inferir si existe una relación de dependencia entre las variables en la población y finalmente se evalúa la fuerza de la asociación entre las variables, diferenciando cuando se trata de variables nominales u ordinales.
