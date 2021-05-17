@@ -12,7 +12,6 @@ output:
     df_print: paged
     self_contained: no
     keep_md: yes
-    #code_folding: hide
 editor_options: 
   markdown: 
     wrap: sentence
@@ -92,7 +91,7 @@ tapply(lapop18$ing4r, lapop18$ambito, mean, na.rm=T) #Para género
 
 Se puede reporducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
 
-```{r apoyo x género}
+```{r apoyoxgen}
 library(Rmisc)
 apxgen <- group.CI(ing4r~genero, lapop18)
 library(ggplot2)
@@ -107,7 +106,7 @@ graf1.5
 
 Se puede general un gráfico similar que presente el porcentaje de apoyo a la democracia y los intervalos de confianza por grupos urbano y rural.
 
-```{r apoyo x ámbito}
+```{r apoyoxamb}
 apxamb <- group.CI(ing4r~ambito, lapop18)
 library(ggplot2)
 graf1.5_2 <- ggplot(apxamb, aes(x=ambito, y=ing4r.mean))+

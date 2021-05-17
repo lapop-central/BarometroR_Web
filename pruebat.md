@@ -12,7 +12,6 @@ output:
     df_print: paged
     self_contained: no
     keep_md: yes
-    #code_folding: hide
 editor_options: 
   markdown: 
     wrap: sentence
@@ -134,7 +133,7 @@ graf1.5 <- ggplot(apxgen, aes(x=genero, y=ing4r.mean))+
 graf1.5
 ```
 
-![](pruebat_files/figure-html/apoyo x género-1.png)<!-- -->
+![](pruebat_files/figure-html/apoyoxgen-1.png)<!-- -->
 
 Se puede general un gráfico similar que presente el porcentaje de apoyo a la democracia y los intervalos de confianza por grupos urbano y rural.
 
@@ -151,7 +150,7 @@ graf1.5_2 <- ggplot(apxamb, aes(x=ambito, y=ing4r.mean))+
 graf1.5_2
 ```
 
-![](pruebat_files/figure-html/apoyo x ámbito-1.png)<!-- -->
+![](pruebat_files/figure-html/apoyoxamb-1.png)<!-- -->
 
 LAPOP Lab generalmente presenta en sus gráficos los intervalos de confianza de cada grupo.
 Estas barras grises en el reporte sirven como un heurístico de comparación.
