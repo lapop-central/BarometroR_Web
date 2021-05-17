@@ -12,7 +12,6 @@ output:
     df_print: paged
     self_contained: no
     keep_md: yes
-    #code_folding: hide
 editor_options: 
   markdown: 
     wrap: sentence
