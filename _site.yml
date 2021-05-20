@@ -34,6 +34,12 @@ navbar:
         href: anova.html
       - text: "Tablas cruzadas y chi-cuadrado"
         href: chi.html
+    - text: "Modelamiento"
+      menu:
+      - text: "Correlación"
+        href: correlacion.html
+      - text: "Regresión lineal"
+        href: ols.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"
