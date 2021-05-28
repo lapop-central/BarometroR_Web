@@ -200,7 +200,7 @@ ggplot(df, aes(x=apoyo, y=vdem2019))+
   geom_point()+
   geom_smooth(method=lm, se=F)+ #agregar línea de tendencia
   geom_text(data=df, aes(label=paises), cex=2.5, nudge_y = 0.02, check_overlap = T)+ #Pata etiquetar los puntos, darles un tamalo, ubicación y prevenir que se sobrepongan
-  labs(x="% Supporting Democracy", y="V-Dem Electoral Democracy Index")+ #para etiquetar los ejes
+  labs(x="Apoyo a la democracia", y="ïndice de Democracia Electoral V-Dem ")+ #para etiquetar los ejes
   theme_light()+
   xlim(40, 80)+
   ylim(0.2, 1)
@@ -211,7 +211,7 @@ ggplot(df, aes(x=apoyo, y=vdem2019))+
 Como se presenta en el gráfico, la distribución de los países se puede resumir con una aproximación lineal mediante una recta.
 Esta recta tiene una pendiente positiva, que indica que hay una relación directa entre ambas variables: a medida que un país exhibe un mayor porcentaje de ciudadanos que apoyan a la democracia, se observa un mayor puntaje en el índice de democracia electoral.
 
-# Coeficiente de Pearson
+# Coeficiente de Correlación de Pearson
 
 Para evaluar la magnitud de la dependencia entre ambas variables, se puede agregar una medida estadística, el coeficiente de correlación R de Pearsons.
 Este coeficiente varía entre -1 a +1.

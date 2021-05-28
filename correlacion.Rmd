@@ -167,7 +167,7 @@ ggplot(df, aes(x=apoyo, y=vdem2019))+
   geom_point()+
   geom_smooth(method=lm, se=F)+ #agregar línea de tendencia
   geom_text(data=df, aes(label=paises), cex=2.5, nudge_y = 0.02, check_overlap = T)+ #Pata etiquetar los puntos, darles un tamalo, ubicación y prevenir que se sobrepongan
-  labs(x="% Supporting Democracy", y="V-Dem Electoral Democracy Index")+ #para etiquetar los ejes
+  labs(x="Apoyo a la democracia", y="ïndice de Democracia Electoral V-Dem ")+ #para etiquetar los ejes
   theme_light()+
   xlim(40, 80)+
   ylim(0.2, 1)

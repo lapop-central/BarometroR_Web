@@ -50,7 +50,7 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 
 ## Modelamiento {.col-sm-6}
 
-1.  Correlación
+1.  [Correlación](https://arturomaldonado.github.io/BarometroEdu_Web/correlacion.html)
 
 2.  Regresión lineal
 :::
