@@ -38,7 +38,7 @@ navbar:
       menu:
       - text: "Correlación"
         href: correlacion.html
-      - text: "Regresión lineal"
+      - text: "Regresión lineal simple"
         href: ols.html
     - text: "Contacto"
       href: Links.html
