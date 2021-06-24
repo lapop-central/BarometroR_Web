@@ -90,10 +90,10 @@ El comando muestra que esta nueva variable tiene un mínimo de 0 y máximo de 10
 
 ```{r apoyo}
 lapop18$apoyo <- NA
-#lapop18$apoyo <- rowMeans(lapop18[,1370:1374])
+lapop18$apoyo <- rowMeans(lapop18[,1370:1374])
 #lapop18$apoyo <- rowMeans(lapop18[,c("b1r", "b2r", "b3r", "b4r", "b6r")], na.rm=T)
-lapop18$apoyo2 = (lapop18$b1rec+lapop18$b2rec+lapop18$b3rec+lapop18$b4rec+lapop18$b6rec)/5
-summary(lapop18$apoyo2)
+#lapop18$apoyo2 = (lapop18$b1rec+lapop18$b2rec+lapop18$b3rec+lapop18$b4rec+lapop18$b6rec)/5
+summary(lapop18$apoyo)
 ```
 
 Se comprueba que el promedio reportado es de 48.8 unidades, similar al que aparece en el Gráfico 2.1 para el 2018.
