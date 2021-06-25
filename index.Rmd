@@ -29,30 +29,36 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 ## Preparación
 
 1.  [Instalando R y RStudio](https://arturomaldonado.github.io/BarometroEdu_Web/instalando.html)
+
 2.  [Bases de datos](https://arturomaldonado.github.io/BarometroEdu_Web/bases.html)
 
 ## Aspectos iniciales
 
 1.  [Manejo de datos del Barómetro de las Américas](https://arturomaldonado.github.io/BarometroEdu_Web/Manipulacion.html)
+
 2.  [Uso de factores de expansión](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html)
 
 ## Describir y graficar
 
 1.  [Descriptivos básicos y gráficos de variables nominales](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos.html)
+
 2.  [Descriptivos básicos y gráficos de variables ordinales](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos2.html)
+
 3.  [Descriptivos básicos y gráficos de variables numéricas](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos3.html)
 
 ## Inferencia básica
 
 1.  [Intervalos de confianza](https://arturomaldonado.github.io/BarometroEdu_Web/IC.html)
+
 2.  [Comparación de 2 medias](https://arturomaldonado.github.io/BarometroEdu_Web/pruebat.html)
+
 3.  [Comparación de varias medias](https://arturomaldonado.github.io/BarometroEdu_Web/anova.html)
 
 ## Modelamiento {.col-sm-6}
 
 1.  [Correlación](https://arturomaldonado.github.io/BarometroEdu_Web/correlacion.html)
 
-2.  Regresión lineal simple
+2.  [Regresión lineal simple](https://arturomaldonado.github.io/BarometroEdu_Web/regresion1.html)
 :::
 
 ::: {.col-sm-6}
