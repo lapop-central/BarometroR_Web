@@ -39,14 +39,17 @@ Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarom
 En el buscador, se puede ingresar el texto "2018".
 Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 
-En este documento se carga una base de datos recortada.
+En este documento se carga una base de datos en formato RData.
+Este formato, nativo de R, es más eficiente en términos de espacio de almacenamiento y permite alojarlo en GitHub.
+Esta base contiene la información de la ronda 2018 para todas las variables.
 Esta base de datos se encuentra alojada en el repositorio"materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
 
 
 ```r
 library(rio)
-lapop18 <- import("lapop18.RData")
+#lapop18 <- import("lapop18.RData")
+lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/lapop18.RData")
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
