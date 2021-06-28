@@ -40,6 +40,8 @@ navbar:
         href: correlacion.html
       - text: "Regresión lineal simple"
         href: regresion1.html
+      - text: "Regresión lineal multivariada"
+        href: regresion2.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"

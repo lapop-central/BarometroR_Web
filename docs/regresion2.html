@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Regresión lineal múltiple con los datos del Barómetro de las Américas</title>
+
+<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">LAPOP_edu</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Preparación
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="instalando.html">Instalando R y RStudio</a>
+    </li>
+    <li>
+      <a href="bases.html">Bases de datos</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Aspectos iniciales
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Manipulacion.html">Manejo de datos</a>
+    </li>
+    <li>
+      <a href="Expansion.html">Factor de expansión</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Describir y graficar
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Descriptivos.html">Descriptivos variables nominales</a>
+    </li>
+    <li>
+      <a href="Descriptivos2.html">Descriptivos variables ordinales</a>
+    </li>
+    <li>
+      <a href="Descriptivos3.html">Descriptivos variables numéricas</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Inferencia básica
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="IC.html">Intervalos de confianza</a>
+    </li>
+    <li>
+      <a href="pruebat.html">Comparación de 2 medias</a>
+    </li>
+    <li>
+      <a href="anova.html">Comparación de varias medias</a>
+    </li>
+    <li>
+      <a href="chi.html">Tablas cruzadas y chi-cuadrado</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Modelamiento
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="correlacion.html">Correlación</a>
+    </li>
+    <li>
+      <a href="regresion1.html">Regresión lineal simple</a>
+    </li>
+    <li>
+      <a href="regresion2.html">Regresión lineal multivariada</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Links.html">Contacto</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Regresión lineal múltiple con los datos del Barómetro de las Américas</h1>
+
+</div>
+
+
+<div id="introducción" class="section level1">
+<h1>Introducción</h1>
+<p>En la sección anterior vimos los aspectos básicos del modelo de mínimos cuadrados ordinarios para analizar la relación entre una variable dependiente y una independiente, ambas numéricas. En esta sección se expandirá el análisis, desde un análisis bivariado a un análisis multivariado. Es decir, se usará el método de mínimos cuadrados ordinarios para analizar la relación de una variable dependiente numérica con varias variables independientes.</p>
+<p>En esta sección se seguirá replicando los análisis del capítulo “Legitimidad democrática” del reporte <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">El Pulso de la Democracia</a>. En ese capítulo se analiza una medición de apoyo a la democracia.</p>
+</div>
+<div id="sobre-la-base-de-datos" class="section level1">
+<h1>Sobre la base de datos</h1>
+<p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org. Pueden descargar los datos de manera libre <a href="http://datasets.americasbarometer.org/database/login.php">aquí</a>. En este enlace, se pueden registrar o entrar como “Free User”. En el buscador, se puede ingresar el texto “2018”. Ahí se tendrá acceso a la base de datos completa “2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos en formato RData. Este formato es eficiente en términos de espacio de almacenamiento. Esta base de datos se encuentra alojada en el repositorio”materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código.</p>
+<pre class="r"><code>library(rio)
+lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/lapop18.RData&quot;)
+lapop18 &lt;- subset(lapop18, pais&lt;=35)</code></pre>
+</div>
+<div id="determinantes-del-apoyo-al-sistema" class="section level1">
+<h1>Determinantes del apoyo al sistema</h1>
+<p>En la sección anterior vimos que la sección del reporte sobre Legitimidad Democrática presenta un modelo de regresión múltiple con los predictores del índice de apoyo al sistema. El Gráfico 2.10 muestra los resultados para 5 variables independientes, aunque el modelo completo incluye controles socioeconómicos y demográficos. Las 5 variables mostradas en el gráfico son: eficacia externa, tolerancia política, confianza en el ejecutivo, confianza en la comunidad y confianza en el gobierno local.</p>
+<p>La base de datos incluye la variable “psar” que mide el apoyo al sistema y que en la sección anterior se procedió a calcular desde las variables originales. Esta variable ya está recodificada en la escala 0-100.</p>
+<pre class="r"><code>summary(lapop18$psar)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    0.00   33.33   50.00   48.90   66.67  100.00     327</code></pre>
+<p>El Gráfico 2.10 muestra la relación entre apoyo al sistema y cinco variables independientes, usadas como predictores de esta variable dependiente. Estas variables son:</p>
+<ul>
+<li><p>Índice de tolerancia política, construida a partir de cuatro variables: D1, D2, D3 y D4. En la base de datos, la variable recodificada se llama “tol1r”.</p></li>
+<li><p>Eficacia externa (EFF1): “A los que gobiernan el país les interesa lo que piensa la gente como usted- ¿Hasta qué punto está de acuerdo o en desacuerdo con esta frase?”. En la base de datos, la variable recodificada de llama “eff1r”.</p></li>
+<li><p>Confianza en el ejecutivo (B21A): “¿Hasta qué punto tiene confianza en el presidente/primer ministro?”.</p></li>
+<li><p>Confianza en el gobierno local (B32): “¿Hasta qué punto tiene usted confianza en su alcaldía?”. En la base de datos, la variable recodificada se llama “b32r”.</p></li>
+<li><p>Confianza en su comunidad (IT1): “Ahora, hablando de la gente de por aquí, ¿diría que la gente de su comunidad es muy confiable, algo confiable, poco confiable o nada confiable?”. En la base de datos, la variable recodificada de llama “it1r”.</p></li>
+</ul>
+<p>De la misma manera que en la sección anterior, se tiene que calcular la variable de confianza en el ejecutivo, recodificada a una escala de 0 a 100.</p>
+<pre class="r"><code>lapop18$ejec &lt;- ((lapop18$b21a-1)/6)*100
+summary(lapop18$ejec)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##    0.00    0.00   50.00   42.88   66.67  100.00     390</code></pre>
+</div>
+<div id="modelo-de-regresión-lineal-multivariada" class="section level1">
+<h1>Modelo de regresión lineal multivariada</h1>
+<p>Para evaluar los determinantes del apoyo al sistema se puede calcular un modelo de regresión lineal multivariado. El modelo se calcula con el comando <code>lm</code> donde se indica la variable Y y luego las variables independientes. Cada variable independiente se suma al modelo. Este modelo de guarda en un objeto “modelo1” el que se puede describir con el comando <code>summary</code>.</p>
+<pre class="r"><code>modelo1 &lt;- lm(psar ~ eff1r + ejec + tolr + it1r + b32r, data=lapop18)
+summary(modelo1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = psar ~ eff1r + ejec + tolr + it1r + b32r, data = lapop18)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -80.738 -11.985   0.626  12.249  76.319 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 19.063373   0.377552  50.492   &lt;2e-16 ***
+## eff1r        0.127794   0.003722  34.331   &lt;2e-16 ***
+## ejec         0.225187   0.003673  61.313   &lt;2e-16 ***
+## tolr         0.057712   0.004873  11.842   &lt;2e-16 ***
+## it1r         0.030792   0.003637   8.465   &lt;2e-16 ***
+## b32r         0.210219   0.003966  53.000   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 18.01 on 24767 degrees of freedom
+##   (3269 observations deleted due to missingness)
+## Multiple R-squared:  0.4007, Adjusted R-squared:  0.4006 
+## F-statistic:  3312 on 5 and 24767 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Para presentar los resultados de una manera más ordenada, se pueden usar varias librerías y comandos. En la sección anterior usamos la librería <code>jtools</code> y el comando <code>summs</code>. En esta sección usaremos la librería <code>stargazer</code> y el comando del mismo nombre.</p>
+<pre class="r"><code>library(stargazer)</code></pre>
+<pre><code>## 
+## Please cite as:</code></pre>
+<pre><code>##  Hlavac, Marek (2018). stargazer: Well-Formatted Regression and Summary Statistics Tables.</code></pre>
+<pre><code>##  R package version 5.2.2. https://CRAN.R-project.org/package=stargazer</code></pre>
+<pre class="r"><code>stargazer(modelo1, align=T, type = &#39;text&#39;)</code></pre>
+<pre><code>## 
+## ================================================
+##                         Dependent variable:     
+##                     ----------------------------
+##                                 psar            
+## ------------------------------------------------
+## eff1r                         0.128***          
+##                               (0.004)           
+##                                                 
+## ejec                          0.225***          
+##                               (0.004)           
+##                                                 
+## tolr                          0.058***          
+##                               (0.005)           
+##                                                 
+## it1r                          0.031***          
+##                               (0.004)           
+##                                                 
+## b32r                          0.210***          
+##                               (0.004)           
+##                                                 
+## Constant                     19.063***          
+##                               (0.378)           
+##                                                 
+## ------------------------------------------------
+## Observations                   24,773           
+## R2                             0.401            
+## Adjusted R2                    0.401            
+## Residual Std. Error     18.007 (df = 24767)     
+## F Statistic         3,312.080*** (df = 5; 24767)
+## ================================================
+## Note:                *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>El Gráfico 2.10 muestra los coeficientes de cada variable y el intervalo de confianza al 95% de este estimado. Se incluye una línea vertical en el punto 0. Si un intervalo de confianza cruza esta línea vertical, se puede decir que no tiene una relación estadísticamente significativa con la variable dependiente de apoyo al sistema. Los intervalos de confianza que no cruzan esta línea y que se encuentran a la derecha (izquierda) de esta línea tienen una relación positiva (negativa) con el apoyo al sistema, es decir, cuando aumenta esta variable, el apoyo al sistema promedio aumenta (disminuye). En este ejemplo, las cinco variables son estadísticamente significativas y muestran tienen una relación positiva con el apoyo al sistema. Para aproximar un gráfico similar al mostrado en el reporte, se puede usar la librería <code>jtools</code> y el comando <code>plot_summs</code>.</p>
+<pre class="r"><code>library(jtools)
+plot_summs(modelo1)</code></pre>
+<pre><code>## Registered S3 methods overwritten by &#39;broom&#39;:
+##   method            from  
+##   tidy.glht         jtools
+##   tidy.summary.glht jtools</code></pre>
+<pre><code>## Loading required namespace: broom.mixed</code></pre>
+<p><img src="regresion2_files/figure-html/grafico-1.png" /><!-- --></p>
+</div>
+<div id="interpretación" class="section level1">
+<h1>Interpretación</h1>
+<p>Como indica el reporte: “Para la región en su conjunto, estas cinco dimensiones adicionales tienen una relación positiva y significativa con el apoyo al sistema, de acuerdo con el intervalo de confianza al 95%…Esto indica que a medida que aumenta la eficacia externa, la tolerancia política, la confianza en el ejecutivo (presidente), la comunidad y el gobierno local, también lo hace el nivel promedio de apoyo al sistema”.</p>
+<p>Antes de analizar la relación de cada variable independiente con la variable dependiente, se puede analizar la validez del modelo en su conjunto.</p>
+<div id="validez-del-modelo" class="section level2">
+<h2>Validez del modelo</h2>
+<p>La prueba F sirve para evaluar el modelo en general. Esta prueba tiene como hipótesis:</p>
+<p><span class="math display">\[
+H0: \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0
+\]</span></p>
+<p>Es decir, la hipótesis nula es que todos los coeficientes en su conjunto son iguales a cero. En nuestro ejemplo, el p-value es menor a 0.05, con lo que se puede rechazar la H0 y afirmar que al menos un coeficiente es diferente de cero. Con esto se concluye que el modelo tiene validez.</p>
+</div>
+<div id="relación-entre-las-variables-independientes-y-la-dependiente" class="section level2">
+<h2>Relación entre las variables independientes y la dependiente</h2>
+<p>Para cada variable independiente se calcula una prueba t. Este test de significancia pone a prueba <span class="math inline">\(H0: \beta_n =0\)</span>. Es decir, si el coeficiente de una variable independiente particular es igual a cero.</p>
+<p>Por ejemplo, la variable independiente eficacia externa tiene un coeficiente de 0.128, un estadístico de la prueba t de 34.3 y un t-value asociado de 0.004. De la misma manera que en análisis bivariado, se plantea un valor crítico, convencionalmente de 0.05. Como este t-value es menor de 0.05, se puede rechazar la hipótesis nula y afirmar que el coeficiente es diferente de cero con un 95% de confianza.</p>
+<p>La misma conclusión se puede sacar para las otras variables independientes, al presentar un t-value menor a 0.05. Con esto se puede corroborar que las cinco variables independientes son significativas, como indica el reporte.</p>
+</div>
+<div id="dirección-de-la-relación" class="section level2">
+<h2>Dirección de la relación</h2>
+<p>La dirección de la relación está marcada por el signo del coeficiente de la variable independiente. En nuestro ejemplo, los cinco coeficientes presentan signos positivos, lo que indica una relación directa; es decir, cuando aumenta la variable independiente, aumenta la variable dependiente, en promedio.</p>
+</div>
+<div id="coeficiente-de-determinación-r2" class="section level2">
+<h2>Coeficiente de determinación <span class="math inline">\(R^2\)</span></h2>
+<p>El Gráfico 2.10 además de mostrar gráficamente los coeficientes y los intervalos de confianza al 95%, también muestra el dato para el coeficiente de determinación <span class="math inline">\(R^2\)</span> y para el número de observaciones con los que se calcula el modelo.</p>
+<p>En nuestro ejemplo el valor de <span class="math inline">\(R^2=0.401\)</span>. Este valor no es igual al que se presenta en el reporte (0.44) debido a que el modelo de nuestro ejemplo no incluye los controles socioeconómicos y demográficos. El resultado de nuestro ejemplo indica que el modelo reduce un 40.1% el error de usar solamente el promedio para estimar el apoyo al sistema.</p>
+</div>
+</div>
+<div id="resumen" class="section level1">
+<h1>Resumen</h1>
+<p>En esta sección hemos usado el método de mínimos cuadrados para calcular un modelo multivariado. En particular, se ha presentado un modelo con cinco predictores del apoyo al sistema. Este modelo se ha presentado de manera estándar en una tabla de resultados y mediante un gráfico similar al Gráfico 2.10 del reporte.</p>
+<p>De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.</p>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUmVncmVzacOzbiBsaW5lYWwgbcO6bHRpcGxlIGNvbiBsb3MgZGF0b3MgZGVsIEJhcsOzbWV0cm8gZGUgbGFzIEFtw6lyaWNhcyIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICB0b2M6IHRydWUKICAgIHRvY19mbG9hdDogdHJ1ZQogICAgY29sbGFwc2VkOiBmYWxzZQogICAgbnVtYmVyX3NlY3Rpb25zOiBmYWxzZQogICAgdG9jX2RlcHRoOiAxCiAgICBjb2RlX2Rvd25sb2FkOiB0cnVlCiAgICB0aGVtZTogZmxhdGx5CiAgICBkZl9wcmludDogcGFnZWQKICAgIHNlbGZfY29udGFpbmVkOiBubwogICAga2VlcF9tZDogeWVzCmVkaXRvcl9vcHRpb25zOiAKICBtYXJrZG93bjogCiAgICB3cmFwOiBzZW50ZW5jZQotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpCmBgYAoKIyBJbnRyb2R1Y2Npw7NuCgpFbiBsYSBzZWNjacOzbiBhbnRlcmlvciB2aW1vcyBsb3MgYXNwZWN0b3MgYsOhc2ljb3MgZGVsIG1vZGVsbyBkZSBtw61uaW1vcyBjdWFkcmFkb3Mgb3JkaW5hcmlvcyBwYXJhIGFuYWxpemFyIGxhIHJlbGFjacOzbiBlbnRyZSB1bmEgdmFyaWFibGUgZGVwZW5kaWVudGUgeSB1bmEgaW5kZXBlbmRpZW50ZSwgYW1iYXMgbnVtw6lyaWNhcy4KRW4gZXN0YSBzZWNjacOzbiBzZSBleHBhbmRpcsOhIGVsIGFuw6FsaXNpcywgZGVzZGUgdW4gYW7DoWxpc2lzIGJpdmFyaWFkbyBhIHVuIGFuw6FsaXNpcyBtdWx0aXZhcmlhZG8uCkVzIGRlY2lyLCBzZSB1c2Fyw6EgZWwgbcOpdG9kbyBkZSBtw61uaW1vcyBjdWFkcmFkb3Mgb3JkaW5hcmlvcyBwYXJhIGFuYWxpemFyIGxhIHJlbGFjacOzbiBkZSB1bmEgdmFyaWFibGUgZGVwZW5kaWVudGUgbnVtw6lyaWNhIGNvbiB2YXJpYXMgdmFyaWFibGVzIGluZGVwZW5kaWVudGVzLgoKRW4gZXN0YSBzZWNjacOzbiBzZSBzZWd1aXLDoSByZXBsaWNhbmRvIGxvcyBhbsOhbGlzaXMgZGVsIGNhcMOtdHVsbyAiTGVnaXRpbWlkYWQgZGVtb2Nyw6F0aWNhIiBkZWwgcmVwb3J0ZSBbRWwgUHVsc28gZGUgbGEgRGVtb2NyYWNpYV0oaHR0cHM6Ly93d3cudmFuZGVyYmlsdC5lZHUvbGFwb3AvYWIyMDE4LzIwMTgtMTlfQW1lcmljYXNCYXJvbWV0ZXJfUmVnaW9uYWxfUmVwb3J0X1NwYW5pc2hfV18wMy4yNy4yMC5wZGYpLgpFbiBlc2UgY2Fww610dWxvIHNlIGFuYWxpemEgdW5hIG1lZGljacOzbiBkZSBhcG95byBhIGxhIGRlbW9jcmFjaWEuCgojIFNvYnJlIGxhIGJhc2UgZGUgZGF0b3MKCkxvcyBkYXRvcyBxdWUgdmFtb3MgYSB1c2FyIGRlYmVuIGNpdGFyc2UgZGUgbGEgc2lndWllbnRlIG1hbmVyYTogRnVlbnRlOiBCYXLDs21ldHJvIGRlIGxhcyBBbcOpcmljYXMgcG9yIGVsIFByb3llY3RvIGRlIE9waW5pw7NuIFDDumJsaWNhIGRlIEFtw6lyaWNhIExhdGluYSAoTEFQT1ApLCB3d3d3LkxhcG9wU3VydmV5cy5vcmcuClB1ZWRlbiBkZXNjYXJnYXIgbG9zIGRhdG9zIGRlIG1hbmVyYSBsaWJyZSBbYXF1w61dKGh0dHA6Ly9kYXRhc2V0cy5hbWVyaWNhc2Jhcm9tZXRlci5vcmcvZGF0YWJhc2UvbG9naW4ucGhwKS4KRW4gZXN0ZSBlbmxhY2UsIHNlIHB1ZWRlbiByZWdpc3RyYXIgbyBlbnRyYXIgY29tbyAiRnJlZSBVc2VyIi4KRW4gZWwgYnVzY2Fkb3IsIHNlIHB1ZWRlIGluZ3Jlc2FyIGVsIHRleHRvICIyMDE4Ii4KQWjDrSBzZSB0ZW5kcsOhIGFjY2VzbyBhIGxhIGJhc2UgZGUgZGF0b3MgY29tcGxldGEgIjIwMTggTEFQT1AgQW1lcmljYXNCYXJvbWV0ZXIgTWVyZ2VfdjEuMF9XLmR0YSBlbiB2ZXJzacOzbiBwYXJhIFNUQVRBLiBTZSBkZXNjYXJnYSBsYSBiYXNlIGRlIGRhdG9zIGVuIGZvcm1hdG8gemlwLCBsYSBxdWUgc2UgZGVzY29tcHJpbWUgZW4gZm9ybWF0byAuZHRhLiBVbmEgdmV6IGRlc2NhcmdhZGEgeSBndWFyZGFkYSBlbiBlbCBkaXJlY3RvcmlvIGRlIHRyYWJham8sIHNlIHRpZW5lIHF1ZSBsZWVyIGxhIGJhc2UgZGUgZGF0b3MgY29tbyB1biBvYmpldG8gZGF0YWZyYW1lIGVuIFIuIEVuIGVzdGUgZG9jdW1lbnRvIHNlIGNhcmdhIHVuYSBiYXNlIGRlIGRhdG9zIGVuIGZvcm1hdG8gUkRhdGEuIEVzdGUgZm9ybWF0byBlcyBlZmljaWVudGUgZW4gdMOpcm1pbm9zIGRlIGVzcGFjaW8gZGUgYWxtYWNlbmFtaWVudG8uIEVzdGEgYmFzZSBkZSBkYXRvcyBzZSBlbmN1ZW50cmEgYWxvamFkYSBlbiBlbCByZXBvc2l0b3JpbyJtYXRlcmlhbHNfZWR1IiBkZSBsYSBjdWVudGEgZGUgTEFQT1AgZW4gR2l0SHViLiBNZWRpYW50ZSBsYSBsaWJyZXLDrWEgYHJpb2AgeSBlbCBjb21hbmRvIGBpbXBvcnRgIHNlIHB1ZWRlIGltcG9ydGFyIGVzdGEgYmFzZSBkZSBkYXRvcyBkZXNkZSBlc3RlIHJlcG9zaXRvcmlvLCB1c2FuZG8gZWwgc2lndWllbnRlIGPDs2RpZ28uCgpgYGB7ciBiYXNlLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQpsaWJyYXJ5KHJpbykKbGFwb3AxOCA8LSBpbXBvcnQoImh0dHBzOi8vcmF3LmdpdGh1Yi5jb20vbGFwb3AtY2VudHJhbC9tYXRlcmlhbHNfZWR1L21haW4vbGFwb3AxOC5SRGF0YSIpCmxhcG9wMTggPC0gc3Vic2V0KGxhcG9wMTgsIHBhaXM8PTM1KQpgYGAKCiMgRGV0ZXJtaW5hbnRlcyBkZWwgYXBveW8gYWwgc2lzdGVtYQoKRW4gbGEgc2VjY2nDs24gYW50ZXJpb3Igdmltb3MgcXVlIGxhIHNlY2Npw7NuIGRlbCByZXBvcnRlIHNvYnJlIExlZ2l0aW1pZGFkIERlbW9jcsOhdGljYSBwcmVzZW50YSB1biBtb2RlbG8gZGUgcmVncmVzacOzbiBtw7psdGlwbGUgY29uIGxvcyBwcmVkaWN0b3JlcyBkZWwgw61uZGljZSBkZSBhcG95byBhbCBzaXN0ZW1hLgpFbCBHcsOhZmljbyAyLjEwIG11ZXN0cmEgbG9zIHJlc3VsdGFkb3MgcGFyYSA1IHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcywgYXVucXVlIGVsIG1vZGVsbyBjb21wbGV0byBpbmNsdXllIGNvbnRyb2xlcyBzb2Npb2Vjb27Ds21pY29zIHkgZGVtb2dyw6FmaWNvcy4KTGFzIDUgdmFyaWFibGVzIG1vc3RyYWRhcyBlbiBlbCBncsOhZmljbyBzb246IGVmaWNhY2lhIGV4dGVybmEsIHRvbGVyYW5jaWEgcG9sw610aWNhLCBjb25maWFuemEgZW4gZWwgZWplY3V0aXZvLCBjb25maWFuemEgZW4gbGEgY29tdW5pZGFkIHkgY29uZmlhbnphIGVuIGVsIGdvYmllcm5vIGxvY2FsLgoKTGEgYmFzZSBkZSBkYXRvcyBpbmNsdXllIGxhIHZhcmlhYmxlICJwc2FyIiBxdWUgbWlkZSBlbCBhcG95byBhbCBzaXN0ZW1hIHkgcXVlIGVuIGxhIHNlY2Npw7NuIGFudGVyaW9yIHNlIHByb2NlZGnDsyBhIGNhbGN1bGFyIGRlc2RlIGxhcyB2YXJpYWJsZXMgb3JpZ2luYWxlcy4KRXN0YSB2YXJpYWJsZSB5YSBlc3TDoSByZWNvZGlmaWNhZGEgZW4gbGEgZXNjYWxhIDAtMTAwLgoKYGBge3IgdmR9CnN1bW1hcnkobGFwb3AxOCRwc2FyKQpgYGAKCkVsIEdyw6FmaWNvIDIuMTAgbXVlc3RyYSBsYSByZWxhY2nDs24gZW50cmUgYXBveW8gYWwgc2lzdGVtYSB5IGNpbmNvIHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcywgdXNhZGFzIGNvbW8gcHJlZGljdG9yZXMgZGUgZXN0YSB2YXJpYWJsZSBkZXBlbmRpZW50ZS4KRXN0YXMgdmFyaWFibGVzIHNvbjoKCi0gICDDjW5kaWNlIGRlIHRvbGVyYW5jaWEgcG9sw610aWNhLCBjb25zdHJ1aWRhIGEgcGFydGlyIGRlIGN1YXRybyB2YXJpYWJsZXM6IEQxLCBEMiwgRDMgeSBENC4KICAgIEVuIGxhIGJhc2UgZGUgZGF0b3MsIGxhIHZhcmlhYmxlIHJlY29kaWZpY2FkYSBzZSBsbGFtYSAidG9sMXIiLgoKLSAgIEVmaWNhY2lhIGV4dGVybmEgKEVGRjEpOiAiQSBsb3MgcXVlIGdvYmllcm5hbiBlbCBwYcOtcyBsZXMgaW50ZXJlc2EgbG8gcXVlIHBpZW5zYSBsYSBnZW50ZSBjb21vIHVzdGVkLSDCv0hhc3RhIHF1w6kgcHVudG8gZXN0w6EgZGUgYWN1ZXJkbyBvIGVuIGRlc2FjdWVyZG8gY29uIGVzdGEgZnJhc2U/Ii4KICAgIEVuIGxhIGJhc2UgZGUgZGF0b3MsIGxhIHZhcmlhYmxlIHJlY29kaWZpY2FkYSBkZSBsbGFtYSAiZWZmMXIiLgoKLSAgIENvbmZpYW56YSBlbiBlbCBlamVjdXRpdm8gKEIyMUEpOiAiwr9IYXN0YSBxdcOpIHB1bnRvIHRpZW5lIGNvbmZpYW56YSBlbiBlbCBwcmVzaWRlbnRlL3ByaW1lciBtaW5pc3Rybz8iLgoKLSAgIENvbmZpYW56YSBlbiBlbCBnb2JpZXJubyBsb2NhbCAoQjMyKTogIsK/SGFzdGEgcXXDqSBwdW50byB0aWVuZSB1c3RlZCBjb25maWFuemEgZW4gc3UgYWxjYWxkw61hPyIuCiAgICBFbiBsYSBiYXNlIGRlIGRhdG9zLCBsYSB2YXJpYWJsZSByZWNvZGlmaWNhZGEgc2UgbGxhbWEgImIzMnIiLgoKLSAgIENvbmZpYW56YSBlbiBzdSBjb211bmlkYWQgKElUMSk6ICJBaG9yYSwgaGFibGFuZG8gZGUgbGEgZ2VudGUgZGUgcG9yIGFxdcOtLCDCv2RpcsOtYSBxdWUgbGEgZ2VudGUgZGUgc3UgY29tdW5pZGFkIGVzIG11eSBjb25maWFibGUsIGFsZ28gY29uZmlhYmxlLCBwb2NvIGNvbmZpYWJsZSBvIG5hZGEgY29uZmlhYmxlPyIuCiAgICBFbiBsYSBiYXNlIGRlIGRhdG9zLCBsYSB2YXJpYWJsZSByZWNvZGlmaWNhZGEgZGUgbGxhbWEgIml0MXIiLgoKRGUgbGEgbWlzbWEgbWFuZXJhIHF1ZSBlbiBsYSBzZWNjacOzbiBhbnRlcmlvciwgc2UgdGllbmUgcXVlIGNhbGN1bGFyIGxhIHZhcmlhYmxlIGRlIGNvbmZpYW56YSBlbiBlbCBlamVjdXRpdm8sIHJlY29kaWZpY2FkYSBhIHVuYSBlc2NhbGEgZGUgMCBhIDEwMC4KCmBgYHtyIHZpfQpsYXBvcDE4JGVqZWMgPC0gKChsYXBvcDE4JGIyMWEtMSkvNikqMTAwCnN1bW1hcnkobGFwb3AxOCRlamVjKQpgYGAKCiMgTW9kZWxvIGRlIHJlZ3Jlc2nDs24gbGluZWFsIG11bHRpdmFyaWFkYQoKUGFyYSBldmFsdWFyIGxvcyBkZXRlcm1pbmFudGVzIGRlbCBhcG95byBhbCBzaXN0ZW1hIHNlIHB1ZWRlIGNhbGN1bGFyIHVuIG1vZGVsbyBkZSByZWdyZXNpw7NuIGxpbmVhbCBtdWx0aXZhcmlhZG8uCkVsIG1vZGVsbyBzZSBjYWxjdWxhIGNvbiBlbCBjb21hbmRvIGBsbWAgZG9uZGUgc2UgaW5kaWNhIGxhIHZhcmlhYmxlIFkgeSBsdWVnbyBsYXMgdmFyaWFibGVzIGluZGVwZW5kaWVudGVzLgpDYWRhIHZhcmlhYmxlIGluZGVwZW5kaWVudGUgc2Ugc3VtYSBhbCBtb2RlbG8uCkVzdGUgbW9kZWxvIGRlIGd1YXJkYSBlbiB1biBvYmpldG8gIm1vZGVsbzEiIGVsIHF1ZSBzZSBwdWVkZSBkZXNjcmliaXIgY29uIGVsIGNvbWFuZG8gYHN1bW1hcnlgLgoKYGBge3IgbW9kZWxvfQptb2RlbG8xIDwtIGxtKHBzYXIgfiBlZmYxciArIGVqZWMgKyB0b2xyICsgaXQxciArIGIzMnIsIGRhdGE9bGFwb3AxOCkKc3VtbWFyeShtb2RlbG8xKQpgYGAKClBhcmEgcHJlc2VudGFyIGxvcyByZXN1bHRhZG9zIGRlIHVuYSBtYW5lcmEgbcOhcyBvcmRlbmFkYSwgc2UgcHVlZGVuIHVzYXIgdmFyaWFzIGxpYnJlcsOtYXMgeSBjb21hbmRvcy4KRW4gbGEgc2VjY2nDs24gYW50ZXJpb3IgdXNhbW9zIGxhIGxpYnJlcsOtYSBganRvb2xzYCB5IGVsIGNvbWFuZG8gYHN1bW1zYC4KRW4gZXN0YSBzZWNjacOzbiB1c2FyZW1vcyBsYSBsaWJyZXLDrWEgYHN0YXJnYXplcmAgeSBlbCBjb21hbmRvIGRlbCBtaXNtbyBub21icmUuCgpgYGB7ciB0YWJsYX0KbGlicmFyeShzdGFyZ2F6ZXIpCnN0YXJnYXplcihtb2RlbG8xLCBhbGlnbj1ULCB0eXBlID0gJ3RleHQnKQpgYGAKCkVsIEdyw6FmaWNvIDIuMTAgbXVlc3RyYSBsb3MgY29lZmljaWVudGVzIGRlIGNhZGEgdmFyaWFibGUgeSBlbCBpbnRlcnZhbG8gZGUgY29uZmlhbnphIGFsIDk1JSBkZSBlc3RlIGVzdGltYWRvLgpTZSBpbmNsdXllIHVuYSBsw61uZWEgdmVydGljYWwgZW4gZWwgcHVudG8gMC4KU2kgdW4gaW50ZXJ2YWxvIGRlIGNvbmZpYW56YSBjcnV6YSBlc3RhIGzDrW5lYSB2ZXJ0aWNhbCwgc2UgcHVlZGUgZGVjaXIgcXVlIG5vIHRpZW5lIHVuYSByZWxhY2nDs24gZXN0YWTDrXN0aWNhbWVudGUgc2lnbmlmaWNhdGl2YSBjb24gbGEgdmFyaWFibGUgZGVwZW5kaWVudGUgZGUgYXBveW8gYWwgc2lzdGVtYS4KTG9zIGludGVydmFsb3MgZGUgY29uZmlhbnphIHF1ZSBubyBjcnV6YW4gZXN0YSBsw61uZWEgeSBxdWUgc2UgZW5jdWVudHJhbiBhIGxhIGRlcmVjaGEgKGl6cXVpZXJkYSkgZGUgZXN0YSBsw61uZWEgdGllbmVuIHVuYSByZWxhY2nDs24gcG9zaXRpdmEgKG5lZ2F0aXZhKSBjb24gZWwgYXBveW8gYWwgc2lzdGVtYSwgZXMgZGVjaXIsIGN1YW5kbyBhdW1lbnRhIGVzdGEgdmFyaWFibGUsIGVsIGFwb3lvIGFsIHNpc3RlbWEgcHJvbWVkaW8gYXVtZW50YSAoZGlzbWludXllKS4KRW4gZXN0ZSBlamVtcGxvLCBsYXMgY2luY28gdmFyaWFibGVzIHNvbiBlc3RhZMOtc3RpY2FtZW50ZSBzaWduaWZpY2F0aXZhcyB5IG11ZXN0cmFuIHRpZW5lbiB1bmEgcmVsYWNpw7NuIHBvc2l0aXZhIGNvbiBlbCBhcG95byBhbCBzaXN0ZW1hLgpQYXJhIGFwcm94aW1hciB1biBncsOhZmljbyBzaW1pbGFyIGFsIG1vc3RyYWRvIGVuIGVsIHJlcG9ydGUsIHNlIHB1ZWRlIHVzYXIgbGEgbGlicmVyw61hIGBqdG9vbHNgIHkgZWwgY29tYW5kbyBgcGxvdF9zdW1tc2AuCgpgYGB7ciBncmFmaWNvfQpsaWJyYXJ5KGp0b29scykKcGxvdF9zdW1tcyhtb2RlbG8xKQpgYGAKCiMgSW50ZXJwcmV0YWNpw7NuCgpDb21vIGluZGljYSBlbCByZXBvcnRlOiAiUGFyYSBsYSByZWdpw7NuIGVuIHN1IGNvbmp1bnRvLCBlc3RhcyBjaW5jbyBkaW1lbnNpb25lcyBhZGljaW9uYWxlcyB0aWVuZW4gdW5hIHJlbGFjacOzbiBwb3NpdGl2YSB5IHNpZ25pZmljYXRpdmEgY29uIGVsIGFwb3lvIGFsIHNpc3RlbWEsIGRlIGFjdWVyZG8gY29uIGVsIGludGVydmFsbyBkZSBjb25maWFuemEgYWwgOTUlLi4uRXN0byBpbmRpY2EgcXVlIGEgbWVkaWRhIHF1ZSBhdW1lbnRhIGxhIGVmaWNhY2lhIGV4dGVybmEsIGxhIHRvbGVyYW5jaWEgcG9sw610aWNhLCBsYSBjb25maWFuemEgZW4gZWwgZWplY3V0aXZvIChwcmVzaWRlbnRlKSwgbGEgY29tdW5pZGFkIHkgZWwgZ29iaWVybm8gbG9jYWwsIHRhbWJpw6luIGxvIGhhY2UgZWwgbml2ZWwgcHJvbWVkaW8gZGUgYXBveW8gYWwgc2lzdGVtYSIuCgpBbnRlcyBkZSBhbmFsaXphciBsYSByZWxhY2nDs24gZGUgY2FkYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlIGNvbiBsYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSwgc2UgcHVlZGUgYW5hbGl6YXIgbGEgdmFsaWRleiBkZWwgbW9kZWxvIGVuIHN1IGNvbmp1bnRvLgoKIyMgVmFsaWRleiBkZWwgbW9kZWxvCgpMYSBwcnVlYmEgRiBzaXJ2ZSBwYXJhIGV2YWx1YXIgZWwgbW9kZWxvIGVuIGdlbmVyYWwuCkVzdGEgcHJ1ZWJhIHRpZW5lIGNvbW8gaGlww7N0ZXNpczoKCiQkCkgwOiBcYmV0YV8xID0gXGJldGFfMiA9IFxiZXRhXzMgPSBcYmV0YV80ID0gXGJldGFfNSA9IDAKJCQKCkVzIGRlY2lyLCBsYSBoaXDDs3Rlc2lzIG51bGEgZXMgcXVlIHRvZG9zIGxvcyBjb2VmaWNpZW50ZXMgZW4gc3UgY29uanVudG8gc29uIGlndWFsZXMgYSBjZXJvLgpFbiBudWVzdHJvIGVqZW1wbG8sIGVsIHAtdmFsdWUgZXMgbWVub3IgYSAwLjA1LCBjb24gbG8gcXVlIHNlIHB1ZWRlIHJlY2hhemFyIGxhIEgwIHkgYWZpcm1hciBxdWUgYWwgbWVub3MgdW4gY29lZmljaWVudGUgZXMgZGlmZXJlbnRlIGRlIGNlcm8uCkNvbiBlc3RvIHNlIGNvbmNsdXllIHF1ZSBlbCBtb2RlbG8gdGllbmUgdmFsaWRlei4KCiMjIFJlbGFjacOzbiBlbnRyZSBsYXMgdmFyaWFibGVzIGluZGVwZW5kaWVudGVzIHkgbGEgZGVwZW5kaWVudGUKClBhcmEgY2FkYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlIHNlIGNhbGN1bGEgdW5hIHBydWViYSB0LgpFc3RlIHRlc3QgZGUgc2lnbmlmaWNhbmNpYSBwb25lIGEgcHJ1ZWJhICRIMDogXGJldGFfbiA9MCQuCkVzIGRlY2lyLCBzaSBlbCBjb2VmaWNpZW50ZSBkZSB1bmEgdmFyaWFibGUgaW5kZXBlbmRpZW50ZSBwYXJ0aWN1bGFyIGVzIGlndWFsIGEgY2Vyby4KClBvciBlamVtcGxvLCBsYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlIGVmaWNhY2lhIGV4dGVybmEgdGllbmUgdW4gY29lZmljaWVudGUgZGUgMC4xMjgsIHVuIGVzdGFkw61zdGljbyBkZSBsYSBwcnVlYmEgdCBkZSAzNC4zIHkgdW4gdC12YWx1ZSBhc29jaWFkbyBkZSAwLjAwNC4KRGUgbGEgbWlzbWEgbWFuZXJhIHF1ZSBlbiBhbsOhbGlzaXMgYml2YXJpYWRvLCBzZSBwbGFudGVhIHVuIHZhbG9yIGNyw610aWNvLCBjb252ZW5jaW9uYWxtZW50ZSBkZSAwLjA1LgpDb21vIGVzdGUgdC12YWx1ZSBlcyBtZW5vciBkZSAwLjA1LCBzZSBwdWVkZSByZWNoYXphciBsYSBoaXDDs3Rlc2lzIG51bGEgeSBhZmlybWFyIHF1ZSBlbCBjb2VmaWNpZW50ZSBlcyBkaWZlcmVudGUgZGUgY2VybyBjb24gdW4gOTUlIGRlIGNvbmZpYW56YS4KCkxhIG1pc21hIGNvbmNsdXNpw7NuIHNlIHB1ZWRlIHNhY2FyIHBhcmEgbGFzIG90cmFzIHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcywgYWwgcHJlc2VudGFyIHVuIHQtdmFsdWUgbWVub3IgYSAwLjA1LgpDb24gZXN0byBzZSBwdWVkZSBjb3Jyb2JvcmFyIHF1ZSBsYXMgY2luY28gdmFyaWFibGVzIGluZGVwZW5kaWVudGVzIHNvbiBzaWduaWZpY2F0aXZhcywgY29tbyBpbmRpY2EgZWwgcmVwb3J0ZS4KCiMjIERpcmVjY2nDs24gZGUgbGEgcmVsYWNpw7NuCgpMYSBkaXJlY2Npw7NuIGRlIGxhIHJlbGFjacOzbiBlc3TDoSBtYXJjYWRhIHBvciBlbCBzaWdubyBkZWwgY29lZmljaWVudGUgZGUgbGEgdmFyaWFibGUgaW5kZXBlbmRpZW50ZS4KRW4gbnVlc3RybyBlamVtcGxvLCBsb3MgY2luY28gY29lZmljaWVudGVzIHByZXNlbnRhbiBzaWdub3MgcG9zaXRpdm9zLCBsbyBxdWUgaW5kaWNhIHVuYSByZWxhY2nDs24gZGlyZWN0YTsgZXMgZGVjaXIsIGN1YW5kbyBhdW1lbnRhIGxhIHZhcmlhYmxlIGluZGVwZW5kaWVudGUsIGF1bWVudGEgbGEgdmFyaWFibGUgZGVwZW5kaWVudGUsIGVuIHByb21lZGlvLgoKIyMgQ29lZmljaWVudGUgZGUgZGV0ZXJtaW5hY2nDs24gJFJeMiQKCkVsIEdyw6FmaWNvIDIuMTAgYWRlbcOhcyBkZSBtb3N0cmFyIGdyw6FmaWNhbWVudGUgbG9zIGNvZWZpY2llbnRlcyB5IGxvcyBpbnRlcnZhbG9zIGRlIGNvbmZpYW56YSBhbCA5NSUsIHRhbWJpw6luIG11ZXN0cmEgZWwgZGF0byBwYXJhIGVsIGNvZWZpY2llbnRlIGRlIGRldGVybWluYWNpw7NuICRSXjIkIHkgcGFyYSBlbCBuw7ptZXJvIGRlIG9ic2VydmFjaW9uZXMgY29uIGxvcyBxdWUgc2UgY2FsY3VsYSBlbCBtb2RlbG8uCgpFbiBudWVzdHJvIGVqZW1wbG8gZWwgdmFsb3IgZGUgJFJeMj0wLjQwMSQuCkVzdGUgdmFsb3Igbm8gZXMgaWd1YWwgYWwgcXVlIHNlIHByZXNlbnRhIGVuIGVsIHJlcG9ydGUgKDAuNDQpIGRlYmlkbyBhIHF1ZSBlbCBtb2RlbG8gZGUgbnVlc3RybyBlamVtcGxvIG5vIGluY2x1eWUgbG9zIGNvbnRyb2xlcyBzb2Npb2Vjb27Ds21pY29zIHkgZGVtb2dyw6FmaWNvcy4KRWwgcmVzdWx0YWRvIGRlIG51ZXN0cm8gZWplbXBsbyBpbmRpY2EgcXVlIGVsIG1vZGVsbyByZWR1Y2UgdW4gNDAuMSUgZWwgZXJyb3IgZGUgdXNhciBzb2xhbWVudGUgZWwgcHJvbWVkaW8gcGFyYSBlc3RpbWFyIGVsIGFwb3lvIGFsIHNpc3RlbWEuCgojIFJlc3VtZW4KCkVuIGVzdGEgc2VjY2nDs24gaGVtb3MgdXNhZG8gZWwgbcOpdG9kbyBkZSBtw61uaW1vcyBjdWFkcmFkb3MgcGFyYSBjYWxjdWxhciB1biBtb2RlbG8gbXVsdGl2YXJpYWRvLgpFbiBwYXJ0aWN1bGFyLCBzZSBoYSBwcmVzZW50YWRvIHVuIG1vZGVsbyBjb24gY2luY28gcHJlZGljdG9yZXMgZGVsIGFwb3lvIGFsIHNpc3RlbWEuCkVzdGUgbW9kZWxvIHNlIGhhIHByZXNlbnRhZG8gZGUgbWFuZXJhIGVzdMOhbmRhciBlbiB1bmEgdGFibGEgZGUgcmVzdWx0YWRvcyB5IG1lZGlhbnRlIHVuIGdyw6FmaWNvIHNpbWlsYXIgYWwgR3LDoWZpY28gMi4xMCBkZWwgcmVwb3J0ZS4KCkRlIGFjdWVyZG8gYSBsb3MgcmVzdWx0YWRvcyBkZSBlc3RlIG1vZGVsbyBtdWx0aXZhcmlhZG8sIHNlIGhhIGV4cGxpY2FkbyBsYSB2YWxpZGV6IGRlbCBtb2RlbG8sIGxhIHBydWViYSBkZSBpbmZlcmVuY2lhIHBhcmEgZXZhbHVhciBsYSByZWxhY2nDs24gZW50cmUgY2FkYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlIGNvbiBsYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSwgbGEgZGlyZWNjacOzbiBkZSBsYSByZWxhY2nDs24geSBsYSBkaXNtaW51Y2nDs24gZGVsIGVycm9yIG1lZGlhbnRlIGVsIGNvZWZpY2llbnRlIGRlIGRldGVybWluYWNpw7NuLgo=</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("regresion2.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
