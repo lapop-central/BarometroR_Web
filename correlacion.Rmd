@@ -74,7 +74,7 @@ Luego, en la página web del proyecto V-Dem, se puede calcular los puntajes del 
 Por lo tanto, se puede recoger los datos para los 18 países que son parte del reporte "El pulso de la democracia".
 Estos datos, luego, se pueden descargar en formato .csv.
 El eje Y del gráfico 1.3 muestra los puntajes del índice de democracia electoral de V-Dem en una escala del 0 al 1.
-Para este documento se ha recogido los datos del índice de democracia electoral 2018 y 2019 para los 18 paises analizados en el reporte, incluyendo el código de país, para poder fusionar los datos luego.
+Para este documento se ha recogido los datos del índice de democracia electoral 2018 y 2019 para los 18 países analizados en el reporte, incluyendo el código de país, para poder fusionar los datos luego.
 Esta base de datos también se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 
 ```{r vdem}

@@ -26,15 +26,20 @@ h1 {color: #3366CC;}
 
 # Introducción
 
-En este documento se verán aspectos básico del manejo de datos, como la recodificación de una variable, la selección de datos y el cálculo de una nueva variable.
+En este documento se verán aspectos básicos del manejo de datos, como la recodificación de una variable, la selección de datos y el cálculo de una nueva variable.
 Al final se incluye una nota acerca de los cálculos estadísticos considerando el efecto de diseño.
 
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php) En este enlace, se pueden registrar o entrar como "Free User".
+Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
+En este enlace, se pueden registrar o entrar como "Free User".
 En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos recortada. Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
+Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
+
+En este documento se carga una base de datos recortada.
+Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
 
 ```{r base}
 library(rio)
