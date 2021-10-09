@@ -54,6 +54,8 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 
 3.  [Comparación de varias medias](https://arturomaldonado.github.io/BarometroEdu_Web/anova.html)
 
+4.  [Tablas cruzadas y chi cuadrado](https://arturomaldonado.github.io/BarometroEdu_Web/chi.html)
+
 ## Modelamiento {.col-sm-6}
 
 1.  [Correlación](https://arturomaldonado.github.io/BarometroEdu_Web/correlacion.html)

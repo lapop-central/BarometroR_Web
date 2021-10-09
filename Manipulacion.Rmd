@@ -66,6 +66,13 @@ Es decir, la variable original ING4, en una escala de 1-7, se tiene que recodifi
 1.  Valores entre 1-4 de ING4 se transforman en 0 en la nueva variable ing4r
 2.  Valores entre 5-7 de ING4 se transformen en 1 en la nueva variable ing4r
 
+Un ejemplo de cómo se presentan estos datos recodificados en el reporte se puede ver en el Gráfico 1.2.
+Este muestra el porcentaje de ciudadanos que apoya a la democracia por país.
+Es decir, se muestra el porcentaje de entrevistados que respondieron entre 5 y 7 a la pregunta ING4 en cada país.
+De acuerdo a la recodificación planteada, este gráfico representaría el porcentaje de entrevistados que registra un 1 en la variable recodificada.
+
+![](Graf1.2.png){width="350"}
+
 Para poder recodificar una variable hay varias formas.
 Una de las formas más eficientes de hacerlo es usando el comando `recode` del paquete `car`.
 El paquete `dplyr` tiene un comando `recode` que puede confundir a R.
@@ -81,9 +88,13 @@ Si se suman las observaciones entre 1 y 4 de la variable original (1699+1470+300
 
 # Selección de casos
 
-El reporte indica que "El Gráfico 1.1 muestra el porcentaje de personas en cada país que expresa apoyar la democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45% en Honduras a un máximo de 76.2% en Uruguay" (p.11).
+El reporte indica que "El Gráfico 1.2 muestra el porcentaje de personas en cada país que expresa apoyar la democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45% en Honduras a un máximo de 76.2% en Uruguay" (p.11).
+
 Para replicar estos resultados acerca de Honduras y acerca de Uruguay para 2018/19, se podría seleccionar los datos de estos dos países.
 De acuerdo al cuestionario, que se puede ver [aquí](https://www.vanderbilt.edu/lapop/ab2018/AB2018-v12.0-Spa-190131_W.pdf), Honduras es el país 4 y Uruguay es el país 14 de la variable "pais".
+
+![](pais.png){width="552"}
+
 La selección de casos en R se puede hacer de múltiples maneras.
 Una forma es usar los corchetes [ ].
 Otra forma es usando el comando `subset`.
@@ -145,7 +156,7 @@ B1.
 [Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio].
 
 B2.
-¿Hasta qué punto tiene usted respeto por las instituciones políticasl de (país)?
+¿Hasta qué punto tiene usted respeto por las instituciones políticas de (país)?
 
 B3.
 ¿Hasta qué punto cree usted que los derechos básicos del ciudadano están bien protegidos por el sistema político de (país)?
@@ -212,18 +223,22 @@ Estos estadísticos se verán en más detalle en otros documentos.
 
 ```{r apoyo al sistema 2018/19}
 mean(lapop18$apoyo, na.rm=T)
-mean(lapop18$b1rec, na.rm=T)
-mean(lapop18$b2rec, na.rm=T)
-mean(lapop18$b3rec, na.rm=T)
-mean(lapop18$b4rec, na.rm=T)
-mean(lapop18$b6rec, na.rm=T)
+mean(lapop18$b1rec, na.rm=T) #Cortes garantizan juicio justo
+mean(lapop18$b2rec, na.rm=T) #Respeto a las instituciones
+mean(lapop18$b3rec, na.rm=T) #Derechos básicos están protegidos
+mean(lapop18$b4rec, na.rm=T) #Orgullos por el sistema político
+mean(lapop18$b6rec, na.rm=T) #Se debería apoyar al sistema político
 ```
+
+Estos resultados son los que se muestran en el Gráfico 2.1 para la ronda 2018/19.
+
+![](Graf2.1.png){width="629"}
 
 # Calcular una variable de manera condicional
 
 En algunas ocasiones el cálculo de una variable no requiere solamente la transformación numérica de la variable original, sino que los valores de la nueva variable dependen de valores de otras variables.
 Por ejemplo, el capítulo "Redes sociales y actitudes políticas" del reporte "El Pulso de la Democracia" presenta los resultados para las variables "usuario de Whatsapp", "usuario de Twitter" y "usuario de Facebook".
-Para calcular estas variables, el pie de página 7 de este capítulo indica: "Para cada plataforma, se identifican los usuarios con una combinación de dos conjuntos de preguntas. Primero, se identifican como usuarios a quienes responden positivamente a las preguntas, SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a quienes responden "nunca" a las preguntas siguientes, SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en Facebook/Twitter/Whatsapp?".
+Para calcular estas variables, el pie de página 7 de este capítulo indica: "Para cada plataforma, se identifican los usuarios con una combinación de dos conjuntos de preguntas. Primero, se identifican como usuarios a quienes responden positivamente a las preguntas, SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a quienes responden "nunca" a las preguntas siguientes, SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en Facebook/Twitter/Whatsapp?" (p. 64).
 Es decir, el usuario no solo es el que tiene una cuenta, sino el que la usa con cierta frecuencia.
 De esta manera, el no usuario puede tener una cuenta, pero nunca usarla.
 Por lo tanto, la variable "usuario" depende de los valores de 2 variables.
@@ -246,6 +261,10 @@ round(prop.table(table(lapop18$fb_user))*100, 1)
 round(prop.table(table(lapop18$tw_user))*100, 1)
 round(prop.table(table(lapop18$wa_user))*100, 1)
 ```
+
+Estos resultados se pueden ver en el Gráfico 3.1 del reporte en gráficos circulares que se verán en la sección siguiente.
+
+![](Graf3.1.png){width="323"}
 
 # Observación del efecto de diseño
 
