@@ -238,7 +238,8 @@ Finalmente, con la especificación `scale_fill_discrete(name=...)` se puede camb
 ```{r ggpie2}
 ggplot(data=df, aes(x="", y=per, fill=smedia1r))+
   geom_bar(width=1, stat="identity")+
-  geom_text(aes(label=paste(per, "%", sep="")), color="white", hjust=-0.3)+
+  geom_text(aes(label=paste(per, "%", sep="")), color="white",
+            position=position_stack(vjust=0.5), size=3)+
   coord_polar("y")+
   theme_void()+
   scale_fill_discrete(name="¿Usa Facebook?")
@@ -299,13 +300,12 @@ Este porcentaje varía a 55.2% si se incluye la variable de expansión, que es e
 Estos resultados ponderados también se pueden guardar en objetos y luego graficar de la misma manera que se ha hecho con los resultados sin ponderar.
 
 Para el caso de Facebook, la tabla se puede guardar como un dataframe, usando el comando `as.data.frame`.
-Esta tabla incluye datos que no requerimos, como la fila de NA´s y del total.
-Estas filas se borran usando la especificación `[-c(3,4), ]`.
-Si se quisiera borrar la primera columna se tendría que escribir `[, -c(1)]`.
+Esta tabla incluye datos que no requerimos, como la fila de NA´s y del total y como la columna de Percent.
+Estas filas y esta columna se borran usando la especificación `[-c(3,4), -2]`.
 
 Luego, se le cambia el nombre a las columnas para evitar el nombre "Valid Percent".
-Se las nombre simplemente como "freq", "per" y "vper".
-Esta última columna es la que nos sirve.
+Se las nombre simplemente como "freq" y "per".
+Esta columna "per" es la que tiene los datos que graficaremos.
 Finalmente, se añade una columna "lab" con las etiquetas de cada fila de resultados.
 
 ```{r tabla fb}
@@ -318,13 +318,14 @@ fb
 
 Con este nuevo dataframe podemos replicar los mismo códigos usados más arriba para hacer un gráfico de barras o un gráfico circular.
 El siguiente código muestra el gráfico de barras.
-Nótese que ahora se usa el dataframe "fb" y que en aes se especifica que en el eje X deben estar los datos de la columna "lab" y en el eje Y los datos de la columna "vper".
+Nótese que ahora se usa el dataframe "fb" y que en aes se especifica que en el eje X deben estar los datos de la columna "lab" y en el eje Y los datos de la columna "per".
 
 ```{r barras ponderadas}
 ggplot(data=fb, aes(x=lab, y=per))+
   geom_bar(stat="identity",  width=0.5)+
   geom_text(aes(label=paste(round(per, 1), "%", sep="")), color="black", vjust=-0.5)+
-  labs(title="¿Qué tan frecuente se usan las redes sociales?", x="Usuario de Facebook", y="Porcentaje", caption="Barómetro de las Américas por LAPOP, 2018/19")+
+  labs(title="¿Qué tan frecuente se usan las redes sociales?", x="Usuario de Facebook", 
+       y="Porcentaje", caption="Barómetro de las Américas por LAPOP, 2018/19")+
   coord_cartesian(ylim=c(0, 60))
 ```
 
