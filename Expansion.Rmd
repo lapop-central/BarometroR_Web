@@ -32,9 +32,11 @@ Seguiremos lo que se trabajó en el documento de "Manejo de datos", disponible [
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php) En este enlace se pueden registrar o entrar como "Free User".
-En el buscador se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos recortada. Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
+Para poder reproducir estos cálculos, este documento empieza desde el inicio, cargando nuevamente la base de datos recortada desde el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Se sugiere que se limpie el Environment de cualquier otro dataframe anterior.
+Esto se puede hacer con la escoba (Clear objects from the workspace).
+
+Mediante la librería `rio` y el comando `import` se puede importar nuevamente desde el inicio esta base de datos desde este repositorio, usando el siguiente código.
 
 ```{r base}
 library(rio)
@@ -47,7 +49,7 @@ Cuando un investigador abre una base de datos en cualquier programa estadístico
 Cuando se trabaja con datos de opinión pública, como los datos del Barómetro de las Américas, el diseño muestral generalmente no es un muestreo simple aleatorio, sino un diseño complejo, con estratificaciones, segmentaciones, cuotas, en diferentes etapas.
 Como indica el reporte técnico de la ronda 2018/19 del Barómetro de las Américas, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/AmericasBarometer_2018-19_Technical_Report_W_102919.pdf), las muestras en cada país fueron diseñadas usando un diseño probabilístico multietapa (con cuotas al nivel de hogares para la mayoría de países), y fueron estratificadas por regiones principales en el país, tamaño de la municipalidad y por áreas urbanas y rurales dentro de las municipalidades.
 Este diseño muestral complejo se tiene que incorporar generalmente en los cálculos.
-En ciertas ocasiones si no se incorpora puede llevar a diferencias en los resultados.
+En ciertas ocasiones, si no se incorpora, puede llevar a diferencias en los resultados.
 Una explicación más detallada sobre el uso de los factores de expansión y las potenciales consecuencias de no usarlos con los datos del Barómetro de las Américas puede ser leída en la Nota Metodológica 007 (Castorena, 2021), disponible [aquí](https://www.vanderbilt.edu/lapop/insights/IMN007es.pdf).
 Esta Nota Metodológica describe tres escenarios de usos de factores de expansión:
 
@@ -60,7 +62,8 @@ Esta Nota Metodológica describe tres escenarios de usos de factores de expansi�
 Como indica la Nota metodológica, "los análisis sin ponderar pueden resultar en estimaciones sesgadas" (p.9).
 Por ejemplo, en el documento sobre manejo de datos replicamos los resultados sobre el apoyo a la democracia en Honduras (45%) y Uruguay (76.2%), para lo que se calculó la variable recodificada y se describió.
 
-```{r manipulación}
+```{r manipulación, message=FALSE, warning=FALSE}
+library(car)
 lapop18$ing4rec <- car::recode(lapop18$ing4, "1:4=0; 5:7=1")
 table(lapop18$ing4rec)
 ```
@@ -73,7 +76,8 @@ round(prop.table(table(lapop18$ing4rec[lapop18$pais==14]))*100, 1)
 ```
 
 Se observa que estos resultados son iguales a los que aparecen en el Gráfico 1.2 del reporte "El Pulso de la Democracia" (p.12), disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
-Esto es esperable porque, como indica la Tabla 5 de la Nota Metodológica, ambos países tienen un diseño muestral autoponderado, por lo que estos cálculos aquí, que no incluyen el diseño, coinciden con los del reporte, que sí incluyen el factor de expansión.
+Esto es esperable porque, como indica la Tabla 5 de la Nota Metodológica, ambos países tienen un diseño muestral autoponderado, por lo que estos cálculos, que no incluyen el diseño, coinciden con los del reporte, que sí incluyen el factor de expansión.
+
 Un caso diferente es el de Brasil que, según la Nota Metodológica, tiene un diseño muestral ponderado, por lo que sí requeriría usar el factor de expansión para ajustar la sobremuestra en el diseño.
 Si se calcula el descriptivo del apoyo a la democracia en Brasil sin incluir el factor de expansión se obtiene un resultado distinto al del reporte.
 
@@ -86,7 +90,7 @@ Esta diferencia es debida a que el comando `table`, y luego `prop.table`, no inc
 
 # Incluyendo el factor de expansión
 
-Algunos comandos en R permiten la inclusión de una variable de expansión en los cálculos.
+Algunas librarías y comandos en R permiten la inclusión de una variable de expansión en los cálculos.
 El paquete `descr`, por ejemplo, incluye varios comandos, como `compmeans` o `crosstab` que permiten esta inclusión del factor de expansión.
 Para reproducir los datos que se observan en el Gráfico 1.2 del reporte, se puede usar el comando `compmeans` que permite calcular la media de una variable (como ing4rec, cuya media es igual a la proporción) por grupos de una variable factor, como "pais", ponderando los resultados por una variable, como "weight1500".
 Se agrega la especificación `plot=FALSE` para desactivar la producción del gráfico.
@@ -96,10 +100,10 @@ library(descr)
 compmeans(lapop18$ing4rec, lapop18$pais, lapop18$weight1500, plot=FALSE)
 ```
 
-De acuerdo a estos resultados, vemos que Brasil, pais 15, tiene un apoyo a la democracia de 0.599975.
+De acuerdo a estos resultados, vemos que Brasil (pais=15), tiene un apoyo a la democracia de 0.599975.
 Si transformamos este número en porcentaje, aproximando a 1 decimal, reproducimos el valor de 60% que se observa en el Gráfico 1.2 del reporte.
 No solo eso, además, se observa que para el resto de países, los datos se replican.
-Por ejemplo, para México, país 1, esta tabla muestra un apoyo a la democracia de 0.6272307, o, en porcentaje aproximado a 1 decimal, 62.7%, igual al dato del reporte.
+Por ejemplo, para México (país=1), esta tabla muestra un apoyo a la democracia de 0.6272307, o, en porcentaje aproximado a 1 decimal, 62.7%, igual al dato del reporte.
 
 Otra forma de replicar los resultados incorporando el efecto de diseño es usando el paquete `survey`, paquete especialmente desarrollado para trabajar con diseños muestrales complejos.
 La Nota Metodológica incluye un apéndice con el código de STATA para usar los factores de expansión en los datos del Barómetro de las Américas.
@@ -108,8 +112,9 @@ Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la i
 Por tanto, si luego se creara una nueva variable, se tendría que correr nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
 
 ```{r expansión con survey, message=FALSE, warning=FALSE}
+#install.packages("survey") Para instalar el paquete se debe usar este código
 library(survey)
-lapop.design<-svydesign(ids =~upm, strata =~ estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
 ```
 
 Una vez creado los datos con el factor de expansión en el objeto "lapop.design", se puede usar los comandos nativos del paquete `survey` para realizar cálculos.
