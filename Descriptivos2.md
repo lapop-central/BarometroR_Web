@@ -417,7 +417,7 @@ ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
   xlim(0.5, 2.5)
 ```
 
-![](Descriptivos2_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
+![](Descriptivos2_files/figure-html/wa graf pond-1.png)<!-- -->
 
 # Cruce de variables
 

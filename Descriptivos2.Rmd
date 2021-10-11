@@ -256,7 +256,7 @@ tabla2
 
 Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp, con los datos ponderados, usando el código de `ggplot`.
 
-```{r}
+```{r wa graf pond}
 ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
   geom_bar(stat="identity")+
   geom_text(aes(label=paste(round(per, 1), "%", sep="")), color="white", 
@@ -305,7 +305,7 @@ lapop18$wa_user <- ifelse(lapop18$smedia7==1 & lapop18$smedia8<=4, 1, 0)
 Esta variables son graficadas en el reporte en el Gráfico 3.1.
 Para reproducir estos datos, se puede describir estas variables.
 
-```{r}
+```{r user}
 prop.table(table(lapop18$fb_user))*100
 prop.table(table(lapop18$tw_user))*100
 prop.table(table(lapop18$wa_user))*100
