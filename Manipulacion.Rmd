@@ -137,11 +137,12 @@ round(prop.table(table(lapop2$ing4rec[lapop2$pais==14]))*100, 1)
 Con este código se ha reproducido los resultados de los países en los extremos del Gráfico 1.2 del reporte.
 
 El reporte también indica que se excluye de los cálculos a Estados Unidos y Canadá.
-Es decir, en el dataframe "lapop18" se tiene que seleccionar los países que no son EE.UU.
+La base de datos cargada como "lapop18" incluye a todos los países de la ronda.
+Para excluir a estos dos países, se tiene que seleccionar los países que NO son EE.UU.
 y Canadá.
 Esta nueva selección se puede guardar en un nuevo dataframe o se puede sobreescribir en el dataframe original, como se hace en este caso debido a que la exclusión de estos países es para todos los cálculos que siguen.
 De acuerdo al cuestionario, EE.UU.
-tiene el código 40 en la variable "pais" y Canadá, el código 41.
+tiene el código 40 y Canadá, el código 41 en la variable "pais".
 Para excluirlos se tiene que incluir a los países que tengan un código menor a 40 (o de 35 o menos).
 Para esto nuevamente podemos usar el comando `subset`.
 
@@ -150,7 +151,7 @@ lapop18 <- subset(lapop18, pais<=35)
 ```
 
 Se puede observar en el Environment que se reducen las observaciones del dataframe "lapop18" luego de correr este código, pues se han eliminado las observaciones de entrevistados en estos dos países.
-El número de observaciones (28,042) coincide con el de la base de datos en formato .RData que usamos en el módulo anterior.
+El número de observaciones pasa de 31,050 a 28,042, número que coincide con el de la base de datos en formato .RData que usamos en el módulo anterior y que indicamos que no incluía a estos países.
 
 # Calcular una variable
 

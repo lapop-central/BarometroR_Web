@@ -5,3 +5,6 @@ formattable
 dplyr
 ggplot2
 descr
+carData
+car
+data.table

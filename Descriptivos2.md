@@ -27,7 +27,7 @@ h1 {color: #3366CC;}
 
 # Introducción
 
-En este documento vamos a seguir continuar usando el último informe regional "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas.
+En este documento vamos a continuar usando el último informe regional "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas.
 Una de las secciones de este informe, reporta los datos sobre redes sociales y actitudes políticas.
 En esta sección, se presentan datos sobre el uso de internet y el uso de redes sociales, en general y por país.
 En este caso vamos a trabajar con la frecuencia de uso de las redes sociales.
@@ -36,13 +36,9 @@ En este documento vamos a analizar descriptivamente estas variables sobre frecue
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
-En este documento se carga una base de datos recortada.
+En este documento se carga nuevamente una base de datos recortada.
+Para reproducir los resultados mostrados en esta sección se debe limpiar en Environment.
+
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
@@ -78,13 +74,14 @@ lapop18$smedia5r = as.factor(lapop18$smedia5)
 lapop18$smedia8r = as.factor(lapop18$smedia8)
 ```
 
-La nota a pie 15 indica que "los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales" (p. 64).
+La nota a pie 15 del reporte indica que "los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales" (p. 64).
 Por este motivo, el gráfico 3.3 de frecuencia de uso de redes sociales (pag. 57) solo incluyen las categorías "Diariamente", "Algunas veces a la semana", "Algunas veces al mes" y "Algunas veces al año".
 Se excluya la categoría "Nunca".
 En las nuevas variables vamos a declarar el valor 5, correspondiente a "nunca", como "NA", es decir, como valor perdido en R.
 
 
 ```r
+library(car)
 lapop18$smedia2r = car::recode(lapop18$smedia2r, "5=NA")
 lapop18$smedia5r = car::recode(lapop18$smedia5r, "5=NA")
 lapop18$smedia8r = car::recode(lapop18$smedia8r, "5=NA")
@@ -251,52 +248,57 @@ formattable(tabla)
 </tbody>
 </table>
 
-Para graficar, se replica el código usado en el documento anterior (que se puede ver [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos.html)) para hacer la tabla resumen y el gráfico de pie.
-En este caso se trabajará con la variable de frecuencia de uso de Facebook ("smedia2r").
-En primer lugar, se construye un dataframe "df" con la modalidad "pipe" (`%>%`) de la librería `dplyr` (parte del Tidyverse).
-Se declara el dataframe original con el que se trabajará ("lapop18").
-Con el comando `filter` se le indique que internamente no tome en cuenta en los cálculos los valores perdidos de la variable "smedia2r", usando la especificación `!is.na(...)`.
-Se indica, luego, que se agrupen los resultados posteriores por categorías de la variable "smedia2r" con el comando `group_by(...)`.
-En cada categoría se calcula el número de observaciones con el comando `summarise(n=n())`.
-Finalmente, con el número de observaciones por categoría, se calcula el porcentaje y se guarda en una nueva columna de "df".
-Esto se calcula con el comando `mutate`, donde se especifica que la columna se llame "per" y se calcula el porcentaje redondeado.
+Para graficar esta variable no vamos a seguir el mismo procedimiento que en el módulo anterior.
+En este módulo vamos a trabajar directamente desde la tabla creada con los porcentajes de las tres redes sociales.
+Esta tabla tiene a cada red social en las filas y las opciones de respuesta en las columnas.
+Para poder graficar estos datos se requiere que las redes sociales estén en las columnas y las opciones de respuesta en las filas, por lo que en primer lugar vamos a transponer esta tabla.
+Este procedimiento lo hacemos usando la librería `data.table` y el comando `transpose`.
+Estos datos transpuestos los guardamos en una nueva tabla "tabla_tr".
+
+Este comando transpone los datos, pero deja sin nombrar las filas y columnas.
+Primero se nombran las columnas con el comando `colnames` usando los nombres de las filas de "tabla".
+Luego se nombran las filas con el comando `rownames` usando los nombres de las columnas de "tabla".
+
+Finalmente, requerimos una columna dentro de "tabla_tr" que incluya las etiquetas de respuesta de las preguntas de smedia.
+Estas etiquetas están como nombres de filas.
+Para incluirlas como una variable más, se agrega una variable "tabla_tr\$lab" al que se le asigna los nombres de las filas con `row.names`.
 
 
 ```r
-library(dplyr)
-df <- lapop18 %>%
-      filter(!is.na(smedia2r)) %>%
-      group_by(smedia2r) %>% 
-      dplyr::summarise(n = n()) %>%
-      mutate(per=round(n/sum(n), 3)*100) 
-df
+library(data.table)
+tabla_tr = transpose(tabla)
+colnames(tabla_tr) = rownames(tabla)
+rownames(tabla_tr) = colnames(tabla)
+tabla_tr$lab <- rownames(tabla_tr)
+tabla_tr
 ```
 
 <div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["smedia2r"],"name":[1],"type":["fct"],"align":["left"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]},{"label":["per"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Diariamente","2":"8633","3":"57.1"},{"1":"Algunas veces a la semana","2":"4927","3":"32.6"},{"1":"Algunas veces al mes","2":"1286","3":"8.5"},{"1":"Algunas veces al año","2":"282","3":"1.9"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Facebook"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Twitter"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Whatsapp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["lab"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"57.1","2":"37.2","3":"81.6","4":"Diariamente","_rn_":"Diariamente"},{"1":"32.6","2":"34.1","3":"15.3","4":"Algunas veces a la semana","_rn_":"Algunas veces a la semana"},{"1":"8.5","2":"19.7","3":"2.9","4":"Algunas veces al mes","_rn_":"Algunas veces al mes"},{"1":"1.9","2":"9.0","3":"0.3","4":"Algunas veces al año","_rn_":"Algunas veces al año"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 
-En segundo lugar, se activa la librería `ggplot2` para graficar los datos guardados en "df" con el comando `ggplot`.
-Dentro de este comando se especifica que se trabajará con el dataframe "df" (no con lapop18) y se especifica la "estética", es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de "per" del dataframe "df" y que se dividirá por categorías de la variable "smedia2r".
+En segundo lugar, se activa la librería `ggplot2` para graficar los datos guardados en "tabla_tr" con el comando `ggplot`.
+Dentro de este comando se especifica que se trabajará con el dataframe "tabla_tr" (no con lapop18) y se especifica la "estética", es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de "Facebook" del dataframe "tabla_tr" y que se dividirá por categorías de la variable guardadas en "lab".
 Luego se añade la capa `geom_bar` para indicar que se graficará en barras de ancho (`width`) 1 y que la barra replicará lo especificado en la estética (`stat="identity"`).
-Con `geom_text` se agrega las etiquetas de los datos y con `coord_polar` se transforma las barras en un gráfico circular de sectores.
+Con `geom_text` se agrega las etiquetas de los datos, con el símbolo de porcentaje, y se especifica la posición del texto con `position=position_stack(…)` y el tamaño con `size=3`.
+Con `coord_polar` se transforma las barras en un gráfico circular de sectores.
 Finalmente, se define el "tema" con `theme_void` indicando un fondo blanco y se modifica la etiqueta de la leyenda con `scale_fill_discrete`.
 
 
 ```r
 library(ggplot2)
-ggplot(data=df, aes(x="", y=per, fill=smedia2r))+
+ggplot(data=tabla_tr, aes(x="", y=Facebook, fill=lab))+
   geom_bar(width=1, stat="identity")+
-  geom_text(aes(label=paste(per, "%", sep="")), color="white", 
+  geom_text(aes(label=paste(Facebook, "%", sep="")), color="white", 
             position=position_stack(vjust=0.5), size=3)+
   coord_polar("y", start=0)+
   theme_void()+
   scale_fill_discrete(name="Frecuencia de uso de Facebook")
 ```
 
-![](Descriptivos2_files/figure-html/grafico-1.png)<!-- -->
+![](Descriptivos2_files/figure-html/grafico pie-1.png)<!-- -->
 
 En el gráfico 3.3 del reporte "El Pulso de la Democracia" se presenta un gráfico circular tipo "donna".
 Para reproducir exactamente este tipo de gráfico, se tiene que acomodar unos detalles de la sintaxis anterior.
@@ -304,13 +306,15 @@ Se establece "x=2" en la "estética" y se establece límites en el eje X, entre 
 
 
 ```r
-ggplot(data=df, aes(x=2, y=per, fill=smedia2r))+
+ggplot(data=tabla_tr, aes(x=2, y=Facebook, fill=lab))+
   geom_bar(stat="identity")+
-  geom_text(aes(label=paste(per, "%", sep="")), color="white", 
+  geom_text(aes(label=paste(Facebook, "%", sep="")), color="white", 
             position=position_stack(vjust=0.5), size=3)+
   coord_polar("y")+
   theme_void()+
   scale_fill_discrete(name="Frecuencia de uso de Facebook")+
+   labs(title="Frecuencia con la que ve contenido en Facebbok", 
+        caption="Barómetro de las Américas por LAPOP, 2018/19")+
   xlim(0.5, 2.5)
 ```
 
@@ -325,9 +329,9 @@ Un tema importante es que este gráfico también se puede guardar en un objeto e
 
 
 ```r
-graf1 <- ggplot(df, aes(x=smedia2r, y=per))+
+graf1 <- ggplot(tabla_tr, aes(x=lab, y=Facebook))+
   geom_bar(stat="identity",  width=0.5)+
-  geom_text(aes(label=paste(per, "%", sep="")), color="black", vjust=-0.5)+
+  geom_text(aes(label=paste(Facebook, "%", sep="")), color="black", vjust=-0.5)+
   labs(title="Frecuencia de uso de redes sociales", x="Frecuencia de uso de Facebook", y="Porcentaje", caption="Barómetro de las Américas por LAPOP, 2018/19")+
   coord_cartesian(ylim=c(0, 60))
 graf1
@@ -355,67 +359,73 @@ graf1 +
 
 De esta manera el gráfico queda más legible.
 Hasta aquí se ha replicado las tablas y gráficos que se usaron con las variables nominales, ahora usando variables ordinales.
-Si se quiere replicar el gráfico circular de las otras redes sociales, se puede calcular un nuevo dataframe como los datos de la otra red social.
+Si se quiere replicar el gráfico circular de las otras redes sociales, se puede ejecutar el mismo código, pero cambiando la columna de la red social.
 Para Twitter, por ejemplo, se tendría.
 
 
 ```r
-df2 <- lapop18 %>%
-      filter(!is.na(smedia5r)) %>%
-      group_by(smedia5r) %>% 
-      dplyr::summarise(n = n()) %>%
-      mutate(per=round(n/sum(n), 3)*100) 
-df2
-```
-
-<div data-pagedtable="false">
-  <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["smedia5r"],"name":[1],"type":["fct"],"align":["left"]},{"label":["n"],"name":[2],"type":["int"],"align":["right"]},{"label":["per"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Diariamente","2":"795","3":"37.2"},{"1":"Algunas veces a la semana","2":"728","3":"34.1"},{"1":"Algunas veces al mes","2":"422","3":"19.7"},{"1":"Algunas veces al año","2":"193","3":"9.0"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-
-Podemos replicar el gráfico anterior, ahora usando el nuevo dataframe "df2", con el código anterior.
-
-
-```r
-graf2 <- ggplot(df2, aes(x=smedia5r, y=per))+
-  geom_bar(stat="identity",  width=0.5)+
-  geom_text(aes(label=paste(per, "%", sep="")), color="black", vjust=-0.5)+
-  labs(title="Frecuencia de uso de redes sociales", x="Frecuencia de uso de Twitter", y="Porcentaje", caption="Barómetro de las Américas por LAPOP, 2018/19")+
-  coord_cartesian(ylim=c(0, 50))+
-  scale_x_discrete(labels=etiq)
+graf2 <- ggplot(data=tabla_tr, aes(x=2, y=Twitter, fill=lab))+
+  geom_bar(stat="identity")+
+  geom_text(aes(label=paste(Twitter, "%", sep="")), color="white", 
+            position=position_stack(vjust=0.5), size=3)+
+  coord_polar("y")+
+  theme_void()+
+  scale_fill_discrete(name="Frecuencia de uso de Twitter")+
+   labs(title="Frecuencia con la que ve contenido en Twitter", 
+        caption="Barómetro de las Américas por LAPOP, 2018/19")+
+  xlim(0.5, 2.5)
 graf2
 ```
 
 ![](Descriptivos2_files/figure-html/grafico Twitter-1.png)<!-- -->
 
 La pequeña diferencia entre los porcentajes puede deberse a que en todos las tablas y gráficos anteriores no se incluye el factor de expansión.
-Si se incluyera, usando la variable "weight1500", se tendría porcentajes que difieren solo por la aproximación decimal.
+Si se incluyera, usando la variable "weight1500", se replicarían los porcentajes mostrados en el informe.
+Por ejemplo, para el uso de Whatsapp, se puede usar el comando `freq` de la librería `descr` que permite incluir una variable de ponderación.
+
+Esta tabla luego se puede guardar en un dataframe, al que se le pueden eliminar las filas y columnas que no se requieren, y se les puede cambiar el nombre a las columnas.
+y agregar las etiquetas.
 
 
 ```r
-descr::freq(lapop18$smedia5r, lapop18$weight1500, plot=F)
+tabla2 <- as.data.frame(descr::freq(lapop18$smedia8r, lapop18$weight1500, plot=F))
+tabla2 <- tabla2[-c(5,6), -2]
+colnames(tabla2) <- c("frec", "per")
+tabla2$lab <- rownames(tabla2)
+tabla2
 ```
 
-```
-## lapop18$smedia5r 
-##                           Frequency  Percent Valid Percent
-## Diariamente                   770.2   2.8524        37.300
-## Algunas veces a la semana     701.4   2.5979        33.971
-## Algunas veces al mes          406.4   1.5053        19.684
-## Algunas veces al año          186.8   0.6917         9.045
-## NA's                        24935.2  92.3527              
-## Total                       27000.0 100.0000       100.000
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["frec"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["per"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lab"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"13648.84125","2":"81.6626475","3":"Diariamente","_rn_":"Diariamente"},{"1":"2541.42991","2":"15.2056787","3":"Algunas veces a la semana","_rn_":"Algunas veces a la semana"},{"1":"475.89791","2":"2.8473540","3":"Algunas veces al mes","_rn_":"Algunas veces al mes"},{"1":"47.52031","2":"0.2843197","3":"Algunas veces al año","_rn_":"Algunas veces al año"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp, con los datos ponderados, usando el código de `ggplot`.
+
+
+```r
+ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
+  geom_bar(stat="identity")+
+  geom_text(aes(label=paste(round(per, 1), "%", sep="")), color="white", 
+            position=position_stack(vjust=0.5), size=3)+
+  coord_polar("y")+
+  theme_void()+
+  scale_fill_discrete(name="Frecuencia de uso de Facebook")+
+   labs(title="Frecuencia con la que ve contenido en Facebbok", 
+        caption="Barómetro de las Américas por LAPOP, 2018/19")+
+  xlim(0.5, 2.5)
 ```
 
-Estas tablas también se pueden guardar en objetos y crear un dataframe con estos datos que incluyen el factor de expansión y luego crear gráficos que reproduzcan los porcentajes del reporte tal cual.
+![](Descriptivos2_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 
 # Cruce de variables
 
 En la tabla 3.1 (pag. 55) del reporte "El pulso de la democracia" se presenta los porcentajes de uso de las redes sociales por país.
-Para replicar esta tabla primero se tiene que definir la variable "pais" y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).
 Luego, en la página 56 se presenta un cuadro con el porcentaje de usuarios de redes sociales por características sociodemográficas, por ejemplo, urbano/rural, hombre, edad promedio, riqueza promedio y años de estudio.
+
 Empezaremos replicando los datos generales del uso de redes sociales que se reporta en el gráfico 3.1.
+Para replicar esta tabla primero se tiene que definir la variable "pais" y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).
 
 
 ```r
@@ -452,26 +462,6 @@ table(lapop18$smedia1r) #Facebook
 ## 
 ##    Sí    No 
 ## 15389 11573
-```
-
-```r
-table(lapop18$smedia4r) #Twitter
-```
-
-```
-## 
-##    Sí    No 
-##  2363 24558
-```
-
-```r
-table(lapop18$smedia7r) #Whatsapp
-```
-
-```
-## 
-##    Sí    No 
-## 17446  9569
 ```
 
 Sin embargo, la variable "usuario" de cada red social se calcula como condición de dos variables, como se vio en el documento sobre manejo de datos, con el siguiente código.
@@ -517,8 +507,8 @@ prop.table(table(lapop18$wa_user))*100
 ## 35.76561 64.23439
 ```
 
-Las diferencias entre estos porcentajes y los que aparecen en el reporte son debido a que no se incluye el factor de expansión.
-Para incluirlo se puede usar el comando `freq` de la librería `descr` que permite incluir la variable "weight1500".
+Las pequeñas diferencias entre estos porcentajes y los que aparecen en el reporte son debido a que no se incluye el factor de expansión.
+Para incluirlo se puede usar el comando `freq` de la librería `descr` que permite incluir la variable de expansión "weight1500".
 
 
 ```r
@@ -561,12 +551,13 @@ descr::freq(lapop18$wa_user, lapop18$weight1500, plot=F)
 ## Total     27000 100.000        100.00
 ```
 
-Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas entre cada red social y país.
-Estas tablas presentan el porcentaje de quienes usan y el porcentaje de los que no usan cada red social en cada país.
+Como en gráficos anteriores, con estos datos se puede crear un dataframe que se utilizaría para hacer los gráficos circulares mostrados en el reporte.
+
+Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas con el porcentaje de los que usan y el porcentaje de los que no usan cada red social en cada país.
 Estas tablas se guardan en objetos de R.
 Luego se unen estos objetos usando los comandos `cbind` para juntar las columnas y `as.data.frame` para unir las tablas como un dataframe.
 Esta tabla presenta también los porcentajes de los que No usan estas redes sociales.
-Para presentar una tabla que incluya solo a los que sí usan las redes sociales, se eliminan estas columnas, usando la especificación `[, c(-1,-3,-5)]`, que indica que no se eliminan filas y que sí se eliminen las columnas 1, 3 y 5.Finalmente, se cambia el nombre de las columnas del dataframe.
+Para presentar una tabla que incluya solo a los que sí usan las redes sociales, se eliminan estas columnas, usando la especificación `[, c(-1,-3,-5)]`, que indica que se quiere eliminar las columnas 1, 3 y 5.Finalmente, se cambia el nombre de las columnas del dataframe.
 
 
 ```r
@@ -744,7 +735,7 @@ Esta variable está codificada de la siguiente manera:
 Para construir una variable "dummy" llamada "hombre", de tal manera que hombre sea 1 y mujer sea 0, una forma de hacerlo es de manera algebraica (2-variable q1).
 De esta manera, ahora los hombres mantiene el valor 1 (2-1) y las mujeres pasar a ser 0 (2-2).
 En este caso, la nueva variable "hombre" se crea como una una variable numérica.
-Vamos a manterner a la variable como "num" para, más abajo, poder calcular la media de esta variable (cosa que no se puede hacer de una variable declarada como factor).
+Vamos a mantener a la variable como "num" para, más abajo, poder calcular la media de esta variable (cosa que no se puede hacer de una variable declarada como factor).
 
 
 ```r
@@ -763,7 +754,7 @@ La variable urbano/rural se llama "ur" en la base de datos y está codificada de
 1.  Urbano
 2.  Rural
 
-De la misma manera que con género, se usa la fórmula 2- variable ur, pero esta variable se convierte en factor y se etiqueta.
+De la misma manera que con género, se usa la fórmula 2- variable ur, pero esta variable sí se convierte en factor y se etiqueta.
 
 
 ```r
@@ -830,10 +821,12 @@ tabla1
 
 Estos son los porcentajes para los usuarios de Facebook, en la fila de la variable Hombre de la Tabla 3.2.
 Es decir, entre los no usuarios, 49.9% son hombres y entre los usuarios este porcentaje es 49.7%.
+Hasta aquí se ha reconstruido algunos resultados de la Tabla 3.2.
+Los demás datos pueden seguir siendo reconstruidos mediante combinaciones de las variables de usuarios de redes sociales y las variables sociodemográficas.
 
 # Gráfico de barras de dos variables
 
-Elcruce entre usuarios de Whatsapp y la variable urbano se puede ver mejor en un gráfico de barras agrupadas.
+El cruce entre usuarios de Whatsapp y la variable urbano se puede ver también en un gráfico de barras agrupadas.
 Lo primero que haremos es definir la variable "wa_user" como factor y etiquetarla.
 Luego, se requiere crear una tabla con los datos agrupados.
 Se puede usar el dataframe "t1" creado anteriormente, pero aquí usaremos nuevamente el operador "pipe" para recrear los datos.
