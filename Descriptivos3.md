@@ -35,14 +35,10 @@ En esta sección, se presentan datos sobre el uso de internet y el uso de redes 
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 En este documento se carga una base de datos recortada.
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Se recomienda limpiar el Environment antes de comenzar este módulo.
+
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
 
@@ -82,7 +78,7 @@ En este caso, además se ser numéricas, son variables de tipo dummy, es decir c
 En el caso de la variable "hombre" se ha definido 0=Mujer y 1=Hombre; y en el caso de la variable "urbano" se ha definido 0=Rural y 1=Urbano.
 Es una buena práctica nombrar a la variable dummy con un nombre que refiere a la categoría 1.
 Con variables dummy, cuando se calcula el promedio, el resultado es el mismo que el porcentaje de la categoría 1.
-Entonces, si se calcula `mean(lapop$hombre, na.rm=T)`, esta operación nos arroja el porcentaje (de 0 a 1) de la categoría 1, es decir de hombres.
+Entonces, si se calcula `mean(lapop$hombre, na.rm=T)`, esta operación nos arroja el porcentaje de la categoría 1, es decir de hombres.
 Se multiplica por 100 para ponerlo en formato de 0 a 100.
 
 
@@ -105,7 +101,45 @@ mean(lapop18$urban, na.rm=T)*100
 ```
 
 Estos son los datos que se presentan en la primera columna de resultados de la población general, excepto para la variable riqueza ("quintall") que no está disponible en esta versión recortada de la base de datos.
-Aquí se puede incluir algunas gráficas básicas, por ejemplo, usando el comando `hist` se puede reproducir el histograma de la variable "años de educación" (ed).
+Los resultados anteriores no incluyen el factor de expansión.
+Para incluirlo en los cálculos se puede usar el comando `weighted.mean`, que es parte de la librería `stats`, que viene precargada con R, por lo que no hay que instalarla.
+
+
+```r
+weighted.mean(lapop18$q2, lapop18$weight1500, na.rm=T)
+```
+
+```
+## [1] 39.98095
+```
+
+```r
+weighted.mean(lapop18$ed, lapop18$weight1500, na.rm=T)
+```
+
+```
+## [1] 9.931417
+```
+
+```r
+weighted.mean(lapop18$hombre, lapop18$weight1500, na.rm=T)*100
+```
+
+```
+## [1] 49.74826
+```
+
+```r
+weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
+```
+
+```
+## [1] 71.11895
+```
+
+# Gráficos descriptivos
+
+Luego de describir una variable numérica, también puede incluir algunas gráficas básicas, por ejemplo, usando el comando `hist` se puede producir el histograma de la variable "años de educación" (ed).
 
 
 ```r
@@ -118,14 +152,14 @@ Este mismo gráfico se puede reproducir usando el comando `ggplot`.
 Con este comando se tiene más flexibilidad con las opciones gráficas.
 En primer lugar, se define el dataframe que se usará y la variable "ed" en el eje X.
 Luego con la especificación `geom_histogram()` se define usar un histograma.
-Se define el ancho de la barra del histograma con `banwidth=2`.
+Se define el ancho de la barra del histograma con `banwidth=1`.
 Finalmente, este código permite etiquetar el eje X e Y e incluir un tema en blanco y negro, con `theme_bw()`.
 
 
 ```r
 library(ggplot2)
 ggplot(lapop18, aes(x=ed))+
-  geom_histogram(binwidth = 2)+
+  geom_histogram(binwidth = 1)+
   xlab("Años de educación")+
   ylab("Frecuencia")+
   theme_bw()
@@ -169,7 +203,7 @@ mean(lapop18$ed[lapop18$fb_user==1], na.rm=T)
 
 # Descriptivos de una variable numérica
 
-Otra manera de describir una variable numérica, descripción que incluye la media, es usando el comando `summary`.
+Otra manera de describir una variable numérica es usando el comando `summary`.
 Este comando reporta los estadísticos descriptivos más usados para una variable numérica: mínimo, máximo, cuartiles, media y mediana.
 Todos estos estadísticos permiten una comparación mejor entre ambos grupos, de usuarios y no usuarios de Facebook.
 Dentro de este comando se puede incluir la especificación `digits=3` para redondear los resultados, lo que evita tener que usar `round`, por ejemplo.
@@ -193,7 +227,7 @@ summary(lapop18$ed[lapop18$fb_user==1], na.rm=T, digits=3)
 ##     0.0     9.0    12.0    11.4    14.0    18.0    1240
 ```
 
-Sin embargo, el comando `summary` no brinda un estadística importante como la desviación estándar, una medida de dispersión o heterogeneidad.
+Sin embargo, el comando `summary` no brinda un estadístico importante como la desviación estándar, una medida de dispersión o heterogeneidad.
 Para poder tener los estadísticos anteriores y que se incluya la desviación estándar, entre otras medidas adicionales, se puede usar el comando `describeBy`, que es parte de la librería `psych`.
 Este comando pide la variable a describir ("ed") y la variable que forma los grupos ("fb_user") y brinda la media, la desviación estándar, la mediana, la media recortada, la desviación absoluta de la mediana, el mínimo y máximo.
 
@@ -275,6 +309,7 @@ Otra forma de comparar la distribución de edad por grupos de usuarios o no usua
 Con el comando `boxplot` se puede hacer estos gráficos.
 El comando pide primero la variable en el eje Y, luego la variable que define los grupos y el dataframe.
 Se puede etiquetar el eje X y Y con los nombres de las variables.
+Como la variable "wa_user" ha sido transformada a factor y etiquetada, ahora aparecen las etiquetas.
 
 
 ```r
