@@ -36,14 +36,10 @@ En particular, se reporta, en el gráfico 3.9, el grado de satisfacción con la 
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 En este documento se carga una base de datos recortada.
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Se recomiendo limpiar el Environment antes de proceder con esta sección.
+
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
 
@@ -68,16 +64,18 @@ Por lo tanto, se tiene que recodificar esta variable.
 En este caso se usa el comando `recode` y se tabula, mediante `table`, para verificar la recodificación.
 
 ```{r recodificar, message=FALSE, warning=FALSE}
-library(dplyr)
 library(car)
 table(lapop18$pn4)
-lapop18$pn4rr <- recode(lapop18$pn4, "1:2=100; 3:4=0")
+lapop18$pn4rr <- car::recode(lapop18$pn4, "1:2=100; 3:4=0")
 table(lapop18$pn4rr)
 ```
 
 La nueva variable "pn4rr" es una variable dummy.
 En este tipo de variables, la media corresponde a la proporción de respuestas 100.
 Es decir, si calculamos la media de esta variable, se está calculando el porcentaje para todos los entrevistados.
+En esta sección vamos a tratar a esta variable como si fuera una variable numérica.
+En sentido estricto es una variable categórica nominal.
+Los cálculos de desviaciones estándar y luego de intervalos de confianza, por lo tanto, son referenciales.
 
 ```{r describir}
 summary(lapop18$pn4rr)
@@ -95,7 +93,7 @@ ciMean(lapop18$pn4rr, na.rm=T)
 ```
 
 Estos resultados indican que el intervalo de confianza de la media de satisfacción con la democracia varía entre 38.9% y 40.1% con 95% de confianza.
-Se podría cambiar este valor por defecto a 99% de confianza agregando la especificación `conf = 0.99`.
+Se podría cambiar este valor por defecto a 99% de confianza agregando la especificación `conf = 0.99` al comando `ciMean`.
 
 # Satisfacción con la democracia por grupos de consumo de información en redes sociales
 
@@ -119,9 +117,9 @@ Las nuevas variables recodificadas, se convierten a factor y se etiquetan.
 table(lapop18$smedia2)
 table(lapop18$smedia5)
 table(lapop18$smedia8)
-lapop18$smedia2r <- recode(lapop18$smedia2, "1:2=1; 3:4=2; 5=3")
-lapop18$smedia5r <- recode(lapop18$smedia5, "1:2=1; 3:4=2; 5=3")
-lapop18$smedia8r <- recode(lapop18$smedia8, "1:2=1; 3:4=2; 5=3")
+lapop18$smedia2r <- car::recode(lapop18$smedia2, "1:2=1; 3:4=2; 5=3")
+lapop18$smedia5r <- car::recode(lapop18$smedia5, "1:2=1; 3:4=2; 5=3")
+lapop18$smedia8r <- car::recode(lapop18$smedia8, "1:2=1; 3:4=2; 5=3")
 lapop18$smedia2r <- as.factor(lapop18$smedia2r)
 lapop18$smedia5r <- as.factor(lapop18$smedia5r)
 lapop18$smedia8r <- as.factor(lapop18$smedia8r)
@@ -161,7 +159,7 @@ describeBy(lapop18$pn4rr, group=lapop18$smedia5r)
 ```
 
 Sin embargo, lo que nos interesa es calcular los intervalos de confianza para cada grupo.
-En el gráfico 3.9 del reporte se presenta la media de satisfacción con la democracia, graficado con un punto, y los intervalos de confianza de cada grupo, graficado con un área gris con límites inferior y superior.
+En el gráfico 3.9 del reporte se presenta la media de satisfacción con la democracia, mostrado como un punto, y los intervalos de confianza de cada grupo, mostrados como un área gris con límites inferior y superior.
 Se puede usar la librería `Rmisc` y el comando `group.CI` para calcular los intervalos de confianza de la variable satisfacción con la democracia por grupos de consumo de información en Facebook.
 
 ```{r ci por grupo, message=FALSE, warning=FALSE}
@@ -189,7 +187,7 @@ plotmeans(lapop18$pn4rr~lapop18$smedia5r,
 ```
 
 Esta opción muestra los intervalos de confianza pero se dificulta si se quiere graficar las barras.
-La librería `ggplot` nos brinda más opciones gráficas y nos permite graficar de manera similar al gráfico 3.9 del reporte, en barras, presentar los intervalos de confianza y agregar color a las barras.
+La librería `ggplot` nos brinda más opciones y nos permite graficar de manera similar al gráfico 3.9 del reporte, en barras, presentar los intervalos de confianza y agregar color.
 Para esto, primero se guarda un dataframe "tw.uso" con los datos de la media y los límites superior e inferior de cada grupo, usando el comando `group.CI`.
 Son los datos de este dataframe los que se usan con `ggplot` y se crea un gráfico que se guarda en un objeto "graf1".
 Con esta librería se agrega la capa `geom_bar()` para definir que se quiere un gráfico de barras de las variables especificadas en `aes`.
@@ -232,10 +230,7 @@ table(lapop18$anyhi)
 
 Partiendo de esta variable, se crea una variable que agrega las tres redes sociales, llamada "hi_lo_non".
 Primero, se crea esta variable como un vector de NAs.
-Luego se le imputa valores de 1, 2, 3 o NA, dependiendo de los valores de "hi_lo_non" o de los valores de las variables de redes sociales.
-Luego se crea una nueva variable de tipo factor, con idénticos valores que "hi_lo_non" y se etiqueta.
-La definición de la condicionalidad se trabaja mediante los corchetes `[...]`.
-De esta manera, se define las condiciones de la siguiente manera:
+Luego se le imputa valores de 1, 2, 3 o NA, dependiendo de los valores de "anyhi o de los valores de las variables de redes sociales. Luego se crea una nueva variable de tipo factor, con idénticos valores que "hi_lo_non" y se etiqueta. La definición de la condicionalidad se trabaja mediante los corchetes `[...]`. De esta manera, se define las condiciones de la siguiente manera:
 
 -   La variable "hi_lo_non es igual a 1 si la variable anyhi es mayor o igual a 1 (uso diario o algunas veces a la semana) = `lapop18$hi_lo_non[lapop18$anyhi>=1] <- 1`
 
@@ -246,14 +241,14 @@ De esta manera, se define las condiciones de la siguiente manera:
 Las siguiente reglas de codificación siguen la misma lógica de combinación de otras variables para imputar el valor 3 o NA.
 
 ```{r}
-lapop18$hi_lo_non <- NA
-lapop18$hi_lo_non[lapop18$anyhi>=1] <- 1
-lapop18$hi_lo_non[lapop18$anyhi==0] <- 2
-lapop18$hi_lo_non[lapop18$smedia1==2 & lapop18$smedia4==2 & lapop18$smedia7==2] <- 3
-lapop18$hi_lo_non[lapop18$smedia2==5 & lapop18$smedia5==5 & lapop18$smedia8==5] <- 3
-lapop18$hi_lo_non[lapop18$pais==3 & (lapop18$smedia2==5 | lapop18$smedia5==5 | lapop18$smedia8==5)] <- 3
-lapop18$hi_lo_non[lapop18$pais==3 & (lapop18$smedia1==2 | lapop18$smedia4==2 | lapop18$smedia7==2)] <- 3
-lapop18$hi_lo_non[lapop18$hi_lo_non != 1 & (lapop18$smedia2==NA | lapop18$smedia5==NA | lapop18$smedia8==NA)] <- NA
+lapop18$hi_lo_non <- NA #se crea un vector con NAs#
+lapop18$hi_lo_non[lapop18$anyhi>=1] <- 1 #Se codifica 1 a los que usan diariamente o algunas veces a la semana alguna red social#
+lapop18$hi_lo_non[lapop18$anyhi==0] <- 2 #Se codifica como 2 a los que usan algunas veces al mes y al año alguna red social#
+lapop18$hi_lo_non[lapop18$smedia1==2 & lapop18$smedia4==2 & lapop18$smedia7==2] <- 3 #Se codifica como 3 a los que no tiene redes sociales#
+lapop18$hi_lo_non[lapop18$smedia2==5 & lapop18$smedia5==5 & lapop18$smedia8==5] <- 3 #Se codifica como 3 a los que nunca usan ninguna red social#
+lapop18$hi_lo_non[lapop18$pais==3 & (lapop18$smedia2==5 | lapop18$smedia5==5 | lapop18$smedia8==5)] <- 3 #Se aplica un código particular a pais 3#
+lapop18$hi_lo_non[lapop18$pais==3 & (lapop18$smedia1==2 | lapop18$smedia4==2 | lapop18$smedia7==2)] <- 3 #Se aplica un código particular a pais 3#
+lapop18$hi_lo_non[lapop18$hi_lo_non != 1 & (lapop18$smedia2==NA | lapop18$smedia5==NA | lapop18$smedia8==NA)] <- NA #Se codifican los valores perdidos como perdidos#
 lapop18$hi_lo_non[lapop18$hi_lo_non != 1 & (lapop18$smedia1==NA | lapop18$smedia4==NA | lapop18$smedia7==NA)] <- NA
 lapop18$hi_lo_non[lapop18$smedia1==NA & lapop18$smedia4==NA & lapop18$smedia7==NA] <- NA
 lapop18$hi_lo_non[lapop18$hi_lo_non !=3 & lapop18$smedia2==NA & lapop18$smedia5==NA & lapop18$smedia8==NA] <- NA
@@ -264,7 +259,8 @@ prop.table(table(lapop18$hilon))*100
 
 Según estos datos, el 64.9% de entrevistados reportan un alto uso de redes sociales, mientras que, en el otro extremo, se tiene 31.6% que serían no usuarios de ninguna red social.
 Estos datos difieren un poco de los reportados en el Apéndice al reporte, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/Appendix_Material_for_2018-19_AmericasBarometer_Report-Comparative_Chapters_10.13.19.pdf), donde se reporte 65.34% de alto uso y 31.60% de no usuarios.
-Estas diferencias pueden ser debidas a diferencias en las reglas de codificación.
+Estas diferencias pueden ser debidas a diferencias en la interpretación de las reglas de codificación desde Stata a R.
+
 De la misma forma que se produjo el gráfico de media de satisfacción con la democracia por tipos de usuarios de Twitter usando `ggplot`, ahora se hará lo mismo pero para los usuarios de las tres redes sociales, variable "hilon".
 
 ```{r graf3.9}
