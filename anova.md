@@ -36,13 +36,8 @@ Este tipo de gráficos es uno de los más usados con los datos del Barómetro de
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 
-En este documento se carga una base de datos recortada, originalmente en formato SPSS (.sav).
+En este documento se carga nuevamente una base de datos recortada, originalmente en formato SPSS (.sav).
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
@@ -63,9 +58,8 @@ Para reproducir, los datos de este gráfico, primero se tiene que recodificar la
 
 
 ```r
-library(dplyr)
 library(car)
-lapop18$ing4r <- recode(lapop18$ing4, "1:4=0; 5:7=100")
+lapop18$ing4r <- car::recode(lapop18$ing4, "1:4=0; 5:7=100")
 table(lapop18$ing4r)
 ```
 
@@ -153,7 +147,7 @@ graf1
 
 # Considerando el factor de expansión
 
-El gráfico que se presenta difiere en resultados en algunos países, como Brasil y Colombia.
+El gráfico anterior difiere en resultados en algunos países, como Brasil y Colombia.
 Para reproducir el Gráfico 1.2 tomando en cuenta el factor de expansión se tiene que incluir un código que permita hacer los cálculos tomando en cuenta la variable "weight1500".
 Algunos comandos en R permiten incluir una variable como factor de expansión o como variable ponderadora.
 Por ejemplo, la librería `descr` incluye el comando `compmeans` que se puede usar para calcular la media (o proporción para una variable dummy) según grupos de otra variable, usando una variable de expansión.
@@ -181,7 +175,7 @@ Para reproducir el gráfico de barras, se requiere partir de estos datos y calcu
 
 En primer lugar, se crea un vector con los nombres que asignaremos a las columnas, las que asignamos con el comando `colnames`.
 El comando `compmeans` no crea una columna con los nombres de los países, por lo que se tiene que agregar una columna de nombre de países con el comando `row.names`.
-Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96 multiplicado por el error estándar).
+Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96, al 95% de confianza, multiplicado por el error estándar).
 
 
 ```r
