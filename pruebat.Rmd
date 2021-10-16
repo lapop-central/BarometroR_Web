@@ -35,13 +35,9 @@ En este informe se reportan los resultados sobre apoyo a la democracia electoral
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
-En este documento se carga una base de datos recortada.
+En este documento se carga nuevamente una base de datos recortada.
+Se recomienda limpiar el Environment antes de empezar esta sección.
+
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
@@ -61,19 +57,19 @@ Se especifica `na.rm=T` para que el comando no tome en cuenta los valores perdid
 
 ```{r recodificar}
 library(car)
-table(lapop18$ing4)
-lapop18$ing4r <- recode(lapop18$ing4, "1:4=0; 5:7=100")
+lapop18$ing4r <- car::recode(lapop18$ing4, "1:4=0; 5:7=100")
 mean(lapop18$ing4r, na.rm=T)
 ```
 
-Se observa que en general, el 57.7% de entrevistados apoyo a la democracia en el 2018.
+Se observa que en general, el 57.7% de entrevistados apoyo a la democracia en el conjunto de países evaluados en 2018.
 
 # Factores asociados al apoyo a la democracia
 
-El gráfico 1.5 muestra cómo varía el apoyo a la democracia por grupos demográficos y socioeconómicos.
+El gráfico 1.5 muestra cómo varía el apoyo a la democracia por grupos sociodemográficos.
 En particular, se presenta los resultados para la variable lugar de residencia que distingue el ámbito urbano y rural, y para la variable género, que distingue hombre y mujeres.
 Como vimos en la sección sobre intervalos de confianza, se puede calcular el porcentaje de apoyo por cada grupo.
-En primer lugar, vamos a crear nuevas variables de factor para lugar de residencia y género.
+En primer lugar, vamos a crear nuevas variables de factor para lugar de residencia y género, que son importadas como variables numéricas.
+Estas nuevas variables luego se etiquetan.
 
 ```{r factores}
 lapop18$genero <- as.factor(lapop18$q1)
@@ -85,11 +81,18 @@ levels(lapop18$ambito) <- c("Urbano", "Rural")
 De la misma manera que en el documento sobre intervalos de confianza, usamos el comando `tapply` para calcular el apoyo a la democracia promedio por grupos de género y de ámbito.
 
 ```{r apoyo por grupos}
-tapply(lapop18$ing4r, lapop18$genero, mean, na.rm=T) #Para urbano rural
-tapply(lapop18$ing4r, lapop18$ambito, mean, na.rm=T) #Para género
+tapply(lapop18$ing4r, lapop18$genero, mean, na.rm=T) #Para género
+tapply(lapop18$ing4r, lapop18$ambito, mean, na.rm=T) #Para urbano-rural
 ```
 
-Se puede reporducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
+Se puede reproducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
+Esto lo haremos con el comando `group.CI` que es parte de la librería `Rmisc`.
+Estos datos los guardamos en un objeto de tipo tabla de R llamado "apxgen".
+
+Esta tabla guarda los resultados de la media de apoyo a la democracia para cada grupo (columna "ing4r.mean") y los límites superior e inferior de los intervalos de confianza (columnas "ing4r.lower" y "ing4r.upper").
+También guarda la columna "genero" con los nombres de los grupos.
+
+Se reproduce el gráfico 1.5 usando el comando `ggplot` de la misma manera que en la sección anterior.
 
 ```{r apoyoxgen}
 library(Rmisc)
@@ -124,6 +127,7 @@ Si las barras se traslapan, eso significaría que no habrían diferencias estad�
 Por el contrario, si las barras grises no se traslapan, se podría decir que la diferencia entre los grupos es significativa al 95% de confianza.
 Sin embargo, para comprobar estas observaciones se tiene que correr una prueba estadística.
 Cuando la comparación es entre las medias de dos grupos, la prueba estadística apropiada es la prueba t de diferencias de medias.
+En esta sección estamos asumiendo que podemos tratar a la variable "ing4r" como una variable numérica, de la que se puede calcular la media y la desviación estándar, aunque esta variable en estricto es una de tipo cualitativa nominal.
 
 # Prueba t
 
@@ -170,7 +174,7 @@ El valor del p-value (4.59e-09) es menor a 0.05, por lo que se rechaza la hipót
 
 ## Prueba t para la diferencia de medias de apoyo a la democracia por grupos de ámbito
 
-En primer lugar se corre la prueba de Levene para analizar la igualdad de varianzas.
+De la misma manera que en el caso anterior, en primer lugar se corre la prueba de Levene para analizar la igualdad de varianzas.
 
 ```{r Levene 2}
 LeveneTest(lapop18$ing4r, lapop18$ambito)
