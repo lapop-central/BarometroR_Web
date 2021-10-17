@@ -3,26 +3,35 @@ title: "Contacto"
 output: 
   html_document:
     theme: flatly
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
+
+### Consultas sobre esta web
+
+Para consultas sobre los materiales incluidos en esta web o sobre bugs
+en alguno de los procedimientos, pueden contactar con
+[arturo.maldonado\@vanderbilt.edu](mailto:arturo.maldonado@vanderbilt.edu).
 
 ### LAPOP Lab en Redes Sociales
 
-Puede seguir las novedades de LAPOP Lab en las redes sociales, en [Facebook](https://www.facebook.com/LAPOPLab) y en [Twitter](https://twitter.com/Lapop_Barometro). 
+Puede seguir las novedades de LAPOP Lab en sus redes sociales, en
+[Facebook](https://www.facebook.com/LAPOPLab) y en
+[Twitter](https://twitter.com/Lapop_Barometro).
 
 ### Contáctenos
 
-Dirección Postal:
-LAPOP
-PMB 0505
-Nashville, TN 37203-5721
+Dirección Postal: LAPOP PMB 0505 Nashville, TN 37203-5721
 
-Dirección física:
-LAPOP
-230 Appleton Place
-Suite 304, The Commons
+Dirección física: LAPOP 230 Appleton Place Suite 304, The Commons
 Nashville, TN 37203
 
-Otra información de contacto
+Otra información de contacto:
+
 Teléfono: (615) 322-4033
+
 Fax: (615) 343-6003
-Correo electrónico: rubi.e.arana@vanderbilt.edu
+
+Correo electrónico:
+[rubi.e.arana\@vanderbilt.edu](mailto:rubi.e.arana@vanderbilt.edu){.email}
