@@ -37,13 +37,10 @@ Esta evaluación se hace mediante tablas cruzadas (o de contingencia) y se eval�
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 
-En este documento se carga una base de datos recortada, originalmente en formato SPSS (.sav).
+En este documento se carga nuevamente una base de datos recortada, originalmente en formato SPSS (.sav).
+Se recomiendo limpiar el Environment antes de iniciar esta sección.
+
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería rio y el comando import se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
@@ -58,7 +55,7 @@ lapop18 <- subset(lapop18, pais<=35)
 
 Desde la página 20 del reporte El Pulso de la Democracia se hace una evaluación de la democracia en la práctica.
 En particular, esta sección del reporte usa la variable "pn4".
-Esta variable está fraseada: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en [país]?"
+Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en [país]?"
 
 En el reporte se indica que esta variable se recodifica como una variable dicotómica para poder trabajar con porcentajes.
 En esta sección vamos a trabajar con la variable original, que es una variable categórica (o de factor) ordinal.
@@ -101,7 +98,7 @@ Si se anida solamente, este comando calcula las proporciones sobre el total de o
 prop.table(table(lapop18$satis, lapop18$genero))
 ```
 
-Estas proporciones no son de utilidad para la comparación que queremos hacer.
+Estas proporciones no son de mucha utilidad para la comparación que queremos hacer.
 Lo que requerimos son las distribuciones condicionales de "satisfacción con la democracia" por cada grupo de género.
 Es decir, calcular los porcentajes por cada columna.
 Para que `prop.table` calcule estas proporciones, se tiene que agregar la especificación `(…, 2)`.
@@ -109,11 +106,10 @@ Se multiplica por 100 para pasar de proporciones a porcentajes.
 También se puede anidar todo dentro del comando `addmargins` para verificar la suma de proporciones sobre las columnas, con la especificación `(…, 1)`.
 
 ```{r tablas3}
-prop.table(table(lapop18$satis, lapop18$genero))
 addmargins(prop.table(table(lapop18$satis, lapop18$genero), 2)*100, 1)
 ```
 
-En la segunda tabla se muestra que el 6.8% de los hombres se encuentra muy satisfecho con la democracia, un porcentaje muy similar al de las mujeres.
+En la tabla se muestra que el 6.8% de los hombres se encuentra muy satisfecho con la democracia, un porcentaje muy similar al de las mujeres.
 El 44% de los hombres se encuentra insatisfecho con la democracia.
 En esta categoría, las mujeres tienen un porcentaje mayor (48.4%).
 
@@ -149,7 +145,7 @@ La opción por defecto dentro de esta especificación es `width=NULL`, pero de e
 
 Por defecto la leyenda incluye el nombre de la columna con los datos de género, que es "Var2".
 Para cambiar este nombre, se usa el comando `labs(fill="Género")` para nombrar adecuadamente la leyenda.
-FInalmente, se etiqueta el eje Y y X con `ylab` y `xlab.`
+Finalmente, se etiqueta el eje Y y X con `ylab` y `xlab.`
 
 ```{r grafbar}
 library(ggplot2)
@@ -224,62 +220,19 @@ prueba$observed
 prueba$expected
 ```
 
-La prueba de $\chi^2$ nos indica si existe una relación de dependencia o no entre dos variables categóricas.
-Esta prueba no indica la fuerza de la relación entre estas variables.
-
-# Medidas de asociación de satisfacción con la democracia según género
-
-Para hacer una evaluación de la fuerza de la relación se tiene que usar otras medidas de asociación que indican la magnitud de la relación.
-Puede darse el caso de relaciones con $\chi^2$ grandes (es decir, con p-values pequeños), pero con asociaciones débiles.
-Esto se puede observar, por ejemplo, cuando el N de la muestra es grande.
-
-En nuestro ejemplo, las diferencias entre los porcentajes de satisfacción con la democracia entre hombres y mujeres no son muy grandes y, sin embargo, el p-value nos lleva a concluir que existe una asociación.
-Es probable que este sea un caso de una asociación, pero con una fuerza débil.
-
-Una medida de asociación es un estadístico que resume esta magnitud de la dependencia entre dos variables categóricas.
-El rango de estos estadísticos varía desde asociaciones débiles, generalmente cercanas a 0, hasta asociaciones fuertes, más cercanas a 1.
-Para variables nominales, las medidas de asociación varían entre 0 y 1.
-Para variables ordinales, las medidas de asociación también indican la dirección[^1] de la relación, por lo que varían entre -1 y 1.
-Los valores negativos indican una relación inversa entre las variables (a mayor valor de la variable independiente, un menor valor de la variable dependiente) y los positivos una relación directa entre las variables (a mayor valor de la variable independiente, un mayor valor de la variable dependiente).
-
-[^1]: Se tiene que tener atención a la codificación de la variable.
-    Una medida de asociación será positiva (negativa) para una relación directa (inversa), si las variables están codificadas de tal manera que un código mayor indica una categoría hacia algo mayor en la variable.
-
-En nuestro ejemplo tenemos una variable ordinal (satisfacción con la democracia) y una variable nominal (género), por lo que no se puede hablar de direccionalidad de la relación.
-En el caso de variables nominales tenemos varias alternativas de medidas de asociación, como el Coeficiente de Contingencia o la V de Cramer, ambas variando entre 0 y 1.
-
-Para hacer esta evaluación en R, se guarda la tabla cruzada en un objeto y se usa el comando `assocstats` de la librería `vcd` para calcular las medidas de asociación.
-
-```{r asoc}
-library(vcd)
-tabla <- table(lapop18$satis, lapop18$genero)
-assocstats(tabla)
-```
-
-Ambas medidas resultan en un valor de 0.056.
-Este resultado está mucho más cerca de 0 que de 1, por lo que podemos concluir que estamos ante una relación débil.
-De manera convencional se asume que:
-
--   Medidas de asociación entre 0 y 0.3 son relaciones débiles.
-
--   Medidas de asociación entre 0.3 y 0.6 son relaciones moderadas.
-
--   Medidas de asociación entre 0.6 y 1 son relaciones fuertes.
-
-Se tiene que notar que estos límites son arbitrarios, aunque convencionales, y que, cuando se trabaja con datos de nivel individual, se suele observar valores bajos de asociación.
-
 # Tabla cruzada de satisfacción con la democracia según nivel educativo
 
 El Gráfico 1.14 del reporte muestra los datos de satisfacción con la democracia (según la variable recodificada dummy) por niveles educativo.
-Como según ejemplo, aquí vamos a replicar esa relación usando la variable original de tipo factor.
+Como segundo ejemplo, aquí vamos a replicar esa relación usando la variable original de tipo factor.
 
 Lo primero es recodificar la variable educación.
 La variable original "ed" está recogida como una variable numérica (años de estudio).
 Esta variable tiene valores que van desde 0 a 18.
+Se recodifica de tal manera que aquellos con cero años de educación se les asigna el valor de 0 "Ninguna", aquellos entre 1 y 6 años de educación se les asigna el valor 1 "Primaria", aquellos entre 7 y 11 años de educación se les asigna el valor de 2 "Secundaria" y entre 12 y 18 años de educación el valor de 3 "Superior".
 
 ```{r reco ed}
 library(car)
-lapop18$educ <- recode(lapop18$ed, "0=0; 1:6=1; 7:11=2; 12:18=3")
+lapop18$educ <- car::recode(lapop18$ed, "0=0; 1:6=1; 7:11=2; 12:18=3")
 lapop18$educ <- as.factor(lapop18$educ)
 levels(lapop18$educ) <- c("Ninguna", "Primaria", "Secundaria", "Superior")
 table(lapop18$educ)
@@ -299,7 +252,7 @@ tabla2 <- as.data.frame(prop.table(table(lapop18$satis, lapop18$educ), 2)*100)
 tabla2
 ```
 
-En este caso, como tenemos 4 categorías para satisfacción con la democracia y otras 4 para nivele educativo, un gráfico de barras separadas crearía 16 barras, lo que complicaría la comparación.
+En este caso, como tenemos 4 categorías para satisfacción con la democracia y otras 4 para niveles educativo, un gráfico de barras separadas crearía 16 barras, lo que complicaría la comparación.
 Por eso, en este caso, se prefiere el tipo de barras apiladas.
 
 ```{r barapiladased}
