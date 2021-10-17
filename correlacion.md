@@ -37,16 +37,9 @@ En primer lugar, se cargarán los datos del Barómetro de las Américas 2018/19.
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0.dta" en versión para STATA.
-Se descarga la base de datos en formato zip, la que se descomprime en formato .dta.
-Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
 
-En este documento se carga una base de datos recortada, originalmente en formato SPSS (.sav).
-Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
-Mediante la librería rio y el comando import se puede importar esta base de datos desde este repositorio.
-Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
+En este documento se carga nuevamente una base de datos recortada, originalmente en formato SPSS (.sav).
+Se recomienda limpiar el Environment antes de iniciar esta sección.
 
 
 ```r
@@ -62,6 +55,8 @@ donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro 
 En este informe, se presenta el Gráfico 1.3.
 Este es un gráfico de dispersión que relaciona la variable apoyo a la democracia (del Barómetro de las Américas) con el índice de democracia electoral del proyecto [V-Dem](https://www.v-dem.net/en/).
 Este gráfico muestra "la relación entre el nivel de apoyo a la democracia y la calificación de la democracia en cada país" (p. 12).
+
+![](Graf1.3.png){width="492"}
 
 Para reproducir este gráfico se tiene que agregar los resultados por país de la variable ING4.
 "Cambiando de tema, la democracia puede tener problemas, pero es mejor que cualquier otra forma de gobierno. ¿En qué medida está de acuerdo o en desacuerdo con esta afirmación?".
@@ -79,7 +74,14 @@ Esta base de datos también se encuentra alojada en el repositorio "materials_ed
 
 ```r
 vdem <- import("https://raw.github.com/lapop-central/materials_edu/main/vdem.xlsx")
+vdem
 ```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["country"],"name":[1],"type":["chr"],"align":["left"]},{"label":["pais"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["vdem2018"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["vdem2019"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Mexico","2":"1","3":"0.725","4":"0.710","_rn_":"1"},{"1":"Guatemala","2":"2","3":"0.615","4":"0.594","_rn_":"2"},{"1":"El Salvador","2":"3","3":"0.641","4":"0.631","_rn_":"3"},{"1":"Honduras","2":"4","3":"0.366","4":"0.360","_rn_":"4"},{"1":"Nicaragua","2":"5","3":"0.244","4":"0.245","_rn_":"5"},{"1":"Costa Rica","2":"6","3":"0.879","4":"0.889","_rn_":"6"},{"1":"Panama","2":"7","3":"0.758","4":"0.783","_rn_":"7"},{"1":"Colombia","2":"8","3":"0.680","4":"0.667","_rn_":"8"},{"1":"Ecuador","2":"9","3":"0.637","4":"0.673","_rn_":"9"},{"1":"Bolivia","2":"10","3":"0.587","4":"0.537","_rn_":"10"},{"1":"Peru","2":"11","3":"0.779","4":"0.784","_rn_":"11"},{"1":"Paraguay","2":"12","3":"0.587","4":"0.601","_rn_":"12"},{"1":"Chile","2":"13","3":"0.852","4":"0.773","_rn_":"13"},{"1":"Uruguay","2":"14","3":"0.853","4":"0.858","_rn_":"14"},{"1":"Brasil","2":"15","3":"0.737","4":"0.674","_rn_":"15"},{"1":"Argentina","2":"17","3":"0.834","4":"0.812","_rn_":"16"},{"1":"Rep. Dom.","2":"21","3":"0.536","4":"0.598","_rn_":"17"},{"1":"Jamaica","2":"23","3":"0.799","4":"0.810","_rn_":"18"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 
 Para reproducir el Gráfico 1.3 tenemos que recodificar la variable la variable ING4 de acuerdo a la regla indicada en el reporte:
 
@@ -90,7 +92,7 @@ Para reproducir el Gráfico 1.3 tenemos que recodificar la variable la variable 
 
 ```r
 library(car)
-lapop18$apoyo <- recode(lapop18$ing4, "1:4=0; 5:7=100")
+lapop18$apoyo <- car::recode(lapop18$ing4, "1:4=0; 5:7=100")
 table(lapop18$apoyo)
 ```
 
@@ -127,7 +129,14 @@ Se renombra la columna añadida pues por defecto se nombra como la variable.
 ```r
 df <- cbind(df, vdem$vdem2019)
 colnames(df)[7] <- "vdem2019"
+df
 ```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["pais"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["N"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["apoyo"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["se"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["ci"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["vdem2019"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"1513","3":"62.72307","4":"48.37013","5":"1.243534","6":"2.439235","7":"0.710"},{"1":"2","2":"1524","3":"48.88451","4":"50.00396","5":"1.280890","6":"2.512496","7":"0.594"},{"1":"3","2":"1465","3":"58.56655","4":"49.27750","5":"1.287448","6":"2.525440","7":"0.631"},{"1":"4","2":"1493","3":"45.01005","4":"49.76705","5":"1.287989","6":"2.526461","7":"0.360"},{"1":"5","2":"1496","3":"51.53743","4":"49.99307","5":"1.292540","6":"2.535385","7":"0.245"},{"1":"6","2":"1458","3":"72.35940","4":"44.73735","5":"1.171633","6":"2.298267","7":"0.889"},{"1":"7","2":"1537","3":"53.80612","4":"49.87115","5":"1.272074","6":"2.495186","7":"0.783"},{"1":"8","2":"1619","3":"59.78999","4":"49.04734","5":"1.218967","6":"2.390921","7":"0.667"},{"1":"9","2":"1512","3":"54.43122","4":"49.81973","5":"1.281225","6":"2.513169","7":"0.673"},{"1":"10","2":"1630","3":"49.14110","4":"50.00796","5":"1.238641","6":"2.429496","7":"0.537"},{"1":"11","2":"1496","3":"49.26471","4":"50.01131","5":"1.293012","6":"2.536310","7":"0.784"},{"1":"12","2":"1478","3":"51.21786","4":"50.00208","5":"1.300621","6":"2.551262","7":"0.601"},{"1":"13","2":"1550","3":"63.87097","4":"48.05295","5":"1.220546","6":"2.394097","7":"0.773"},{"1":"14","2":"1529","3":"76.19359","4":"42.60379","5":"1.089543","6":"2.137158","7":"0.858"},{"1":"15","2":"1471","3":"59.82325","4":"49.04221","5":"1.278685","6":"2.508243","7":"0.674"},{"1":"17","2":"1495","3":"71.10368","4":"45.34325","5":"1.172714","6":"2.300340","7":"0.812"},{"1":"21","2":"1474","3":"59.22659","4":"49.15800","5":"1.280400","6":"2.511601","7":"0.598"},{"1":"23","2":"1346","3":"51.18871","4":"50.00445","5":"1.362969","6":"2.673777","7":"0.810"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
 
 # Diagrama de dispersión
 

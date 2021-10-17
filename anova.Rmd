@@ -55,6 +55,8 @@ lapop18 <- subset(lapop18, pais<=35)
 El gráfico 1.2 del reporte muestra el promedio del apoyo a la democracia electoral para cada uno de los 18 países analizados.
 Presenta, además, los intervalos de confianza por cada país, en forma de una barra gris, que indica el intervalo inferior y superior de este intervalo, con un punto que indica el valor de la media.
 
+![](Graf1.2.png){width="363"}
+
 Para reproducir, los datos de este gráfico, primero se tiene que recodificar la variable, de la misma manera que se hizo en la sección sobre [intervalos de confianza](https://arturomaldonado.github.io/BarometroEdu_Web/IC.html).
 
 ```{r recodificar, message=FALSE, warning=FALSE}

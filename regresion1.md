@@ -35,12 +35,11 @@ En ese capítulo se analiza una medición de apoyo a la democracia.
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php) En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R.
+Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
 
+Se recomienda limpiar el Environment antes de iniciar esta sección.
 En este documento se carga una base de datos en formato RData.
-Este formato, nativo de R, es más eficiente en términos de espacio de almacenamiento y permite alojarlo en GitHub.
+Este formato, nativo de R, es más eficiente en términos de espacio de almacenamiento lo que permite alojarlo en GitHub (que tiene restricciones de tamaño de archivos).
 Esta base contiene la información de la ronda 2018 para todas las variables.
 Esta base de datos se encuentra alojada en el repositorio"materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
@@ -83,9 +82,9 @@ lapop18$b6rec <- ((lapop18$b6-1)/6)*100
 
 Con estas nuevas variables, se calcula la media por cada observación de la base de datos.
 Esto se puede hacer con el comando `rowMeans`, donde se indica las columnas que se quiere promediar con la especificación `[, 1370:1374]`.
+El promedio de las 5 variables recodificadas se guarda en un nuevo objeto "apoyo".
 
 Se puede asumir que esta nueva variable es numérica, por lo que se puede describir con el comando `summary`.
-El promedio de las 5 variables recodificadas se guarda en un nuevo objeto "apoyo".
 El comando `summary` muestra que esta nueva variable tiene un mínimo de 0 y máximo de 100.
 
 
@@ -100,8 +99,8 @@ summary(lapop18$apoyo)
 ```
 
 Se comprueba que el promedio reportado es de 48.8 unidades, similar al que aparece en el Gráfico 2.1 para el 2018.
-El Gráfico 2.4 muestra las diferencias entre diferentes grupos sociodemográficos en los niveles de apoyo al sistema.
-Se verá más adelante cómo las diferencias entre hombres y mujeres o entre los ámbitos urbano y rural se pueden evaluar mediante la prueba t y también mediante el análisis de regresión, que sería un método que engloba tanto a la prueba t como a ANOVA.
+
+![](Graf2.1.png){width="654"}
 
 # Determinantes de apoyo al sistema
 
@@ -125,9 +124,9 @@ Los resultados se presentan en un tipo de gráfico que es común en los reportes
 
 El Gráfico 2.10 muestra los coeficientes de cada variable y el intervalo de confianza al 95% de este estimado.
 Se incluye una línea vertical en el punto 0.
-Si un intervalo de confianza cruza esta línea vertical, se puede decir que no tiene una relación estadísticamente significativa con la variable dependiente de apoyo al sistema.
+Si un intervalo de confianza cruza esta línea vertical, se puede decir que la variable independiente no tiene una relación estadísticamente significativa con la variable dependiente de apoyo al sistema.
 Los intervalos de confianza que no cruzan esta línea y que se encuentran a la derecha (izquierda) de esta línea tienen una relación positiva (negativa) con el apoyo al sistema, es decir, cuando aumenta esta variable, el apoyo al sistema promedio aumenta (disminuye).
-En este ejemplo, las cinco variables son estadísticamente significativas y muestran tienen una relación positiva con el apoyo al sistema.
+En este ejemplo, las cinco variables son estadísticamente significativas y muestran una relación positiva con el apoyo al sistema.
 
 También se muestra el valor del coeficiente de determinación $R^2$.
 Este coeficiente indica la bondad de ajuste de un modelo a la variable dependiente.
@@ -141,7 +140,7 @@ Este N no necesariamente es igual al tamaño de muestra, debido a que los valore
 
 En primer lugar, empezaremos por la relación entre una variable independiente y una dependiente.
 Para esto, usaremos el apoyo al sistema como variable dependiente y a la confianza en el ejecutivo como variable independiente.
-Este es un ejercicio parcial del que se encuentra en el Gráfico 2.10, donde se usan 5 variables independientes como predictores del apoyo al sistema en un modelo de regresión multivariado.
+Este es un ejercicio parcial al que se encuentra en el Gráfico 2.10, donde se usan 5 variables independientes como predictores del apoyo al sistema en un modelo de regresión multivariado.
 
 En la sección anterior se calculó la variable dependiente.
 Luego de calcular la variable dependiente, se procede a calcular la principal variable independiente, la confianza en el ejecutivo.
@@ -161,7 +160,7 @@ summary(lapop18$ejec)
 ```
 
 Para evaluar la relación entre la variable de confianza en el ejecutivo y el apoyo al sistema se puede calcular un modelo de regresión lineal.
-El modelo se calcula con el comando `lm` donde se indica la variable Y y luego la X.
+El modelo se calcula con el comando `lm` (de linear model) donde se indica la variable Y y luego la X.
 Este modelo de guarda en un objeto "modelo1" el que se puede describir con el comando `summary`.
 
 
@@ -192,7 +191,7 @@ summary(modelo1)
 ## F-statistic: 1.05e+04 on 1 and 26141 DF,  p-value: < 2.2e-16
 ```
 
-Estos resultados pueden ser presentados de una manera más académica mediante diferentes comandos.
+Estos resultados pueden ser presentados de una manera más formal mediante diferentes comandos.
 Aquí proponemos usar el comando `summ` de la librería `jtools`.
 
 
@@ -296,3 +295,8 @@ En este caso, esos resultados son iguales a la prueba de significancia del coefi
 
 Esta prueba es más pertinente cuando se analiza un modelo de regresión lineal multivariado.
 En un análisis multivariado, este test de significancia sería el primer paso en el análisis sobre el modelo en su conjunto.
+
+# Resumen
+
+En este documento se ha trabajado un modelo de regresión lineal simple, usando una variable independiente numérica para explicar una variable dependiente numérica.
+Luego se ha presentado los principales elementos del modelo de regresión lineal simple, como si existe relación, la dirección de la relación, el coeficiente de determinación, la ecuación de la recta y la predicción.

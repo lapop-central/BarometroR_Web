@@ -77,6 +77,9 @@ lapop18$smedia8r = as.factor(lapop18$smedia8)
 La nota a pie 15 del reporte indica que "los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales" (p. 64).
 Por este motivo, el gráfico 3.3 de frecuencia de uso de redes sociales (pag. 57) solo incluyen las categorías "Diariamente", "Algunas veces a la semana", "Algunas veces al mes" y "Algunas veces al año".
 Se excluya la categoría "Nunca".
+
+![](Graf3.3.png){width="398"}
+
 En las nuevas variables vamos a declarar el valor 5, correspondiente a "nunca", como "NA", es decir, como valor perdido en R.
 
 ```{r eliminar nunca}

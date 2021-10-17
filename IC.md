@@ -51,6 +51,9 @@ lapop18 <- subset(lapop18, pais<=35)
 # Descriptivos de la satisfacción con la democracia
 
 El gráfico 3.9 presenta el porcentaje de entrevistados que está satisfecho con la democracia por tipo de usuarios de redes sociales.
+
+![](Graf3.9.png){width="413"}
+
 La variable satisfacción con la democracia se llama "pn4" y está codificada de la siguiente manera:
 
 1.  Muy satisfecho

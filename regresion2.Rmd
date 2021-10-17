@@ -34,9 +34,12 @@ En ese capítulo se analiza una medición de apoyo a la democracia.
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 Pueden descargar los datos de manera libre [aquí](http://datasets.americasbarometer.org/database/login.php).
-En este enlace, se pueden registrar o entrar como "Free User".
-En el buscador, se puede ingresar el texto "2018".
-Ahí se tendrá acceso a la base de datos completa "2018 LAPOP AmericasBarometer Merge_v1.0_W.dta en versión para STATA. Se descarga la base de datos en formato zip, la que se descomprime en formato .dta. Una vez descargada y guardada en el directorio de trabajo, se tiene que leer la base de datos como un objeto dataframe en R. En este documento se carga una base de datos en formato RData. Este formato es eficiente en términos de espacio de almacenamiento. Esta base de datos se encuentra alojada en el repositorio"materials_edu" de la cuenta de LAPOP en GitHub. Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
+
+Se recomienda limpiar el Environment antes de iniciar esta sección.
+En este documento nuevamente se carga una base de datos en formato RData.
+Este formato es eficiente en términos de espacio de almacenamiento.
+Esta base de datos se encuentra alojada en el repositorio"materials_edu" de la cuenta de LAPOP en GitHub.
+Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
 
 ```{r base, message=FALSE, warning=FALSE}
 library(rio)
@@ -48,6 +51,9 @@ lapop18 <- subset(lapop18, pais<=35)
 
 En la sección anterior vimos que la sección del reporte sobre Legitimidad Democrática presenta un modelo de regresión múltiple con los predictores del índice de apoyo al sistema.
 El Gráfico 2.10 muestra los resultados para 5 variables independientes, aunque el modelo completo incluye controles socioeconómicos y demográficos.
+
+![](Graf2.10.png){width="475"}
+
 Las 5 variables mostradas en el gráfico son: eficacia externa, tolerancia política, confianza en el ejecutivo, confianza en la comunidad y confianza en el gobierno local.
 
 La base de datos incluye la variable "psar" que mide el apoyo al sistema y que en la sección anterior se procedió a calcular desde las variables originales.

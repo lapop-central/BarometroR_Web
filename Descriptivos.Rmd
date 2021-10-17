@@ -145,7 +145,10 @@ knitr::kable(tabla, format="markdown")
 
 # Graficar las variables
 
-En la página 54 del reporte se observa que se reportan estos datos mediante un gráfico de sectores circulares.
+En el Gráfico 3.1 del reporte se observa que se reportan estos datos mediante un gráfico de sectores circulares.
+
+![](Graf3.1.png){width="418"}
+
 Se puede reproducir ese gráfico usando el comando `pie` que es parte de la sintaxis básica de R.
 Dentro de este comando se puede anidar el comando `table` para graficar estos valores.
 

@@ -53,6 +53,9 @@ lapop18 <- subset(lapop18, pais<=35)
 # Descriptivos para una variable numérica
 
 En la tabla 3.2 del reporte "El pulso de la democracia" se presentan los promedios generales de las variables edad ("q2" en la base de datos) y años de estudio ("ed" en la base de datos) para la población general.
+
+![](Tabla3.2.png){width="691"}
+
 Se usa el comando `mean` para calcular el promedio y se usa `na.rm=T` debido a que estas variables cuentan con valores perdidos.
 
 ```{r media}
@@ -114,7 +117,7 @@ ggplot(lapop18, aes(x=ed))+
 
 # Media por grupos
 
-En la página 56 del reporte, se presentan la media de estas variables numéricas por grupos de las variables relacionadas a las redes sociales.
+En la Tabla3.2 del reporte, se presentan la media de estas variables numéricas por grupos de las variables relacionadas a las redes sociales.
 Es decir, por ejemplo, el promedio de años de estudio para los usuarios de Facebook y para los no usuarios de Facebook.
 Si queremos calcular el promedio de años de estudio para los usuarios de Facebook, primero se calcula esta variable, de la misma manera que en secciones anteriores, con el comando `ifelse`.
 

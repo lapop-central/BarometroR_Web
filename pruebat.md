@@ -71,6 +71,9 @@ Se observa que en general, el 57.7% de entrevistados apoyo a la democracia en el
 
 El gráfico 1.5 muestra cómo varía el apoyo a la democracia por grupos sociodemográficos.
 En particular, se presenta los resultados para la variable lugar de residencia que distingue el ámbito urbano y rural, y para la variable género, que distingue hombre y mujeres.
+
+![](Graf1.5.png){width="333"}
+
 Como vimos en la sección sobre intervalos de confianza, se puede calcular el porcentaje de apoyo por cada grupo.
 En primer lugar, vamos a crear nuevas variables de factor para lugar de residencia y género, que son importadas como variables numéricas.
 Estas nuevas variables luego se etiquetan.
