@@ -302,7 +302,44 @@ plot_summs(modelo7, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecuti
                             "Confianza en el gobierno local"="b32r"))
 ```
 
-De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por páis.
+De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por país.
+
+# Incluyendo el efecto de diseño
+
+Los cálculos realizados no incluyen el efecto de diseño muestral.
+Para hacer esto se debe considerar el factor de expansión.
+Se hizo una introducción al uso del factor de expansión [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html).
+En este parte usaremos la librería `survey`.
+
+Usaremos el comando `svydesign` (similar al comando svyset en STATA).
+Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión.
+Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
+
+```{r diseno, message=FALSE, warning=FALSE}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+La librería `survey` incluye el comando `svyglm` que permite calcular un modelo de regresión lineal múltiple.
+Las mismas variables usadas en el modelo 7 se pueden incluir en este comando.
+Se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos.
+Este cálculo se guarda en un objeto "modelo8".
+Se usa el comando `summ` de la librería `jtools` para describir el modelo.
+
+```{r modelo expansion}
+modelo8 <- svyglm(psar ~ eff1r + ejec + tolr + it1r + b32r + factor(pais) + 
+    factor(edr) + factor(quintall) + factor(urban) + factor(mujer) + 
+    factor(edad), design=lapop.design, na.action = na.omit)
+summ(modelo8)
+```
+
+De la misma manera que con el modelo 7, estos resultados también se pueden graficar usando el comando `plot_summs`, seleccionando las variables que se quieren mostrar.
+
+```{r grafico expansion}
+plot_summs(modelo8, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecutivo"= "ejec",
+                            "Tolerancia política"="tolr", "Confianza en la comunidad"="it1r",
+                            "Confianza en el gobierno local"="b32r"))
+```
 
 # Resumen
 
@@ -312,4 +349,6 @@ Este modelo se ha presentado de manera estándar en una tabla de resultados y me
 
 De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.
 
-Finalmente, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+Luego, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+
+Finalmente, se ha visto cómo replicar el modelo completo incluyendo el factor de expansión para incluir el efecto de diseño.
