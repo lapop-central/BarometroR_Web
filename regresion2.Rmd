@@ -296,7 +296,7 @@ summary(modelo7)
 El Gráfico 2.10 incluye estos controles, pero no los presenta en el gráfico.
 Esto se puede replicar con el comando `polt_summs`, que puede graficar el modelo 7, pero se le indica qué coeficientes incluir en el gráfico con el comando `coefs`.
 
-```{r}
+```{r grafico modelo completo}
 plot_summs(modelo7, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecutivo"= "ejec",
                             "Tolerancia política"="tolr", "Confianza en la comunidad"="it1r",
                             "Confianza en el gobierno local"="b32r"))
