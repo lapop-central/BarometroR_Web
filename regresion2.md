@@ -705,7 +705,104 @@ plot_summs(modelo7, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecuti
 
 ![](regresion2_files/figure-html/grafico modelo completo-1.png)<!-- -->
 
-De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por páis.
+De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por país.
+
+# Incluyendo el efecto de diseño
+
+Los cálculos realizados no incluyen el efecto de diseño muestral.
+Para hacer esto se debe considerar el factor de expansión.
+Se hizo una introducción al uso del factor de expansión [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html).
+En este parte usaremos la librería `survey`.
+
+Usaremos el comando `svydesign` (similar al comando svyset en STATA).
+Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión.
+Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+La librería `survey` incluye el comando `svyglm` que permite calcular un modelo de regresión lineal múltiple.
+Las mismas variables usadas en el modelo 7 se pueden incluir en este comando.
+Se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos.
+Este cálculo se guarda en un objeto "modelo8".
+Se usa el comando `summ` de la librería `jtools` para describir el modelo.
+
+
+```r
+modelo8 <- svyglm(psar ~ eff1r + ejec + tolr + it1r + b32r + factor(pais) + 
+    factor(edr) + factor(quintall) + factor(urban) + factor(mujer) + 
+    factor(edad), design=lapop.design, na.action = na.omit)
+summ(modelo8)
+```
+
+```
+## MODEL INFO:
+## Observations: 24084
+## Dependent Variable: psar
+## Type: Survey-weighted linear regression 
+## 
+## MODEL FIT:
+## R² = 0.44
+## Adj. R² = -9.83 
+## 
+## Standard errors: Robust
+## ------------------------------------------------------
+##                            Est.   S.E.   t val.      p
+## ----------------------- ------- ------ -------- ------
+## (Intercept)               25.35   1.27    19.98   0.00
+## eff1r                      0.12   0.00    27.03   0.00
+## ejec                       0.25   0.00    56.82   0.00
+## tolr                       0.06   0.01    11.45   0.00
+## it1r                       0.03   0.00     7.09   0.00
+## b32r                       0.19   0.00    41.47   0.00
+## factor(pais)2              4.90   0.78     6.29   0.00
+## factor(pais)3              1.56   0.69     2.27   0.02
+## factor(pais)4             -3.78   0.77    -4.89   0.00
+## factor(pais)5              2.44   0.77     3.16   0.00
+## factor(pais)6              9.25   0.66    13.94   0.00
+## factor(pais)7              4.88   0.72     6.74   0.00
+## factor(pais)8              0.93   0.72     1.28   0.20
+## factor(pais)9              4.39   0.78     5.59   0.00
+## factor(pais)10            -0.08   0.69    -0.11   0.91
+## factor(pais)11            -4.35   0.72    -6.04   0.00
+## factor(pais)12            -4.29   0.68    -6.32   0.00
+## factor(pais)13            -1.89   0.68    -2.78   0.01
+## factor(pais)14             5.47   0.78     7.04   0.00
+## factor(pais)15            -7.21   0.74    -9.71   0.00
+## factor(pais)17             2.91   0.81     3.58   0.00
+## factor(pais)23            -0.19   0.79    -0.24   0.81
+## factor(edr)1              -1.92   1.00    -1.92   0.05
+## factor(edr)2              -2.55   1.02    -2.50   0.01
+## factor(edr)3              -2.87   1.05    -2.72   0.01
+## factor(quintall)2         -0.74   0.38    -1.98   0.05
+## factor(quintall)3         -0.60   0.37    -1.63   0.10
+## factor(quintall)4         -1.47   0.37    -3.93   0.00
+## factor(quintall)5         -1.68   0.37    -4.50   0.00
+## factor(urban)1            -2.61   0.29    -9.08   0.00
+## factor(mujer)1             1.41   0.24     5.86   0.00
+## factor(edad)2             -3.26   0.32   -10.29   0.00
+## factor(edad)3             -4.21   0.35   -11.87   0.00
+## factor(edad)4             -3.47   0.40    -8.68   0.00
+## factor(edad)5             -2.46   0.46    -5.38   0.00
+## factor(edad)6             -1.69   0.51    -3.35   0.00
+## ------------------------------------------------------
+## 
+## Estimated dispersion parameter = 300.32
+```
+
+De la misma manera que con el modelo 7, estos resultados también se pueden graficar usando el comando `plot_summs`, seleccionando las variables que se quieren mostrar.
+
+
+```r
+plot_summs(modelo8, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecutivo"= "ejec",
+                            "Tolerancia política"="tolr", "Confianza en la comunidad"="it1r",
+                            "Confianza en el gobierno local"="b32r"))
+```
+
+![](regresion2_files/figure-html/grafico expansion-1.png)<!-- -->
 
 # Resumen
 
@@ -715,4 +812,6 @@ Este modelo se ha presentado de manera estándar en una tabla de resultados y me
 
 De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.
 
-Finalmente, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+Luego, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+
+Finalmente, se ha visto cómo replicar el modelo completo incluyendo el factor de expansión para incluir el efecto de diseño.
