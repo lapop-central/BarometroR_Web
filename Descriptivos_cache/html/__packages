@@ -6,3 +6,6 @@ ggplot2
 scales
 dplyr
 janitor
+Matrix
+survival
+survey

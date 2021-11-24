@@ -242,40 +242,12 @@ graf2 <- ggplot(data=tabla_tr, aes(x=2, y=Twitter, fill=lab))+
 graf2
 ```
 
-La pequeña diferencia entre los porcentajes puede deberse a que en todos las tablas y gráficos anteriores no se incluye el factor de expansión.
-Si se incluyera, usando la variable "weight1500", se replicarían los porcentajes mostrados en el informe.
-Por ejemplo, para el uso de Whatsapp, se puede usar el comando `freq` de la librería `descr` que permite incluir una variable de ponderación.
-
-Esta tabla luego se puede guardar en un dataframe, al que se le pueden eliminar las filas y columnas que no se requieren, y se les puede cambiar el nombre a las columnas.
-y agregar las etiquetas.
-
-```{r wa ponderado}
-tabla2 <- as.data.frame(descr::freq(lapop18$smedia8r, lapop18$weight1500, plot=F))
-tabla2 <- tabla2[-c(5,6), -2]
-colnames(tabla2) <- c("frec", "per")
-tabla2$lab <- rownames(tabla2)
-tabla2
-```
-
-Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp, con los datos ponderados, usando el código de `ggplot`.
-
-```{r wa graf pond}
-ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
-  geom_bar(stat="identity")+
-  geom_text(aes(label=paste(round(per, 1), "%", sep="")), color="white", 
-            position=position_stack(vjust=0.5), size=3)+
-  coord_polar("y")+
-  theme_void()+
-  scale_fill_discrete(name="Frecuencia de uso de Facebook")+
-   labs(title="Frecuencia con la que ve contenido en Facebbok", 
-        caption="Barómetro de las Américas por LAPOP, 2018/19")+
-  xlim(0.5, 2.5)
-```
-
 # Cruce de variables
 
 En la tabla 3.1 (pag. 55) del reporte "El pulso de la democracia" se presenta los porcentajes de uso de las redes sociales por país.
 Luego, en la página 56 se presenta un cuadro con el porcentaje de usuarios de redes sociales por características sociodemográficas, por ejemplo, urbano/rural, hombre, edad promedio, riqueza promedio y años de estudio.
+
+![](tabla3.1.png){width="481"}
 
 Empezaremos replicando los datos generales del uso de redes sociales que se reporta en el gráfico 3.1.
 Para replicar esta tabla primero se tiene que definir la variable "pais" y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).
@@ -314,16 +286,6 @@ prop.table(table(lapop18$tw_user))*100
 prop.table(table(lapop18$wa_user))*100
 ```
 
-Las pequeñas diferencias entre estos porcentajes y los que aparecen en el reporte son debido a que no se incluye el factor de expansión.
-Para incluirlo se puede usar el comando `freq` de la librería `descr` que permite incluir la variable de expansión "weight1500".
-
-```{r efecto}
-library(descr)
-descr::freq(lapop18$fb_user, lapop18$weight1500, plot=F)
-descr::freq(lapop18$tw_user, lapop18$weight1500, plot=F)
-descr::freq(lapop18$wa_user, lapop18$weight1500, plot=F)
-```
-
 Como en gráficos anteriores, con estos datos se puede crear un dataframe que se utilizaría para hacer los gráficos circulares mostrados en el reporte.
 
 Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas con el porcentaje de los que usan y el porcentaje de los que no usan cada red social en cada país.
@@ -355,6 +317,9 @@ formattable(tablapais)
 # Cruce con variables sociodemográficas
 
 En la página 56 del reporte "El pulso de la democracia" se presenta los resultados del cruce entre las variables uso de redes sociales y variables sociodemográficas como urbano/rural, sexo, edad, riqueza y años de educación.
+
+![](Tabla3.2.png){width="663"}
+
 La variable "q1" registra el género del entrevistado.
 Esta variable está codificada de la siguiente manera:
 
@@ -476,3 +441,76 @@ En ambos casos las barras celestes indican los porcentajes reportados en la tabl
 
 En este documento se ha trabajado con variable categóricas ordinales, como la frecuencia de uso de redes sociales.
 También se ha introducido al uso de tablas de contingencia de dos variables categóricas y la creación de gráficos de barras agrupadas para 2 variables.
+
+# Cálculos incluyendo el efecto de diseño
+
+La pequeña diferencia entre los porcentajes que se muestran en el Gráfico 3.3 y los mostrados en la sección "Describir las variables" puede deberse a que en todos las tablas y gráficos anteriores no se incluye el factor de expansión.
+Si se incluyera, usando la variable "weight1500", se replicarían los porcentajes mostrados en el informe.
+Por ejemplo, para el uso de Whatsapp, se puede usar el comando `freq` de la librería `descr` que permite incluir una variable de ponderación.
+
+Esta tabla luego se puede guardar en un dataframe, al que se le pueden eliminar las filas y columnas que no se requieren, y se les puede cambiar el nombre a las columnas.
+y agregar las etiquetas.
+
+```{r wa ponderado}
+tabla2 <- as.data.frame(descr::freq(lapop18$smedia8r, lapop18$weight1500, plot=F))
+tabla2 <- tabla2[-c(5,6), -2]
+colnames(tabla2) <- c("frec", "per")
+tabla2$lab <- rownames(tabla2)
+tabla2
+```
+
+Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp, con los datos ponderados, usando el código de `ggplot`.
+
+```{r wa graf pond}
+ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
+  geom_bar(stat="identity")+
+  geom_text(aes(label=paste(round(per, 1), "%", sep="")), color="white", 
+            position=position_stack(vjust=0.5), size=3)+
+  coord_polar("y")+
+  theme_void()+
+  scale_fill_discrete(name="Frecuencia de uso de Facebook")+
+   labs(title="Frecuencia con la que ve contenido en Facebook", 
+        caption="Barómetro de las Américas por LAPOP, 2018/19")+
+  xlim(0.5, 2.5)
+```
+
+Además del comando `freq`, también se puede usar la librería `survey` y el comando nativo `svytable`.
+
+```{r survey}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Los resultados que se obtienen son iguales que con el método anterior y a los presentados en el reporte.
+Estos resultados también se pueden guardar en un "dataframe" para hacer el gráfico.
+
+```{r svytable}
+prop.table(svytable(~smedia8r, design=lapop.design))*100
+```
+
+La sección "Cruce con variables" presenta los datos de usuarios de redes sociales por país.
+Para construir la tabla considerando el efecto de diseño, también se puede usar el comando nativo `svytable` que permite calcular una tabla bivariada.
+De la misma manera que en caso no ponderado, las tablas parciales de cada red social se guardan en unos objetos de tipo lista, los que se juntan como un "dataframe" y se edita para presentar solo los datos de los usuarios de cada red social por país.
+
+```{r svytable bivariada}
+fbpais_2 <- round(prop.table(svytable(~pais+fb_user, design=lapop.design), 1), 3)*100
+twpais_2 <- round(prop.table(svytable(~pais+tw_user, design=lapop.design), 1), 3)*100
+wapais_2 <- round(prop.table(svytable(~pais+wa_user, design=lapop.design), 1), 3)*100
+tablapais_2 <- as.data.frame(cbind(fbpais_2, twpais_2, wapais_2))
+tablapais_2 <- tablapais_2[, c(-1,-3,-5)]
+varnames <- c("Usa Facebook", "Usa Twitter", "Usa Whatsapp")
+colnames(tablapais_2) <- varnames
+tablapais_2
+```
+
+Por último, la sección "Cruce con variables sociodemográficas" reproduce los resultados de la Tabla 3.2 del reporte.
+De la misma manera que en el caso anterior, se puede usar el comando nativo `svytable` para realizar el cruce entre las variables de uso de redes sociales y la variable urbano.
+Los resultados de la fila Urbano en cada red social corresponderían a la primera fila de resultados de la Tabla 3.2.
+
+```{r}
+round(prop.table(svytable(~urban+wa_user, design=lapop.design), 2), 3)*100
+round(prop.table(svytable(~urban+fb_user, design=lapop.design), 2), 3)*100
+round(prop.table(svytable(~urban+tw_user, design=lapop.design), 2), 3)*100
+```
+
+De esta manera se pueden calcular las tablas de distribución de frecuencias y las tablas bivariadas (o de contingencia) incluyendo el efecto de diseño o el factor de expansión.
