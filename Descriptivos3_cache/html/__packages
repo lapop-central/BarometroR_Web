@@ -1,5 +1,7 @@
-base
 rio
 ggplot2
 psych
 dplyr
+Matrix
+survival
+survey

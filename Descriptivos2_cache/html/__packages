@@ -1,4 +1,3 @@
-base
 rio
 knitr
 formattable
@@ -11,3 +10,10 @@ data.table
 Matrix
 survival
 survey
+scales
+janitor
+lattice
+plyr
+Rmisc
+vcd
+oii

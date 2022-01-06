@@ -209,7 +209,7 @@ Finalmente (último paso con `%>%`), con este total por grupos se calcula los po
 library(dplyr)
 df <- subset(lapop18, !is.na(smedia1r)) %>%
       group_by(smedia1r) %>% 
-      summarise(n = n()) %>%
+      dplyr::summarise(n = n()) %>%
       mutate(per=round(n/sum(n), 3)*100)
 df
 ```

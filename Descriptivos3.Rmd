@@ -81,15 +81,6 @@ mean(lapop18$urban, na.rm=T)*100
 ```
 
 Estos son los datos que se presentan en la primera columna de resultados de la población general, excepto para la variable riqueza ("quintall") que no está disponible en esta versión recortada de la base de datos.
-Los resultados anteriores no incluyen el factor de expansión.
-Para incluirlo en los cálculos se puede usar el comando `weighted.mean`, que es parte de la librería `stats`, que viene precargada con R, por lo que no hay que instalarla.
-
-```{r}
-weighted.mean(lapop18$q2, lapop18$weight1500, na.rm=T)
-weighted.mean(lapop18$ed, lapop18$weight1500, na.rm=T)
-weighted.mean(lapop18$hombre, lapop18$weight1500, na.rm=T)*100
-weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
-```
 
 # Gráficos descriptivos
 
@@ -136,7 +127,7 @@ mean(lapop18$ed[lapop18$fb_user==0], na.rm=T)
 mean(lapop18$ed[lapop18$fb_user==1], na.rm=T)
 ```
 
-# Descriptivos de una variable numérica
+# Descriptivos de una variable numérica por grupos
 
 Otra manera de describir una variable numérica es usando el comando `summary`.
 Este comando reporta los estadísticos descriptivos más usados para una variable numérica: mínimo, máximo, cuartiles, media y mediana.
@@ -214,6 +205,59 @@ boxplot(q2 ~ wa_user, data=lapop18, xlab ="Usuario de Whatsapp", ylab="Edad")
 
 # Resumen
 
-En este documento se ha trabajado con variable numéricas, como edad o años de estudio.
+En este documento se ha trabajado con variables numéricas, como edad o años de estudio.
 Se ha calculado estadísticos descriptivos, como la media o la desviación estándar para toda la población o por grupos.
 Finalmente, se ha presentado formas de graficar estas variables, mediante histogramas o boxplots.
+
+# Cálculos incluyendo el efecto de diseño
+
+Los resultados anteriores no incluyen el factor de expansión.
+Para incluirlo en los cálculos se puede usar el comando `weighted.mean`, que es parte de la librería `stats`, que viene precargada con R, por lo que no hay que instalarla.
+
+```{r comando weighted}
+weighted.mean(lapop18$q2, lapop18$weight1500, na.rm=T)
+weighted.mean(lapop18$ed, lapop18$weight1500, na.rm=T)
+weighted.mean(lapop18$hombre, lapop18$weight1500, na.rm=T)*100
+weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
+```
+
+Otra forma de calular la media incluyendo el factor de expansión es mediante de el uso de la librería `survey` y el comando nativo `svymean`.
+Para esto se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "lapop.design".
+
+```{r survey, message=FALSE, warning=FALSE}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Para calcular el promedio, se usa el comando `svymean` y se usa la especificación `na.rm=T` debido a que estas variables cuentan con valores perdidos.
+
+```{r weighted mean edad y estudios}
+svymean(~q2, lapop.design, na.rm=T)
+svymean(~ed, lapop.design, na.rm=T)
+```
+
+Para las variables dummies el procedimiento es el mismo, salvo que se le multiplica por 100 para presentarlo en formato de porcentaje
+
+```{r weighted mean hombre y urbano}
+svymean(~hombre, lapop.design, na.rm =T)*100
+svymean(~urban, lapop.design, na.rm=T)*100
+```
+
+El paquete `survey` también tiene comandos para replicar gráficos.
+Por ejemplo, para calcular un histograma simple.
+
+```{r weighted hist}
+svyhist(~ed, lapop.design, freq = T)
+```
+
+Para calcular estadísticos descriptivos por grupos, se puede usar el comando `svyby`, que permite definir la variable numérica que se quiere describir, la variable que define los grupos y el estadístico ponderado que se quiere calcular.
+
+```{r weighted ed por grupos}
+svyby(~ed, ~fb_user, lapop.design, svymean, na.rm=T)
+```
+
+Para reproducir un gráfico descriptivo por grupos, se puede usar el comando `svyboxplot` para comparar la distribución de la variable edad entre grupos de una variable de tipo factor, como usuarios de Whatsapp.
+
+```{r weighted boxplot por grupos}
+svyboxplot(~q2~factor(wa_user), lapop.design, all.outliers = T)
+```

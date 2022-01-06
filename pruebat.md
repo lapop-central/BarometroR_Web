@@ -212,7 +212,7 @@ t.test(ing4r ~ genero, data = lapop18, var.equal=F)
 ## 
 ## data:  ing4r by genero
 ## t = 5.8633, df = 27046, p-value = 4.59e-09
-## alternative hypothesis: true difference in means is not equal to 0
+## alternative hypothesis: true difference in means between group Hombre and group Mujer is not equal to 0
 ## 95 percent confidence interval:
 ##  2.343068 4.696255
 ## sample estimates:
@@ -251,7 +251,7 @@ t.test(ing4r ~ ambito, data = lapop18, var.equal=F)
 ## 
 ## data:  ing4r by ambito
 ## t = 5.4543, df = 14056, p-value = 5e-08
-## alternative hypothesis: true difference in means is not equal to 0
+## alternative hypothesis: true difference in means between group Urbano and group Rural is not equal to 0
 ## 95 percent confidence interval:
 ##  2.333228 4.950988
 ## sample estimates:

@@ -1,4 +1,3 @@
-base
 rio
 carData
 car
@@ -7,3 +6,18 @@ plyr
 Rmisc
 ggplot2
 DescTools
+knitr
+descr
+scales
+dplyr
+janitor
+Matrix
+survival
+survey
+vcd
+oii
+formattable
+data.table
+lsr
+psych
+gplots

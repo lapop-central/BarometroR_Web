@@ -1,4 +1,3 @@
-base
 rio
 knitr
 descr
@@ -8,3 +7,16 @@ dplyr
 janitor
 carData
 car
+Matrix
+survival
+survey
+lattice
+plyr
+Rmisc
+vcd
+oii
+formattable
+data.table
+lsr
+psych
+gplots

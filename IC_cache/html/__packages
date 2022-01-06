@@ -1,4 +1,3 @@
-base
 rio
 dplyr
 carData
@@ -10,3 +9,14 @@ lattice
 Rmisc
 gplots
 ggplot2
+knitr
+descr
+scales
+janitor
+Matrix
+survival
+survey
+vcd
+oii
+formattable
+data.table

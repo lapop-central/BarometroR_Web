@@ -1,2 +1,9 @@
-base
 rio
+dplyr
+carData
+car
+lattice
+plyr
+Rmisc
+ggplot2
+descr

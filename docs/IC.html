@@ -13,8 +13,8 @@
 
 <title>Intervalos de confianza usando el Barómetro de las Américas</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -631,11 +631,11 @@ table(lapop18$anyhi)</code></pre>
 <pre><code>## 
 ##     0     1     2     3 
 ##  9831  5811 11131  1269</code></pre>
-<p>Partiendo de esta variable, se crea una variable que agrega las tres redes sociales, llamada “hi_lo_non”. Primero, se crea esta variable como un vector de NAs. Luego se le imputa valores de 1, 2, 3 o NA, dependiendo de los valores de “anyhi o de los valores de las variables de redes sociales. Luego se crea una nueva variable de tipo factor, con idénticos valores que”hi_lo_non" y se etiqueta. La definición de la condicionalidad se trabaja mediante los corchetes <code>[...]</code>. De esta manera, se define las condiciones de la siguiente manera:</p>
+<p>Partiendo de esta variable, se crea una variable que agrega las tres redes sociales, llamada “hi_lo_non”. Primero, se crea esta variable como un vector de NAs. Luego se le imputa valores de 1, 2, 3 o NA, dependiendo de los valores de “anyhi o de los valores de las variables de redes sociales. Luego se crea una nueva variable de tipo factor, con idénticos valores que”hi_lo_non” y se etiqueta. La definición de la condicionalidad se trabaja mediante los corchetes <code>[...]</code>. De esta manera, se define las condiciones de la siguiente manera:</p>
 <ul>
-<li><p>La variable "hi_lo_non es igual a 1 si la variable anyhi es mayor o igual a 1 (uso diario o algunas veces a la semana) = <code>lapop18$hi_lo_non[lapop18$anyhi&gt;=1] &lt;- 1</code></p></li>
-<li><p>La variable "hi_lo_non es igual a 2 si la variable anyhi es igual a 0 (uso algunas veces al año o nunca) = <code>lapop18$hi_lo_non[lapop18$anyhi==0] &lt;- 2</code></p></li>
-<li><p>La variable "hi_lo_non es igual a 3 si las variables de tenencia de cuentas son igual a 2 (No) = <code>lapop18$hi_lo_non[lapop18$smedia1==2 &amp; lapop18$smedia4==2 &amp; lapop18$smedia7==2] &lt;- 3</code></p></li>
+<li><p>La variable “hi_lo_non es igual a 1 si la variable anyhi es mayor o igual a 1 (uso diario o algunas veces a la semana) = <code>lapop18$hi_lo_non[lapop18$anyhi&gt;=1] &lt;- 1</code></p></li>
+<li><p>La variable “hi_lo_non es igual a 2 si la variable anyhi es igual a 0 (uso algunas veces al año o nunca) = <code>lapop18$hi_lo_non[lapop18$anyhi==0] &lt;- 2</code></p></li>
+<li><p>La variable “hi_lo_non es igual a 3 si las variables de tenencia de cuentas son igual a 2 (No) = <code>lapop18$hi_lo_non[lapop18$smedia1==2 &amp; lapop18$smedia4==2 &amp; lapop18$smedia7==2] &lt;- 3</code></p></li>
 </ul>
 <p>Las siguiente reglas de codificación siguen la misma lógica de combinación de otras variables para imputar el valor 3 o NA.</p>
 <pre class="r"><code>lapop18$hi_lo_non &lt;- NA #se crea un vector con NAs#

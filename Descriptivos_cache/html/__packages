@@ -1,4 +1,3 @@
-base
 rio
 knitr
 descr
@@ -9,3 +8,10 @@ janitor
 Matrix
 survival
 survey
+carData
+car
+lattice
+plyr
+Rmisc
+vcd
+oii

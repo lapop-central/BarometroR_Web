@@ -13,8 +13,8 @@
 
 <title>Comparación de varias medias con el Barómetro de las Américas</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -501,7 +501,7 @@ df</code></pre>
 <p>Una vez definidos los ejes, se usa el comando <code>geom_bar</code> para indicar que se va a crear un gráfico de barras. Dentro de este comando se especifica el ancho, el color interno, el color del borde y, sobre todo, que se use los datos del dataframe “df” tal como aparecen, con la especificación <code>stat="identity"</code>.</p>
 <p>Además de la barra, se agrega <code>goem_errorbar</code> para incluir las barras de error que mancan los límites de los intervalos de confianza. Esta capa también requiere una estética <code>aes</code> donde se define los límites inferior (<code>ymin=ing4r-ci</code>) y superior (<code>ymax=ing4r+ci</code>).</p>
 <p>Se usa <code>geom_text</code> para añadir las etiquetas de datos a cada barra. Esta especificación requiere una estética <code>aes</code> donde se define que se usará el dato de “ing4r”, pero redondeado a 1 decimal y con el símbolo “%”. Se ajusta la posición de la etiqueta con <code>hjust</code> y el tamaño de la etiqueta con <code>size</code>.</p>
-<p>Finalmente, se indica que el eje X no tenga una etiqueta y que el eje Y se nombre como "Apoyo a la democracia según países. Se usa la especificación <code>coord_flip()</code> para girar el gráfico 90 grados y presentar las barras horizontales.</p>
+<p>Finalmente, se indica que el eje X no tenga una etiqueta y que el eje Y se nombre como “Apoyo a la democracia según países. Se usa la especificación <code>coord_flip()</code> para girar el gráfico 90 grados y presentar las barras horizontales.</p>
 <pre class="r"><code>library(ggplot2)
 graf1 &lt;- ggplot(df, aes(x=reorder(paises, ing4r), y=ing4r))+
   geom_bar(width=0.5, fill=&quot;purple&quot;, colour=&quot;black&quot;, stat=&quot;identity&quot;)+

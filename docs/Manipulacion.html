@@ -13,8 +13,8 @@
 
 <title>Manejo de datos usando el Barómetro de las Américas</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -464,7 +464,7 @@ lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/ma
 <h1>Recodificación de una variable</h1>
 <p>En esta sección usaremos el reporte “El Pulso de la Democracia”, disponible <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>. Este reporte presenta los resultados acerca del apoyo a la democracia en las Américas. Estos resultados se basan en la variable ING4 de la base de datos. Esta variable está fraseada de la siguiente manera:</p>
 <p>ING4. <em>Cambiando de nuevo de tema, puede que la democracia tenga problemas, pero es mejor que cualquier otra forma de gobierno. ¿Hasta qué punto está de acuerdo o en desacuerdo con esta frase?</em></p>
-<p>Como indica el reporte “los entrevistados evalúan esta frase dando una respuesta que va de 1 a 7, donde 1 significa”muy en desacuerdo" y 7 significa “muy de acuerdo” (p.11). Para ver la distribución de respuestas a esta variable, se puede usar el comando <code>table</code>.</p>
+<p>Como indica el reporte “los entrevistados evalúan esta frase dando una respuesta que va de 1 a 7, donde 1 significa”muy en desacuerdo” y 7 significa “muy de acuerdo” (p.11). Para ver la distribución de respuestas a esta variable, se puede usar el comando <code>table</code>.</p>
 <pre class="r"><code>table(lapop18$ing4)</code></pre>
 <pre><code>## 
 ##    1    2    3    4    5    6    7 
@@ -528,7 +528,7 @@ table(lapop2$pais)</code></pre>
 <p>B3. <em>¿Hasta qué punto cree usted que los derechos básicos del ciudadano están bien protegidos por el sistema político de (país)?</em></p>
 <p>B4. <em>¿Hasta qué punto se siente orgulloso de vivir bajo el sistema político de (país)?</em></p>
 <p>B6. <em>¿Hasta qué punto piensa usted que se debe apoyar al sistema político de (país)?</em></p>
-<p>Como indica el reporte “Para cada pregunta, la escala original de 1 (”Nada“) a 7 (”Mucho“) se recodifica en una escala de 0 a 100, de tal forma que 0 indica el menor nivel de apoyo al sistema político y 100 es el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la recodificación típica de LAPOP y puede ser interpretada como una medición del apoyo en unidades, o grados, en una escala continua que va de 0 a 100” (p.34). Para comprobar la escala original de estas variables, se puede describir estas variables usando el comando <code>table</code>.</p>
+<p>Como indica el reporte “Para cada pregunta, la escala original de 1 (”Nada”) a 7 (“Mucho”) se recodifica en una escala de 0 a 100, de tal forma que 0 indica el menor nivel de apoyo al sistema político y 100 es el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la recodificación típica de LAPOP y puede ser interpretada como una medición del apoyo en unidades, o grados, en una escala continua que va de 0 a 100” (p.34). Para comprobar la escala original de estas variables, se puede describir estas variables usando el comando <code>table</code>.</p>
 <pre class="r"><code>table(lapop18$b1)</code></pre>
 <pre><code>## 
 ##    1    2    3    4    5    6    7 
@@ -613,7 +613,7 @@ table(lapop18$apoyo)</code></pre>
 </div>
 <div id="calcular-una-variable-de-manera-condicional" class="section level1">
 <h1>Calcular una variable de manera condicional</h1>
-<p>En algunas ocasiones el cálculo de una variable no requiere solamente la transformación numérica de la variable original, sino que los valores de la nueva variable dependen de valores de otras variables. Por ejemplo, el capítulo “Redes sociales y actitudes políticas” del reporte “El Pulso de la Democracia” presenta los resultados para las variables “usuario de Whatsapp”, “usuario de Twitter” y “usuario de Facebook”. Para calcular estas variables, el pie de página 7 de este capítulo indica: “Para cada plataforma, se identifican los usuarios con una combinación de dos conjuntos de preguntas. Primero, se identifican como usuarios a quienes responden positivamente a las preguntas, SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a quienes responden”nunca" a las preguntas siguientes, SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en Facebook/Twitter/Whatsapp?" (p. 64).</p>
+<p>En algunas ocasiones el cálculo de una variable no requiere solamente la transformación numérica de la variable original, sino que los valores de la nueva variable dependen de valores de otras variables. Por ejemplo, el capítulo “Redes sociales y actitudes políticas” del reporte “El Pulso de la Democracia” presenta los resultados para las variables “usuario de Whatsapp”, “usuario de Twitter” y “usuario de Facebook”. Para calcular estas variables, el pie de página 7 de este capítulo indica: “Para cada plataforma, se identifican los usuarios con una combinación de dos conjuntos de preguntas. Primero, se identifican como usuarios a quienes responden positivamente a las preguntas, SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a quienes responden”nunca” a las preguntas siguientes, SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en Facebook/Twitter/Whatsapp?” (p. 64).</p>
 <p><img src="smedia.png" width="466" /></p>
 <p>Es decir, el usuario no solo es el que tiene una cuenta (SMEDIA1=1), sino el que la usa con cierta frecuencia (SMEDIA2=1, 2, 3, 4). De esta manera, el no usuario puede tener una cuenta, pero nunca usarla. Por lo tanto, la variable “usuario” depende de los valores de 2 variables. La regla de codificación que se sigue es:</p>
 <ul>

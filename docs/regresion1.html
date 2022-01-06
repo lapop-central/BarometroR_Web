@@ -13,8 +13,8 @@
 
 <title>Regresion lineal simple usando datos del Barómetro de las Américas</title>
 
-<script src="site_libs/header-attrs-2.9/header-attrs.js"></script>
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
@@ -458,7 +458,7 @@ h1 {color: #3366CC;}
 <div id="sobre-la-base-de-datos" class="section level1">
 <h1>Sobre la base de datos</h1>
 <p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org. Pueden descargar los datos de manera libre <a href="http://datasets.americasbarometer.org/database/login.php">aquí</a>.</p>
-<p>Se recomienda limpiar el Environment antes de iniciar esta sección. En este documento se carga una base de datos en formato RData. Este formato, nativo de R, es más eficiente en términos de espacio de almacenamiento lo que permite alojarlo en GitHub (que tiene restricciones de tamaño de archivos). Esta base contiene la información de la ronda 2018 para todas las variables. Esta base de datos se encuentra alojada en el repositorio“materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código.</p>
+<p>Se recomienda limpiar el Environment antes de iniciar esta sección. En este documento se carga una base de datos en formato RData. Este formato, nativo de R, es más eficiente en términos de espacio de almacenamiento lo que permite alojarlo en GitHub (que tiene restricciones de tamaño de archivos). Esta base contiene la información de la ronda 2018 para todas las variables. Esta base de datos se encuentra alojada en el repositorio”materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código.</p>
 <pre class="r"><code>library(rio)
 #lapop18 &lt;- import(&quot;lapop18.RData&quot;)
 lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/lapop18.RData&quot;)
@@ -472,7 +472,7 @@ lapop18 &lt;- subset(lapop18, pais&lt;=35)</code></pre>
 <p><strong>B3.</strong> ¿Hasta qué punto cree usted que los derechos básicos del ciudadano están bien protegidos por el sistema político de (país)?</p>
 <p><strong>B4.</strong> ¿Hasta qué punto se siente orgulloso de vivir bajo el sistema político de (país)?</p>
 <p><strong>B6.</strong> ¿Hasta qué punto piensa usted que se debe apoyar al sistema político de (país)?</p>
-<p>Como indica el reporte “Para cada pregunta, la escala original de 1 (”Nada“) a 7 (”Mucho“) se recodifica en una escala de 0 a 100, de tal forma que 0 indica el menor nivel de apoyo al sistema político y 100 es el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la recodificación típica de LAPOP y puede ser interpretada como una medición del apoyo en unidades, o grados, en una escala continua que va de 0 a 100” (p.34).</p>
+<p>Como indica el reporte “Para cada pregunta, la escala original de 1 (”Nada”) a 7 (“Mucho”) se recodifica en una escala de 0 a 100, de tal forma que 0 indica el menor nivel de apoyo al sistema político y 100 es el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la recodificación típica de LAPOP y puede ser interpretada como una medición del apoyo en unidades, o grados, en una escala continua que va de 0 a 100” (p.34).</p>
 <p>Para crear el índice de apoyo a la democracia, se tiene que reescalar cada variable, originalmente medida en una escala de 1-7, a una nueva escala de 0-100.</p>
 <pre class="r"><code>lapop18$b1rec &lt;- ((lapop18$b1-1)/6)*100
 lapop18$b2rec &lt;- ((lapop18$b2-1)/6)*100
@@ -535,25 +535,132 @@ summary(modelo1)</code></pre>
 ## Multiple R-squared:  0.2866, Adjusted R-squared:  0.2866 
 ## F-statistic: 1.05e+04 on 1 and 26141 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Estos resultados pueden ser presentados de una manera más formal mediante diferentes comandos. Aquí proponemos usar el comando <code>summ</code> de la librería <code>jtools</code>.</p>
-<pre class="r"><code>library(jtools)
-summ(modelo1)</code></pre>
-<pre><code>## MODEL INFO:
-## Observations: 26143 (1899 missing obs. deleted)
-## Dependent Variable: apoyo
-## Type: OLS linear regression 
+<pre class="r"><code>library(jtools)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;jtools&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:DescTools&#39;:
 ## 
-## MODEL FIT:
-## F(1,26141) = 10503.71, p = 0.00
-## R² = 0.29
-## Adj. R² = 0.29 
-## 
-## Standard errors: OLS
-## ------------------------------------------------
-##                      Est.   S.E.   t val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)         33.78   0.19   177.55   0.00
-## ejec                 0.35   0.00   102.49   0.00
-## ------------------------------------------------</code></pre>
+##     %nin%</code></pre>
+<pre class="r"><code>summ(modelo1)</code></pre>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Observations
+</td>
+<td style="text-align:right;">
+26143 (1899 missing obs. deleted)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Dependent variable
+</td>
+<td style="text-align:right;">
+apoyo
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Type
+</td>
+<td style="text-align:right;">
+OLS linear regression
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+F(1,26141)
+</td>
+<td style="text-align:right;">
+10503.71
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+R²
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Adj. R²
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Est.
+</th>
+<th style="text-align:right;">
+S.E.
+</th>
+<th style="text-align:right;">
+t val.
+</th>
+<th style="text-align:right;">
+p
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+33.78
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+<td style="text-align:right;">
+177.55
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+ejec
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+102.49
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: OLS
+</td>
+</tr>
+</tfoot>
+</table>
 <p>En la información básica del modelo se encuentra que se ha calculado este modelo bivariado sobre 26,143 observaciones. Es decir, del total de observaciones de la base de datos 1,899 se han perdido debido a valores perdidos en alguna de las variables, por lo que esas observaciones no se incluyen en el modelo.</p>
 <p>Para evaluar una relación entre dos variables numéricas, tenemos que responder las siguientes preguntas</p>
 <div id="existe-asociación" class="section level2">

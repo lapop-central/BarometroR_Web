@@ -1,7 +1,11 @@
-base
 rio
 ggplot2
 vcd
 carData
 car
 oii
+dplyr
+lattice
+plyr
+Rmisc
+descr

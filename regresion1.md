@@ -197,28 +197,82 @@ Aquí proponemos usar el comando `summ` de la librería `jtools`.
 
 ```r
 library(jtools)
-summ(modelo1)
 ```
 
 ```
-## MODEL INFO:
-## Observations: 26143 (1899 missing obs. deleted)
-## Dependent Variable: apoyo
-## Type: OLS linear regression 
 ## 
-## MODEL FIT:
-## F(1,26141) = 10503.71, p = 0.00
-## R² = 0.29
-## Adj. R² = 0.29 
-## 
-## Standard errors: OLS
-## ------------------------------------------------
-##                      Est.   S.E.   t val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)         33.78   0.19   177.55   0.00
-## ejec                 0.35   0.00   102.49   0.00
-## ------------------------------------------------
+## Attaching package: 'jtools'
 ```
+
+```
+## The following object is masked from 'package:DescTools':
+## 
+##     %nin%
+```
+
+```r
+summ(modelo1)
+```
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Observations </td>
+   <td style="text-align:right;"> 26143 (1899 missing obs. deleted) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Dependent variable </td>
+   <td style="text-align:right;"> apoyo </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Type </td>
+   <td style="text-align:right;"> OLS linear regression </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> F(1,26141) </td>
+   <td style="text-align:right;"> 10503.71 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> R² </td>
+   <td style="text-align:right;"> 0.29 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Adj. R² </td>
+   <td style="text-align:right;"> 0.29 </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Est. </th>
+   <th style="text-align:right;"> S.E. </th>
+   <th style="text-align:right;"> t val. </th>
+   <th style="text-align:right;"> p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> (Intercept) </td>
+   <td style="text-align:right;"> 33.78 </td>
+   <td style="text-align:right;"> 0.19 </td>
+   <td style="text-align:right;"> 177.55 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> ejec </td>
+   <td style="text-align:right;"> 0.35 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 102.49 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+</tbody>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: OLS</td></tr></tfoot>
+</table>
 
 En la información básica del modelo se encuentra que se ha calculado este modelo bivariado sobre 26,143 observaciones.
 Es decir, del total de observaciones de la base de datos 1,899 se han perdido debido a valores perdidos en alguna de las variables, por lo que esas observaciones no se incluyen en el modelo.
