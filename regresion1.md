@@ -197,20 +197,6 @@ Aquí proponemos usar el comando `summ` de la librería `jtools`.
 
 ```r
 library(jtools)
-```
-
-```
-## 
-## Attaching package: 'jtools'
-```
-
-```
-## The following object is masked from 'package:DescTools':
-## 
-##     %nin%
-```
-
-```r
 summ(modelo1)
 ```
 

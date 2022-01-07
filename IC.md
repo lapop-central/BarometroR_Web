@@ -460,3 +460,71 @@ Con esta variable se ha calculado el intervalo de confianza de la media, que ser
 Luego, se ha descrito esta variables por grupos de una variable de factor (consumo de información política).
 Se ha presentado cómo calcular los intervalos de confianza de la variable numérica por grupos de la variable de factor.
 Finalmente, se ha presentado cómo graficar los intervalos de confianza por grupos.
+
+# Cálculos incluyendo el efecto de diseño
+
+Otra forma de calcular el intervalo de confianza, incluyendo el factor de expansión, es mediante el uso de la librería `survey` y el comando `confint`junto al comando nativo `svymean`.
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+De la misma manera que en los temas anteriores, se puede describir la variable de satisfacción con la democracia incorporando el factor de diseño usando el comando `svymean`.
+
+
+```r
+svymean(~pn4rr, lapop.design, na.rm=T)
+```
+
+```
+##         mean     SE
+## pn4rr 39.459 0.3317
+```
+
+Para calcular el intervalo de confianza, se tiene que anidar el código anterior dentro del comando `confint`.
+Este comando calcula el intervalo de confianza al 95% por defecto.
+Se podría cambiar este valor por defecto a 99% de confianza agregando la especificación `conf = 0.99` al comando.
+
+
+```r
+confint(svymean(~pn4rr, lapop.design, na.rm=T))
+```
+
+```
+##          2.5 %   97.5 %
+## pn4rr 38.80884 40.10901
+```
+
+También se puede calcular la media y el intervalo de confianza de satisfacción con la democracia incorporando el efecto de diseño usando el comando `svyby`.
+Dentro de este comando se especifica la variable numérica a ser descrita (`~pn4rr`), la variable que forma los grupos (`~smedia5r`), el diseño muestral (`lapop.design`), la función que se quiere calcular (`svymean`), que no tome en cuenta los valores perdidos (`na.rm=T`) y que incluya el intervalo de confianza de cada grupo (`vartype="ci"`).
+
+
+```r
+tw.uso.weighted <- svyby(~pn4rr, ~smedia5r, lapop.design, svymean, na.rm=T, vartype = "ci")
+tw.uso.weighted
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["smedia5r"],"name":[1],"type":["fct"],"align":["left"]},{"label":["pn4rr"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ci_l"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["ci_u"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Alto uso","2":"39.46510","3":"36.98285","4":"41.94735","_rn_":"Alto uso"},{"1":"Bajo uso","2":"37.56570","3":"33.74961","4":"41.38179","_rn_":"Bajo uso"},{"1":"No usuario","2":"42.48075","3":"35.57877","4":"49.38274","_rn_":"No usuario"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Para poder graficar, estos cálculos se guardan en un dataframe "tw.uso.weighted", que incluye los datos de la media por cada grupo y el límite inferior y superior del intervalo de confianza.
+De la misma manera que con los datos que no incluyen el efecto de diseño, se usa la librería `ggplot` y se crea un gráfico que se guarda en un objeto "graf2".
+Se usan especificaciones muy similares a los ejemplos anteriores.
+
+
+```r
+graf2 <- ggplot(tw.uso.weighted, aes(x=smedia5r, y=pn4rr))+
+  geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=ci_l, ymax=ci_u), width=0.2)+
+  geom_text(aes(label=paste(round(pn4rr, 1), "%")), vjust=-4.2, size=4)+
+  xlab("Tipo de usuario de Twitter") + ylab("Satisfacción con la democracia (%)")+
+  ylim(0, 50)
+graf2
+```
+
+![](IC_files/figure-html/weightedbarras-1.png)<!-- -->

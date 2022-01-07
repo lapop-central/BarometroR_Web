@@ -592,8 +592,13 @@ H0: \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0
 <p>El reporte indica que “se controla por los mismos indicadores socioeconómicos y demográficos y por efectos fijos por país”. Aunque los coeficientes para estas variables no se muestran, los resultados mostrados en el Gráfico 2.10 incluyen el efecto de estas variables.</p>
 <p>Antes de replicar el modelo completo, se explicará el rol de las variables “dummy”. Una variable dummy es aquella que está codificada como 0 y 1. En la base de datos “lapop18” tenemos una variable llamada “mujer”, que identifica con 1 a aquellas entrevistadas mujeres y con 0 a todos los demás.</p>
 <p>En esta sección se puede querer comparar el apoyo al sistema entre mujeres y los demás. En la sección referente a la <a href="https://arturomaldonado.github.io/BarometroEdu_Web/pruebat.html">prueba t</a> se explicó el procedimiento para comparar una variable dependiente numérica entre grupos de una variable dicotómica. Aquí seguiremos un procedimiento similar. En primer lugar se calcula la prueba de Levene de igualdad de varianzas.</p>
-<pre class="r"><code>library(DescTools)
-LeveneTest(lapop18$psar, lapop18$mujer)</code></pre>
+<pre class="r"><code>library(DescTools)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;DescTools&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:jtools&#39;:
+## 
+##     %nin%</code></pre>
+<pre class="r"><code>LeveneTest(lapop18$psar, lapop18$mujer)</code></pre>
 <pre><code>## Warning in LeveneTest.default(lapop18$psar, lapop18$mujer): lapop18$mujer
 ## coerced to factor.</code></pre>
 <div data-pagedtable="false">

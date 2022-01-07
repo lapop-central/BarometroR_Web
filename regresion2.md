@@ -286,6 +286,20 @@ En primer lugar se calcula la prueba de Levene de igualdad de varianzas.
 
 ```r
 library(DescTools)
+```
+
+```
+## 
+## Attaching package: 'DescTools'
+```
+
+```
+## The following object is masked from 'package:jtools':
+## 
+##     %nin%
+```
+
+```r
 LeveneTest(lapop18$psar, lapop18$mujer)
 ```
 
