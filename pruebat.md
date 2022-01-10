@@ -49,7 +49,7 @@ lapop18 <- subset(lapop18, pais<=35)
 
 # Descriptivos del apoyo a la democracia
 
-El apoyo a la democracia, variable "ING4", medida en una escala del 1 al 7 donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo", se tiene que recodificar.
+El apoyo a la democracia, variable "ING4", medida en una escala del 1 al 7, donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo", se tiene que recodificar.
 De acuerdo al reporte "Se consideran las respuestas en la porción de la escala que indica estar de acuerdo, esto es los valores de 5 a 7, para indicar el porcentaje que apoya a la democracia" (p. 11).
 Se usa el comando `mean` para reportar el promedio regional de apoyo a la democracia.
 Se especifica `na.rm=T` para que el comando no tome en cuenta los valores perdidos en el cálculo.
@@ -107,7 +107,8 @@ tapply(lapop18$ing4r, lapop18$ambito, mean, na.rm=T) #Para urbano-rural
 ## 58.71664 55.07453
 ```
 
-Se puede reproducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
+Se puede reproducir los gráficos de barras que comparan el promedio de apoyo a la democracia entre grupos de género y ámbito.
+Primero, para género, se tiene que crear una tabla con los datos de la media y los límites de los intervalos de confianza para cada grupo.
 Esto lo haremos con el comando `group.CI` que es parte de la librería `Rmisc`.
 Estos datos los guardamos en un objeto de tipo tabla de R llamado "apxgen".
 
@@ -153,7 +154,7 @@ LAPOP Lab generalmente presenta en sus gráficos los intervalos de confianza de 
 Estas barras grises en el reporte sirven como una forma de comparación rápida.
 Si las barras se traslapan, eso significaría que no habrían diferencias estadísticamente significativas entre los grupos.
 Por el contrario, si las barras grises no se traslapan, se podría decir que la diferencia entre los grupos es significativa al 95% de confianza.
-Sin embargo, para comprobar estas observaciones se tiene que correr una prueba estadística.
+Sin embargo, para comprobar estas observaciones se tiene que calcular una prueba estadística.
 Cuando la comparación es entre las medias de dos grupos, la prueba estadística apropiada es la prueba t de diferencias de medias.
 En esta sección estamos asumiendo que podemos tratar a la variable "ing4r" como una variable numérica, de la que se puede calcular la media y la desviación estándar, aunque esta variable en estricto es una de tipo cualitativa nominal.
 
@@ -197,7 +198,7 @@ LeveneTest(lapop18$ing4r, lapop18$genero)
   </script>
 </div>
 
-Como el p-value (Pr(\>F) es menor a 0.05, se rechaza la hipótesis cero y se afirma que las varianzas son diferentes.
+Como el p-value (Pr(>F) es menor a 0.05, se rechaza la hipótesis cero y se afirma que las varianzas son diferentes.
 Con este resultado, se puede correr el comando `t.test`, cuya hipótesis cero indica que las medias de apoyo a la democracia son iguales entre hombre y mujeres y la hipótesis alternativa indica que ambas medias son diferentes.
 Se incluye la especificación `var.equal=F` debido al resultado de la prueba de Levene que indica que las varianzas parecen diferentes.
 
@@ -267,3 +268,58 @@ En esta sección hemos comprobado estos resultados estadísticos para variables 
 
 En esta sección hemos descrito y graficado, como apoyo a la democracia, por grupos de otra variable.
 Partiendo de la comparación de intervalos de confianza, formalizamos esta comparación con una prueba estadística, como la prueba t, para concluir si las diferencias entre grupos son estadísticamente significativas.
+
+# Cálculos incluyendo el efecto de diseño
+
+Otra forma de calcular la diferencia de medias incluyendo el factor de expansión es mediante de el uso de la librería `survey`.
+Para esto se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "lapop.design".
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+En primer lugar, se puede calcular la tabla de la media de apoyo a la democracia para cada valor de la variable género incluyendo el factor de expansión.
+De la misma manera que se vio en la sección sobre [intervalos de confianza](https://arturomaldonado.github.io/BarometroEdu_Web/IC.html), se usa el comando `svyby`.
+
+
+```r
+apxgen.w <- svyby(~ing4r, ~genero, lapop.design, svymean, na.rm=T, vartype = "ci")
+apxgen.w
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["genero"],"name":[1],"type":["fct"],"align":["left"]},{"label":["ing4r"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ci_l"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["ci_u"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Hombre","2":"59.45019","3":"58.60266","4":"60.29772","_rn_":"Hombre"},{"1":"Mujer","2":"55.95399","3":"55.09168","4":"56.81630","_rn_":"Mujer"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Con esta tabla se puede proceder a crear el gráfico de barras, de la misma manera que se realizó arriba en esta sección.
+
+Para el cálculo de la prueba t de diferencia de medias, el paquete `survey` cuenta con un comando nativo que permite hacer este calculo `svyttest`.
+Sin embargo, en este caso no se cuenta con un comando para evaluar la igualdad de varianzas, como el `LeveneTest`.
+El comando `svyttest` es una derivación de un comando más general para modelos lineales generalizados, que asumen igualdad de varianzas.
+Si se quisiera comprobar este supuesto, se puede hacer de manera manual, tal como se indica en este [link](https://stats.stackexchange.com/questions/148314/f-test-for-equality-of-variances-with-weighted-survey-data).
+Aquí se va a proceder asumiendo el supuesto.
+Se observa que el comando regresa resultados muy parecidos al comando sin el efecto de diseño y para todo efecto se llegan a las mismas conclusiones.
+El p-value es menor a 0.05, por lo que se puede rechazar la H0 de igualdad de medias y afirmar que existe una diferencia en el apoyo a la democracia entre hombres y mujeres en la población, tomando en cuenta el efecto de diseño.
+
+
+```r
+svyttest(ing4r~genero, lapop.design)
+```
+
+```
+## 
+## 	Design-based t-test
+## 
+## data:  ing4r ~ genero
+## t = -5.8332, df = 1329, p-value = 6.822e-09
+## alternative hypothesis: true difference in mean is not equal to 0
+## 95 percent confidence interval:
+##  -4.672004 -2.320395
+## sample estimates:
+## difference in mean 
+##          -3.496199
+```

@@ -330,7 +330,7 @@ weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
 ## [1] 71.11895
 ```
 
-Otra forma de calular la media incluyendo el factor de expansión es mediante de el uso de la librería `survey` y el comando nativo `svymean`.
+Otra forma de calcular la media incluyendo el factor de expansión es mediante de el uso de la librería `survey` y el comando nativo `svymean`.
 Para esto se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "lapop.design".
 
 
