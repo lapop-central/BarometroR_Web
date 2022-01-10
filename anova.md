@@ -94,7 +94,7 @@ table(lapop18$paises)
 ##        1638        1581        1498        1528        1516        1513
 ```
 
-Con estas variables, se crea un nuevo dataframe con los datos del promedio (que es la proporción) de apoyo a la democracia por cada país, con los datos para construir los intervalos de confianza.
+Con estas variables, se crea un nuevo dataframe con los datos del promedio de apoyo a la democracia por cada país( que es el porcentaje de ciudadanos que apoya a la democracia) , con los datos para construir los intervalos de confianza.
 Para esto usamos el comando `summarySE` que es parte de la librería `Rmisc`.
 Estos datos se guardan en el dataframe "df".
 
@@ -147,71 +147,7 @@ graf1
 
 ![](anova_files/figure-html/graf-1.png)<!-- -->
 
-# Considerando el factor de expansión
-
-El gráfico anterior difiere en resultados en algunos países, como Brasil y Colombia.
-Para reproducir el Gráfico 1.2 tomando en cuenta el factor de expansión se tiene que incluir un código que permita hacer los cálculos tomando en cuenta la variable "weight1500".
-Algunos comandos en R permiten incluir una variable como factor de expansión o como variable ponderadora.
-Por ejemplo, la librería `descr` incluye el comando `compmeans` que se puede usar para calcular la media (o proporción para una variable dummy) según grupos de otra variable, usando una variable de expansión.
-Este comando calcula la media, el N de cada grupo y la desviación estándar.
-De esta manera, se puede calcular estos nuevos datos y guardarlos en un nuevo dataframe "df2".
-
-
-```r
-library(descr)
-df2 <- as.data.frame(compmeans(lapop18$ing4r, lapop18$paises, lapop18$weight1500, plot=F))
-```
-
-```r
-df2
-```
-
-<div data-pagedtable="false">
-  <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Mean"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["N"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Std. Dev."],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"62.72307","2":"1436","3":"48.37099","_rn_":"México"},{"1":"48.88451","2":"1432","3":"50.00501","_rn_":"Guatemala"},{"1":"58.56655","2":"1454","3":"49.27762","_rn_":"El Salvador"},{"1":"45.01005","2":"1436","3":"49.76772","_rn_":"Honduras"},{"1":"51.53743","2":"1451","3":"49.99359","_rn_":"Nicaragua"},{"1":"72.35940","2":"1457","3":"44.73736","_rn_":"Costa Rica"},{"1":"53.80612","2":"1479","3":"49.87179","_rn_":"Panamá"},{"1":"59.78999","2":"1460","3":"49.04899","_rn_":"Colombia"},{"1":"54.43122","2":"1479","3":"49.82010","_rn_":"Ecuador"},{"1":"49.14110","2":"1454","3":"50.00983","_rn_":"Bolivia"},{"1":"49.26471","2":"1475","3":"50.01155","_rn_":"Perú"},{"1":"51.21786","2":"1463","3":"50.00225","_rn_":"Paraguay"},{"1":"63.87097","2":"1419","3":"48.05438","_rn_":"Chile"},{"1":"76.19359","2":"1451","3":"42.60454","_rn_":"Uruguay"},{"1":"59.99750","2":"1470","3":"49.00697","_rn_":"Brasil"},{"1":"71.10368","2":"1468","3":"45.34353","_rn_":"Argentina"},{"1":"59.22659","2":"1458","3":"49.15818","_rn_":"Rep. Dom."},{"1":"51.18871","2":"1334","3":"50.00461","_rn_":"Jamaica"},{"1":"57.71191","2":"26078","3":"49.40263","_rn_":"Total"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-
-Este comando calcula la media, el N y la desviación estándar de una variable por cada grupo de otra variable.
-Para reproducir el gráfico de barras, se requiere partir de estos datos y calcular el error estándar y el intervalo de confianza y agregar estos datos al dataframe como nuevas columnas.
-
-En primer lugar, se crea un vector con los nombres que asignaremos a las columnas, las que asignamos con el comando `colnames`.
-El comando `compmeans` no crea una columna con los nombres de los países, por lo que se tiene que agregar una columna de nombre de países con el comando `row.names`.
-Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96, al 95% de confianza, multiplicado por el error estándar).
-
-
-```r
-varnames <- c("media", "n", "sd")
-colnames(df2) <- varnames
-df2$pais <- row.names(df2)
-df2$err.st <- df2$sd/sqrt(df2$n)
-df2$ci <- df2$err.st*1.96
-df2
-```
-
-<div data-pagedtable="false">
-  <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["media"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["n"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pais"],"name":[4],"type":["chr"],"align":["left"]},{"label":["err.st"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["ci"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"62.72307","2":"1436","3":"48.37099","4":"México","5":"1.2764616","6":"2.5018646","_rn_":"México"},{"1":"48.88451","2":"1432","3":"50.00501","4":"Guatemala","5":"1.3214236","6":"2.5899902","_rn_":"Guatemala"},{"1":"58.56655","2":"1454","3":"49.27762","4":"El Salvador","5":"1.2923124","6":"2.5329324","_rn_":"El Salvador"},{"1":"45.01005","2":"1436","3":"49.76772","4":"Honduras","5":"1.3133198","6":"2.5741069","_rn_":"Honduras"},{"1":"51.53743","2":"1451","3":"49.99359","4":"Nicaragua","5":"1.3124436","6":"2.5723894","_rn_":"Nicaragua"},{"1":"72.35940","2":"1457","3":"44.73736","4":"Costa Rica","5":"1.1720349","6":"2.2971884","_rn_":"Costa Rica"},{"1":"53.80612","2":"1479","3":"49.87179","4":"Panamá","5":"1.2967936","6":"2.5417155","_rn_":"Panamá"},{"1":"59.78999","2":"1460","3":"49.04899","4":"Colombia","5":"1.2836708","6":"2.5159947","_rn_":"Colombia"},{"1":"54.43122","2":"1479","3":"49.82010","4":"Ecuador","5":"1.2954495","6":"2.5390809","_rn_":"Ecuador"},{"1":"49.14110","2":"1454","3":"50.00983","4":"Bolivia","5":"1.3115147","6":"2.5705687","_rn_":"Bolivia"},{"1":"49.26471","2":"1475","3":"50.01155","4":"Perú","5":"1.3021897","6":"2.5522918","_rn_":"Perú"},{"1":"51.21786","2":"1463","3":"50.00225","4":"Paraguay","5":"1.3072764","6":"2.5622617","_rn_":"Paraguay"},{"1":"63.87097","2":"1419","3":"48.05438","4":"Chile","5":"1.2756800","6":"2.5003328","_rn_":"Chile"},{"1":"76.19359","2":"1451","3":"42.60454","4":"Uruguay","5":"1.1184645","6":"2.1921904","_rn_":"Uruguay"},{"1":"59.99750","2":"1470","3":"49.00697","4":"Brasil","5":"1.2782012","6":"2.5052744","_rn_":"Brasil"},{"1":"71.10368","2":"1468","3":"45.34353","4":"Argentina","5":"1.1834565","6":"2.3195747","_rn_":"Argentina"},{"1":"59.22659","2":"1458","3":"49.15818","4":"Rep. Dom.","5":"1.2874105","6":"2.5233246","_rn_":"Rep. Dom."},{"1":"51.18871","2":"1334","3":"50.00461","4":"Jamaica","5":"1.3690903","6":"2.6834171","_rn_":"Jamaica"},{"1":"57.71191","2":"26078","3":"49.40263","4":"Total","5":"0.3059236","6":"0.5996102","_rn_":"Total"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-
-Con este nuevo dataframe "df2", que ya incluye el valor del intervalo de confianza, se puede reproducir el Gráfico 1.2, de manera muy similar al gráfico anterior, pero con los datos considerando el factor de expansión.
-
-
-```r
-graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
-  geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
-  geom_errorbar(aes(ymin=media-ci, ymax=media+ci), width=0.2)+
-  geom_text(aes(label=paste(round(media, 1), "%")), hjust=-0.8, size=2)+
-  xlab("")+
-  ylab("Apoyo a la democracia segun países")+
-  coord_flip()
-graf2
-```
-
-![](anova_files/figure-html/graf2-1.png)<!-- -->
-
-Este estilo de gráficos es bastante usado en los reportes del Barómetro de las Américas y otros elaborados por LAPOP.
+Este tipo de gráficos es bastante usado en los reportes del Barómetro de las Américas y otros elaborados por LAPOP.
 Este gráfico muestra el valor promedio del apoyo a la democracia en cada país y una barra con los intervalos de confianza al 95%.
 De esta manera, se puede hacer una comparación visual entre los países para saber donde podría haber diferencias estadísticamente significativas.
 Cuando los intervalos de confianza de dos países se intersectan, no se puede decir que haya una diferencia en el promedio poblacional del apoyo a la democracia.
@@ -449,4 +385,325 @@ TukeyHSD(anova)
 
 En esta sección se ha expandido la comparación de medias de 2 grupos a más de 2 grupos.
 En primer lugar, se realizó una exploración visual, mediante un gráfico de barras con intervalos de confianza.
-Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas
+Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas.
+
+# Cálculos incluyendo el efecto de diseño
+
+Para reproducir el Gráfico 1.2 tomando en cuenta el factor de expansión se tiene que incluir un código que permita hacer los cálculos tomando en cuenta la variable "weight1500".
+Algunos comandos en R permiten incluir una variable como factor de expansión o como variable ponderadora.
+Por ejemplo, la librería `descr` incluye el comando `compmeans` que se puede usar para calcular la media (o proporción para una variable dummy) según grupos de otra variable, usando una variable de expansión.
+Este comando calcula la media, el N de cada grupo y la desviación estándar.
+De esta manera, se puede calcular estos nuevos datos y guardarlos en un nuevo dataframe "df2".
+
+
+```r
+library(descr)
+df2 <- as.data.frame(compmeans(lapop18$ing4r, lapop18$paises, lapop18$weight1500, plot=F))
+```
+
+```r
+df2
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Mean"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["N"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Std. Dev."],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"62.72307","2":"1436","3":"48.37099","_rn_":"México"},{"1":"48.88451","2":"1432","3":"50.00501","_rn_":"Guatemala"},{"1":"58.56655","2":"1454","3":"49.27762","_rn_":"El Salvador"},{"1":"45.01005","2":"1436","3":"49.76772","_rn_":"Honduras"},{"1":"51.53743","2":"1451","3":"49.99359","_rn_":"Nicaragua"},{"1":"72.35940","2":"1457","3":"44.73736","_rn_":"Costa Rica"},{"1":"53.80612","2":"1479","3":"49.87179","_rn_":"Panamá"},{"1":"59.78999","2":"1460","3":"49.04899","_rn_":"Colombia"},{"1":"54.43122","2":"1479","3":"49.82010","_rn_":"Ecuador"},{"1":"49.14110","2":"1454","3":"50.00983","_rn_":"Bolivia"},{"1":"49.26471","2":"1475","3":"50.01155","_rn_":"Perú"},{"1":"51.21786","2":"1463","3":"50.00225","_rn_":"Paraguay"},{"1":"63.87097","2":"1419","3":"48.05438","_rn_":"Chile"},{"1":"76.19359","2":"1451","3":"42.60454","_rn_":"Uruguay"},{"1":"59.99750","2":"1470","3":"49.00697","_rn_":"Brasil"},{"1":"71.10368","2":"1468","3":"45.34353","_rn_":"Argentina"},{"1":"59.22659","2":"1458","3":"49.15818","_rn_":"Rep. Dom."},{"1":"51.18871","2":"1334","3":"50.00461","_rn_":"Jamaica"},{"1":"57.71191","2":"26078","3":"49.40263","_rn_":"Total"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Este comando calcula la media, el N y la desviación estándar de una variable por cada grupo de otra variable.
+Para reproducir el gráfico de barras, se requiere partir de estos datos y calcular el error estándar y el intervalo de confianza y agregar estos datos al dataframe como nuevas columnas.
+
+En primer lugar, se crea un vector con los nombres que asignaremos a las columnas, las que asignamos con el comando `colnames`.
+El comando `compmeans` no crea una columna con los nombres de los países, por lo que se tiene que agregar una columna de nombre de países con el comando `row.names`.
+Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96, al 95% de confianza, multiplicado por el error estándar).
+
+
+```r
+varnames <- c("media", "n", "sd")
+colnames(df2) <- varnames
+df2$pais <- row.names(df2)
+df2$err.st <- df2$sd/sqrt(df2$n)
+df2$ci <- df2$err.st*1.96
+df2
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["media"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["n"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["sd"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pais"],"name":[4],"type":["chr"],"align":["left"]},{"label":["err.st"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["ci"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"62.72307","2":"1436","3":"48.37099","4":"México","5":"1.2764616","6":"2.5018646","_rn_":"México"},{"1":"48.88451","2":"1432","3":"50.00501","4":"Guatemala","5":"1.3214236","6":"2.5899902","_rn_":"Guatemala"},{"1":"58.56655","2":"1454","3":"49.27762","4":"El Salvador","5":"1.2923124","6":"2.5329324","_rn_":"El Salvador"},{"1":"45.01005","2":"1436","3":"49.76772","4":"Honduras","5":"1.3133198","6":"2.5741069","_rn_":"Honduras"},{"1":"51.53743","2":"1451","3":"49.99359","4":"Nicaragua","5":"1.3124436","6":"2.5723894","_rn_":"Nicaragua"},{"1":"72.35940","2":"1457","3":"44.73736","4":"Costa Rica","5":"1.1720349","6":"2.2971884","_rn_":"Costa Rica"},{"1":"53.80612","2":"1479","3":"49.87179","4":"Panamá","5":"1.2967936","6":"2.5417155","_rn_":"Panamá"},{"1":"59.78999","2":"1460","3":"49.04899","4":"Colombia","5":"1.2836708","6":"2.5159947","_rn_":"Colombia"},{"1":"54.43122","2":"1479","3":"49.82010","4":"Ecuador","5":"1.2954495","6":"2.5390809","_rn_":"Ecuador"},{"1":"49.14110","2":"1454","3":"50.00983","4":"Bolivia","5":"1.3115147","6":"2.5705687","_rn_":"Bolivia"},{"1":"49.26471","2":"1475","3":"50.01155","4":"Perú","5":"1.3021897","6":"2.5522918","_rn_":"Perú"},{"1":"51.21786","2":"1463","3":"50.00225","4":"Paraguay","5":"1.3072764","6":"2.5622617","_rn_":"Paraguay"},{"1":"63.87097","2":"1419","3":"48.05438","4":"Chile","5":"1.2756800","6":"2.5003328","_rn_":"Chile"},{"1":"76.19359","2":"1451","3":"42.60454","4":"Uruguay","5":"1.1184645","6":"2.1921904","_rn_":"Uruguay"},{"1":"59.99750","2":"1470","3":"49.00697","4":"Brasil","5":"1.2782012","6":"2.5052744","_rn_":"Brasil"},{"1":"71.10368","2":"1468","3":"45.34353","4":"Argentina","5":"1.1834565","6":"2.3195747","_rn_":"Argentina"},{"1":"59.22659","2":"1458","3":"49.15818","4":"Rep. Dom.","5":"1.2874105","6":"2.5233246","_rn_":"Rep. Dom."},{"1":"51.18871","2":"1334","3":"50.00461","4":"Jamaica","5":"1.3690903","6":"2.6834171","_rn_":"Jamaica"},{"1":"57.71191","2":"26078","3":"49.40263","4":"Total","5":"0.3059236","6":"0.5996102","_rn_":"Total"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Con este nuevo dataframe "df2", que ya incluye el valor del intervalo de confianza, se puede reproducir el Gráfico 1.2, de manera muy similar al gráfico anterior, pero con los datos considerando el factor de expansión.
+
+
+```r
+graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
+  geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=media-ci, ymax=media+ci), width=0.2)+
+  geom_text(aes(label=paste(round(media, 1), "%")), hjust=-0.8, size=2)+
+  xlab("")+
+  ylab("Apoyo a la democracia segun países")+
+  coord_flip()
+graf2
+```
+
+![](anova_files/figure-html/graf2-1.png)<!-- -->
+
+Otra forma de incluir el factor de expansión, es mediante de el uso de la librería `survey`.
+Se define primero el diseño muestral.
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Para el cálculo de la prueba de anova se puede definir un modelo lineal, usando el apoyo a la democracia como variable dependiente y paises como variable independiente.
+Este modelo se guarda en un objeto "modelo.anova".
+
+
+```r
+modelo.anova=svyglm(ing4r ~ paises, lapop.design)
+```
+
+Para calcular la prueba de anova de este modelo, se puede usar el comando `aov` que usa como argumento el objeto con el modelo lineal.
+Estos resultados, a su vez, se guardan en otro objeto "anova.w".
+Se puede presentar un `summary` de estos resultados, los que muestran los datos para sacar conclusiones de anova.
+Como el p-value (Pr>F) es menor a 0.05, se concluye que al menos un par de medias son diferentes.
+
+
+```r
+anova.w=aov(modelo.anova)
+summary(anova.w)
+```
+
+```
+##                Df   Sum Sq Mean Sq F value Pr(>F)    
+## paises         17  2022326  118960   50.25 <2e-16 ***
+## Residuals   27068 64077761    2367                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 956 observations deleted due to missingness
+```
+
+El modelo lineal también se puede describir.
+Estos resultados muestran que el modelo ha descompuesto en diferentes indicadores a cada país, tomando a México como el país de referencia.
+Esto hace que la media de apoyo a la democracia en México se pueda ver en el valor del intercepto (62.7).
+Luego, el valor del intercepto de cada país corresponde a la diferencia con México.
+Por ejemplo, el valor del coeficiente para Guatelama es -13.8, que corresponde a la diferencia del apoyo a la democracia entre México y Guatemala.
+Esta diferencia es igual a la que se observa en la tabla de emparejamientos de más arriba.
+Estos resultados, sin embargo, muestran los emparejamientos, todos relativos a México.
+
+
+```r
+summary(modelo.anova)
+```
+
+```
+## 
+## Call:
+## svyglm(formula = ing4r ~ paises, design = lapop.design)
+## 
+## Survey design:
+## svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, 
+##     nest = TRUE, data = lapop18)
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)         62.723      1.246  50.342  < 2e-16 ***
+## paisesGuatemala    -13.839      1.843  -7.508 1.10e-13 ***
+## paisesEl Salvador   -4.157      1.777  -2.339   0.0195 *  
+## paisesHonduras     -17.713      1.728 -10.249  < 2e-16 ***
+## paisesNicaragua    -11.186      1.889  -5.922 4.05e-09 ***
+## paisesCosta Rica     9.636      1.959   4.918 9.84e-07 ***
+## paisesPanamá        -8.917      1.854  -4.811 1.68e-06 ***
+## paisesColombia      -2.933      1.738  -1.687   0.0918 .  
+## paisesEcuador       -8.292      1.843  -4.499 7.42e-06 ***
+## paisesBolivia      -13.582      1.855  -7.320 4.30e-13 ***
+## paisesPerú         -13.458      1.828  -7.363 3.16e-13 ***
+## paisesParaguay     -11.505      2.048  -5.619 2.34e-08 ***
+## paisesChile          1.148      1.703   0.674   0.5004    
+## paisesUruguay       13.471      1.758   7.660 3.58e-14 ***
+## paisesBrasil        -2.726      1.994  -1.367   0.1719    
+## paisesArgentina      8.381      1.886   4.444 9.59e-06 ***
+## paisesRep. Dom.     -3.496      1.630  -2.145   0.0321 *  
+## paisesJamaica      -11.534      1.819  -6.340 3.16e-10 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 2365.803)
+## 
+## Number of Fisher Scoring iterations: 2
+```
+
+Para poder todos los emparejamientos, se puede usar el comando `TukeyHSD`, usando los resultados de anova con el modelo lineal, el objeto "anova.w".
+Este comando nos muestra el valor de todos los emparejamientos, tomando en cuenta el efecto de diseño.
+
+
+```r
+TukeyHSD(anova.w)
+```
+
+```
+##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = modelo.anova)
+## 
+## $paises
+##                                diff           lwr         upr     p adj
+## Guatemala-México       -13.83855232 -1.999973e+01  -7.6773698 0.0000000
+## El Salvador-México      -4.15651385 -1.037920e+01   2.0661694 0.6610397
+## Honduras-México        -17.71301987 -2.390599e+01 -11.5200532 0.0000000
+## Nicaragua-México       -11.18563360 -1.737547e+01  -4.9957931 0.0000000
+## Costa Rica-México        9.63632968  3.406062e+00  15.8665976 0.0000102
+## Panamá-México           -8.91695094 -1.506514e+01  -2.7687628 0.0000619
+## Colombia-México         -2.93307293 -9.003533e+00   3.1373872 0.9695509
+## Ecuador-México          -8.29184982 -1.446520e+01  -2.1184990 0.0003980
+## Bolivia-México         -13.58196246 -1.964252e+01  -7.5214053 0.0000000
+## Perú-México            -13.45836087 -1.964820e+01  -7.2685204 0.0000000
+## Paraguay-México        -11.50520478 -1.771397e+01  -5.2964408 0.0000000
+## Chile-México             1.14790099 -4.987484e+00   7.2832859 0.9999999
+## Uruguay-México          13.47052383  7.314362e+00  19.6266856 0.0000000
+## Brasil-México           -2.72556793 -8.941800e+00   3.4906644 0.9886264
+## Argentina-México         8.38061217  2.189731e+00  14.5714935 0.0003337
+## Rep. Dom.-México        -3.49647245 -9.709496e+00   2.7165515 0.8866713
+## Jamaica-México         -11.53435947 -1.789526e+01  -5.1734574 0.0000000
+## El Salvador-Guatemala    9.68203847  3.470413e+00  15.8936643 0.0000081
+## Honduras-Guatemala      -3.87446755 -1.005632e+01   2.3073886 0.7629806
+## Nicaragua-Guatemala      2.65291872 -3.525806e+00   8.8316430 0.9909291
+## Costa Rica-Guatemala    23.47488200  1.725566e+01  29.6941060 0.0000000
+## Panamá-Guatemala         4.92160137 -1.215395e+00  11.0585978 0.3140674
+## Colombia-Guatemala      10.90547939  4.846354e+00  16.9646043 0.0000001
+## Ecuador-Guatemala        5.54670250 -6.155023e-01  11.7089073 0.1398794
+## Bolivia-Guatemala        0.25658986 -5.792613e+00   6.3057932 1.0000000
+## Perú-Guatemala           0.38019145 -5.798533e+00   6.5589157 1.0000000
+## Paraguay-Guatemala       2.33334754 -3.864334e+00   8.5310293 0.9980099
+## Chile-Guatemala         14.98645331  8.862283e+00  21.1106231 0.0000000
+## Uruguay-Guatemala       27.30907615  2.116409e+01  33.4540608 0.0000000
+## Brasil-Guatemala        11.11298439  4.907821e+00  17.3181477 0.0000001
+## Argentina-Guatemala     22.21916449  1.603940e+01  28.3989315 0.0000000
+## Rep. Dom.-Guatemala     10.34207987  4.140131e+00  16.5440292 0.0000009
+## Jamaica-Guatemala        2.30419285 -4.045892e+00   8.6542782 0.9987355
+## Honduras-El Salvador   -13.55650602 -1.979966e+01  -7.3133528 0.0000000
+## Nicaragua-El Salvador   -7.02911975 -1.326917e+01  -0.7890676 0.0104583
+## Costa Rica-El Salvador  13.79284353  7.512687e+00  20.0729999 0.0000000
+## Panamá-El Salvador      -4.76043709 -1.095917e+01   1.4383001 0.3949847
+## Colombia-El Salvador     1.22344092 -4.898210e+00   7.3450920 0.9999997
+## Ecuador-El Salvador     -4.13533597 -1.035903e+01   2.0883595 0.6701887
+## Bolivia-El Salvador     -9.42544861 -1.553728e+01  -3.3136176 0.0000112
+## Perú-El Salvador        -9.30184702 -1.554190e+01  -3.0617949 0.0000296
+## Paraguay-El Salvador    -7.34869093 -1.360751e+01  -1.0898671 0.0054118
+## Chile-El Salvador        5.30441484 -8.816237e-01  11.4904534 0.2039911
+## Uruguay-El Salvador     17.62703768  1.142039e+01  23.8336836 0.0000000
+## Brasil-El Salvador       1.43094592 -4.835287e+00   7.6971784 0.9999980
+## Argentina-El Salvador   12.53712603  6.296041e+00  18.7782107 0.0000000
+## Rep. Dom.-El Salvador    0.66004140 -5.603008e+00   6.9230912 1.0000000
+## Jamaica-El Salvador     -7.37784562 -1.378762e+01  -0.9680718 0.0074803
+## Nicaragua-Honduras       6.52738627  3.169675e-01  12.7378050 0.0274891
+## Costa Rica-Honduras     27.34934955  2.109864e+01  33.6000626 0.0000000
+## Panamá-Honduras          8.79606892  2.627164e+00  14.9649742 0.0000960
+## Colombia-Honduras       14.77994694  8.688505e+00  20.8713886 0.0000000
+## Ecuador-Honduras         9.42117005  3.227186e+00  15.6151538 0.0000167
+## Bolivia-Honduras         4.13105741 -1.950515e+00  10.2126302 0.6311577
+## Perú-Honduras            4.25465900 -1.955760e+00  10.4650777 0.6156156
+## Paraguay-Honduras        6.20781509 -2.146459e-02  12.4370948 0.0519723
+## Chile-Honduras          18.86092086  1.270478e+01  25.0170660 0.0000000
+## Uruguay-Honduras        31.18354370  2.500669e+01  37.3603959 0.0000000
+## Brasil-Honduras         14.98745194  8.750729e+00  21.2241754 0.0000000
+## Argentina-Honduras      26.09363204  1.988218e+01  32.3050882 0.0000000
+## Rep. Dom.-Honduras      14.21654742  7.983022e+00  20.4500731 0.0000000
+## Jamaica-Honduras         6.17866040 -2.022682e-01  12.5595890 0.0707772
+## Costa Rica-Nicaragua    20.82196328  1.457435e+01  27.0695790 0.0000000
+## Panamá-Nicaragua         2.26868265 -3.897084e+00   8.4344495 0.9984972
+## Colombia-Nicaragua       8.25256067  2.164297e+00  14.3408240 0.0003239
+## Ecuador-Nicaragua        2.89378378 -3.297074e+00   9.0846419 0.9779747
+## Bolivia-Nicaragua       -2.39632886 -8.474718e+00   3.6820605 0.9965500
+## Perú-Nicaragua          -2.27272727 -8.480029e+00   3.9345740 0.9985861
+## Paraguay-Nicaragua      -0.31957118 -6.545743e+00   5.9066005 1.0000000
+## Chile-Nicaragua         12.33353459  6.180534e+00  18.4865348 0.0000000
+## Uruguay-Nicaragua       24.65615743  1.848244e+01  30.8298752 0.0000000
+## Brasil-Nicaragua         8.46006567  2.226447e+00  14.6936848 0.0003148
+## Argentina-Nicaragua     19.56624577  1.335791e+01  25.7745850 0.0000000
+## Rep. Dom.-Nicaragua      7.68916115  1.458741e+00  13.9195810 0.0022475
+## Jamaica-Nicaragua       -0.34872587 -6.726620e+00   6.0291687 1.0000000
+## Panamá-Costa Rica      -18.55328062 -2.475963e+01 -12.3469295 0.0000000
+## Colombia-Costa Rica    -12.56940261 -1.869876e+01  -6.4400418 0.0000000
+## Ecuador-Costa Rica     -17.92817950 -2.415946e+01 -11.6969006 0.0000000
+## Bolivia-Costa Rica     -23.21829214 -2.933785e+01 -17.0987390 0.0000000
+## Perú-Costa Rica        -23.09469055 -2.934231e+01 -16.8470748 0.0000000
+## Paraguay-Costa Rica    -21.14153446 -2.740790e+01 -14.8751697 0.0000000
+## Chile-Costa Rica        -8.48842869 -1.468210e+01  -2.2947606 0.0002512
+## Uruguay-Costa Rica       3.83419415 -2.380056e+00  10.0484443 0.7849136
+## Brasil-Costa Rica      -12.36189761 -1.863566e+01  -6.0881331 0.0000000
+## Argentina-Costa Rica    -1.25571750 -7.504364e+00   4.9929295 0.9999997
+## Rep. Dom.-Costa Rica   -13.13280213 -1.940339e+01  -6.8622165 0.0000000
+## Jamaica-Costa Rica     -21.17068915 -2.758783e+01 -14.7535518 0.0000000
+## Colombia-Panamá          5.98387801 -6.203319e-02  12.0297892 0.0560683
+## Ecuador-Panamá           0.62510112 -5.524111e+00   6.7743137 1.0000000
+## Bolivia-Panamá          -4.66501152 -1.070098e+01   1.3709564 0.3827840
+## Perú-Panamá             -4.54140993 -1.070718e+01   1.6243569 0.4764889
+## Paraguay-Panamá         -2.58825383 -8.773018e+00   3.5965102 0.9931650
+## Chile-Panamá            10.06485193  3.953755e+00  16.1759487 0.0000014
+## Uruguay-Panamá          22.38747477  1.625552e+01  28.5194307 0.0000000
+## Brasil-Panamá            6.19138302 -8.782402e-04  12.3836443 0.0500799
+## Argentina-Panamá        17.29756312  1.113075e+01  23.4643749 0.0000000
+## Rep. Dom.-Panamá         5.42047849 -7.685621e-01  11.6095190 0.1742623
+## Jamaica-Panamá          -2.61740853 -8.954887e+00   3.7200697 0.9941059
+## Ecuador-Colombia        -5.35877689 -1.143027e+01   0.7127209 0.1640831
+## Bolivia-Colombia       -10.64888953 -1.660567e+01  -4.6921137 0.0000001
+## Perú-Colombia          -10.52528794 -1.661355e+01  -4.4370246 0.0000002
+## Paraguay-Colombia       -8.57213185 -1.467963e+01  -2.4646303 0.0001422
+## Chile-Colombia           4.08097392 -1.951917e+00  10.1138648 0.6386594
+## Uruguay-Colombia        16.40359676  1.034958e+01  22.4576163 0.0000000
+## Brasil-Colombia          0.20750500 -5.907589e+00   6.3225985 1.0000000
+## Argentina-Colombia      11.31368511  5.224364e+00  17.4030067 0.0000000
+## Rep. Dom.-Colombia      -0.56339952 -6.675232e+00   5.5484326 1.0000000
+## Jamaica-Colombia        -8.60128654 -1.486339e+01  -2.3391862 0.0002385
+## Bolivia-Ecuador         -5.29011264 -1.135171e+01   0.7714838 0.1790452
+## Perú-Ecuador            -5.16651105 -1.135737e+01   1.0243470 0.2458653
+## Paraguay-Ecuador        -3.21335496 -9.423133e+00   2.9964235 0.9429346
+## Chile-Ecuador            9.43975081  3.303339e+00  15.5761623 0.0000120
+## Uruguay-Ecuador         21.76237365  1.560519e+01  27.9195586 0.0000000
+## Brasil-Ecuador           5.56628189 -6.509637e-01  11.7835274 0.1462565
+## Argentina-Ecuador       16.67246200  1.048056e+01  22.8643608 0.0000000
+## Rep. Dom.-Ecuador        4.79537737 -1.418660e+00  11.0094152 0.3856778
+## Jamaica-Ecuador         -3.24250965 -9.604402e+00   3.1193826 0.9500852
+## Perú-Bolivia             0.12360159 -5.954788e+00   6.2019909 1.0000000
+## Paraguay-Bolivia         2.07675768 -4.020901e+00   8.1744164 0.9994346
+## Chile-Bolivia           14.72986345  8.706937e+00  20.7527895 0.0000000
+## Uruguay-Bolivia         27.05248629  2.100840e+01  33.0965759 0.0000000
+## Brasil-Bolivia          10.85639453  4.751132e+00  16.9616574 0.0000001
+## Argentina-Bolivia       21.96257464  1.588313e+01  28.0420239 0.0000000
+## Rep. Dom.-Bolivia       10.08549001  3.983494e+00  16.1874863 0.0000012
+## Jamaica-Bolivia          2.04760299 -4.204898e+00   8.3001038 0.9996615
+## Paraguay-Perú            1.95315609 -4.273016e+00   8.1793278 0.9998095
+## Chile-Perú              14.60626186  8.453262e+00  20.7592621 0.0000000
+## Uruguay-Perú            26.92888470  2.075517e+01  33.1026025 0.0000000
+## Brasil-Perú             10.73279294  4.499174e+00  16.9664121 0.0000003
+## Argentina-Perú          21.83897305  1.563063e+01  28.0473123 0.0000000
+## Rep. Dom.-Perú           9.96188842  3.731469e+00  16.1923082 0.0000037
+## Jamaica-Perú             1.92400140 -4.453893e+00   8.3018960 0.9998882
+## Chile-Paraguay          12.65310577  6.481069e+00  18.8251424 0.0000000
+## Uruguay-Paraguay        24.97572861  1.878304e+01  31.1684192 0.0000000
+## Brasil-Paraguay          8.77963685  2.527227e+00  15.0320470 0.0001405
+## Argentina-Paraguay      19.88581695  1.365861e+01  26.1130234 0.0000000
+## Rep. Dom.-Paraguay       8.00873233  1.759512e+00  14.2579527 0.0010806
+## Jamaica-Paraguay        -0.02915469 -6.425416e+00   6.3671070 1.0000000
+## Uruguay-Chile           12.32262284  6.203504e+00  18.4417415 0.0000000
+## Brasil-Chile            -3.87346892 -1.005302e+01   2.3060804 0.7628142
+## Argentina-Chile          7.23271119  1.078664e+00  13.3867585 0.0053246
+## Rep. Dom.-Chile         -4.64437344 -1.082070e+01   1.5319485 0.4358766
+## Jamaica-Chile          -12.68226046 -1.900732e+01  -6.3572023 0.0000000
+## Brasil-Uruguay         -16.19609176 -2.239627e+01  -9.9959135 0.0000000
+## Argentina-Uruguay       -5.08991165 -1.126467e+01   1.0848497 0.2661998
+## Rep. Dom.-Uruguay      -16.96699628 -2.316396e+01 -10.7700347 0.0000000
+## Jamaica-Uruguay        -25.00488330 -3.135010e+01 -18.6596693 0.0000000
+## Argentina-Brasil        11.10618010  4.871527e+00  17.3408328 0.0000001
+## Rep. Dom.-Brasil        -0.77090452 -7.027545e+00   5.4857359 1.0000000
+## Jamaica-Brasil          -8.80879154 -1.521230e+01  -2.4052802 0.0002302
+## Rep. Dom.-Argentina    -11.87708463 -1.810854e+01  -5.6456307 0.0000000
+## Jamaica-Argentina      -19.91497165 -2.629388e+01 -13.5360669 0.0000000
+## Jamaica-Rep. Dom.       -8.03788702 -1.443828e+01  -1.6374901 0.0016139
+```

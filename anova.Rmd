@@ -77,7 +77,7 @@ levels(lapop18$paises) <- c("México", "Guatemala", "El Salvador", "Honduras", "
 table(lapop18$paises)
 ```
 
-Con estas variables, se crea un nuevo dataframe con los datos del promedio (que es la proporción) de apoyo a la democracia por cada país, con los datos para construir los intervalos de confianza.
+Con estas variables, se crea un nuevo dataframe con los datos del promedio de apoyo a la democracia por cada país( que es el porcentaje de ciudadanos que apoya a la democracia) , con los datos para construir los intervalos de confianza.
 Para esto usamos el comando `summarySE` que es parte de la librería `Rmisc`.
 Estos datos se guardan en el dataframe "df".
 
@@ -120,51 +120,7 @@ graf1 <- ggplot(df, aes(x=reorder(paises, ing4r), y=ing4r))+
 graf1
 ```
 
-# Considerando el factor de expansión
-
-El gráfico anterior difiere en resultados en algunos países, como Brasil y Colombia.
-Para reproducir el Gráfico 1.2 tomando en cuenta el factor de expansión se tiene que incluir un código que permita hacer los cálculos tomando en cuenta la variable "weight1500".
-Algunos comandos en R permiten incluir una variable como factor de expansión o como variable ponderadora.
-Por ejemplo, la librería `descr` incluye el comando `compmeans` que se puede usar para calcular la media (o proporción para una variable dummy) según grupos de otra variable, usando una variable de expansión.
-Este comando calcula la media, el N de cada grupo y la desviación estándar.
-De esta manera, se puede calcular estos nuevos datos y guardarlos en un nuevo dataframe "df2".
-
-```{r datos ponderados}
-library(descr)
-df2 <- as.data.frame(compmeans(lapop18$ing4r, lapop18$paises, lapop18$weight1500, plot=F))
-df2
-```
-
-Este comando calcula la media, el N y la desviación estándar de una variable por cada grupo de otra variable.
-Para reproducir el gráfico de barras, se requiere partir de estos datos y calcular el error estándar y el intervalo de confianza y agregar estos datos al dataframe como nuevas columnas.
-
-En primer lugar, se crea un vector con los nombres que asignaremos a las columnas, las que asignamos con el comando `colnames`.
-El comando `compmeans` no crea una columna con los nombres de los países, por lo que se tiene que agregar una columna de nombre de países con el comando `row.names`.
-Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96, al 95% de confianza, multiplicado por el error estándar).
-
-```{r datos ponderados 2}
-varnames <- c("media", "n", "sd")
-colnames(df2) <- varnames
-df2$pais <- row.names(df2)
-df2$err.st <- df2$sd/sqrt(df2$n)
-df2$ci <- df2$err.st*1.96
-df2
-```
-
-Con este nuevo dataframe "df2", que ya incluye el valor del intervalo de confianza, se puede reproducir el Gráfico 1.2, de manera muy similar al gráfico anterior, pero con los datos considerando el factor de expansión.
-
-```{r graf2}
-graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
-  geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
-  geom_errorbar(aes(ymin=media-ci, ymax=media+ci), width=0.2)+
-  geom_text(aes(label=paste(round(media, 1), "%")), hjust=-0.8, size=2)+
-  xlab("")+
-  ylab("Apoyo a la democracia segun países")+
-  coord_flip()
-graf2
-```
-
-Este estilo de gráficos es bastante usado en los reportes del Barómetro de las Américas y otros elaborados por LAPOP.
+Este tipo de gráficos es bastante usado en los reportes del Barómetro de las Américas y otros elaborados por LAPOP.
 Este gráfico muestra el valor promedio del apoyo a la democracia en cada país y una barra con los intervalos de confianza al 95%.
 De esta manera, se puede hacer una comparación visual entre los países para saber donde podría haber diferencias estadísticamente significativas.
 Cuando los intervalos de confianza de dos países se intersectan, no se puede decir que haya una diferencia en el promedio poblacional del apoyo a la democracia.
@@ -220,7 +176,7 @@ El test de Tukey indica que el p-value de este emparejamiento (0.785) es mayor a
 También habíamos visto que los intervalos de confianza del apoyo a la democracia entre Argentina y Chile no se intersectaban, por lo que se intuía que había una diferencia significativa.
 El test de Tukey muestra un p-value de 0.0053, menor de 0.05, por lo que se puede afirmar que existe una diferencia estadísticamente significativa en el apoyo a la democracia entre estos dos países a un 95% de confianza.
 
-```{r post hoc}
+```{r posthoc}
 TukeyHSD(anova)
 ```
 
@@ -228,4 +184,91 @@ TukeyHSD(anova)
 
 En esta sección se ha expandido la comparación de medias de 2 grupos a más de 2 grupos.
 En primer lugar, se realizó una exploración visual, mediante un gráfico de barras con intervalos de confianza.
-Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas
+Luego, se formalizó estas comparaciones con el test de ANOVA y con la prueba post hoc de Tukey que permite evaluar cada emparejamiento entre grupos y saber si hay diferencias estadísticamente significativas.
+
+# Cálculos incluyendo el efecto de diseño
+
+Para reproducir el Gráfico 1.2 tomando en cuenta el factor de expansión se tiene que incluir un código que permita hacer los cálculos tomando en cuenta la variable "weight1500".
+Algunos comandos en R permiten incluir una variable como factor de expansión o como variable ponderadora.
+Por ejemplo, la librería `descr` incluye el comando `compmeans` que se puede usar para calcular la media (o proporción para una variable dummy) según grupos de otra variable, usando una variable de expansión.
+Este comando calcula la media, el N de cada grupo y la desviación estándar.
+De esta manera, se puede calcular estos nuevos datos y guardarlos en un nuevo dataframe "df2".
+
+```{r datosponderados}
+library(descr)
+df2 <- as.data.frame(compmeans(lapop18$ing4r, lapop18$paises, lapop18$weight1500, plot=F))
+df2
+```
+
+Este comando calcula la media, el N y la desviación estándar de una variable por cada grupo de otra variable.
+Para reproducir el gráfico de barras, se requiere partir de estos datos y calcular el error estándar y el intervalo de confianza y agregar estos datos al dataframe como nuevas columnas.
+
+En primer lugar, se crea un vector con los nombres que asignaremos a las columnas, las que asignamos con el comando `colnames`.
+El comando `compmeans` no crea una columna con los nombres de los países, por lo que se tiene que agregar una columna de nombre de países con el comando `row.names`.
+Finalmente, se crea una nueva columna con los datos del error estándar (desviación estándar dividido por la raíz de n) y el intervalo de confianza (1.96, al 95% de confianza, multiplicado por el error estándar).
+
+```{r datosponderados2}
+varnames <- c("media", "n", "sd")
+colnames(df2) <- varnames
+df2$pais <- row.names(df2)
+df2$err.st <- df2$sd/sqrt(df2$n)
+df2$ci <- df2$err.st*1.96
+df2
+```
+
+Con este nuevo dataframe "df2", que ya incluye el valor del intervalo de confianza, se puede reproducir el Gráfico 1.2, de manera muy similar al gráfico anterior, pero con los datos considerando el factor de expansión.
+
+```{r graf2}
+graf2 <- ggplot(df2, aes(x=reorder(pais, media), y=media))+
+  geom_bar(width=0.5, fill="purple", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=media-ci, ymax=media+ci), width=0.2)+
+  geom_text(aes(label=paste(round(media, 1), "%")), hjust=-0.8, size=2)+
+  xlab("")+
+  ylab("Apoyo a la democracia segun países")+
+  coord_flip()
+graf2
+```
+
+Otra forma de incluir el factor de expansión, es mediante de el uso de la librería `survey`.
+Se define primero el diseño muestral.
+
+```{r diseno}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Para el cálculo de la prueba de anova se puede definir un modelo lineal, usando el apoyo a la democracia como variable dependiente y paises como variable independiente.
+Este modelo se guarda en un objeto "modelo.anova".
+
+```{r modeloglm}
+modelo.anova=svyglm(ing4r ~ paises, lapop.design)
+```
+
+Para calcular la prueba de anova de este modelo, se puede usar el comando `aov` que usa como argumento el objeto con el modelo lineal.
+Estos resultados, a su vez, se guardan en otro objeto "anova.w".
+Se puede presentar un `summary` de estos resultados, los que muestran los datos para sacar conclusiones de anova.
+Como el p-value (Pr>F) es menor a 0.05, se concluye que al menos un par de medias son diferentes.
+
+```{r anovaw}
+anova.w=aov(modelo.anova)
+summary(anova.w)
+```
+
+El modelo lineal también se puede describir.
+Estos resultados muestran que el modelo ha descompuesto en diferentes indicadores a cada país, tomando a México como el país de referencia.
+Esto hace que la media de apoyo a la democracia en México se pueda ver en el valor del intercepto (62.7).
+Luego, el valor del intercepto de cada país corresponde a la diferencia con México.
+Por ejemplo, el valor del coeficiente para Guatelama es -13.8, que corresponde a la diferencia del apoyo a la democracia entre México y Guatemala.
+Esta diferencia es igual a la que se observa en la tabla de emparejamientos de más arriba.
+Estos resultados, sin embargo, muestran los emparejamientos, todos relativos a México.
+
+```{r resumenmodelow}
+summary(modelo.anova)
+```
+
+Para poder todos los emparejamientos, se puede usar el comando `TukeyHSD`, usando los resultados de anova con el modelo lineal, el objeto "anova.w".
+Este comando nos muestra el valor de todos los emparejamientos, tomando en cuenta el efecto de diseño.
+
+```{r tukeyw}
+TukeyHSD(anova.w)
+```
