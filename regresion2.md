@@ -707,6 +707,16 @@ plot_summs(modelo7, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecuti
 
 De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por país.
 
+# Resumen
+
+En esta sección hemos usado el método de mínimos cuadrados para calcular un modelo multivariado.
+En particular, se ha presentado un modelo con cinco predictores del apoyo al sistema.
+Este modelo se ha presentado de manera estándar en una tabla de resultados y mediante un gráfico similar al Gráfico 2.10 del reporte.
+
+De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.
+
+Luego, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+
 # Incluyendo el efecto de diseño
 
 Los cálculos realizados no incluyen el efecto de diseño muestral.
@@ -1041,16 +1051,4 @@ plot_summs(modelo8, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecuti
                             "Confianza en el gobierno local"="b32r"))
 ```
 
-![](regresion2_files/figure-html/grafico expansion-1.png)<!-- -->
-
-# Resumen
-
-En esta sección hemos usado el método de mínimos cuadrados para calcular un modelo multivariado.
-En particular, se ha presentado un modelo con cinco predictores del apoyo al sistema.
-Este modelo se ha presentado de manera estándar en una tabla de resultados y mediante un gráfico similar al Gráfico 2.10 del reporte.
-
-De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.
-
-Luego, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
-
-Finalmente, se ha visto cómo replicar el modelo completo incluyendo el factor de expansión para incluir el efecto de diseño.
+![](regresion2_files/figure-html/graficow-1.png)<!-- -->
