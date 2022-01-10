@@ -53,9 +53,9 @@ lapop18 <- subset(lapop18, pais<=35)
 
 # Evaluación de la democracia en la práctica
 
-Desde la página 20 del reporte El Pulso de la Democracia se hace una evaluación de la democracia en la práctica.
+Desde la página 20 del reporte *El Pulso de la Democracia* se hace una evaluación de la democracia en la práctica.
 En particular, esta sección del reporte usa la variable "pn4".
-Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en [país]?"
+Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en \[país\]?"
 
 En el reporte se indica que esta variable se recodifica como una variable dicotómica para poder trabajar con porcentajes.
 En esta sección vamos a trabajar con la variable original, que es una variable categórica (o de factor) ordinal.
@@ -217,7 +217,7 @@ Este tipo de objeto puede almacenar otra información de diferente tipo.
 Por ejemplo, "prueba" guarda las tablas de frecuencias observadas (mismo resultado que con el comando `table`) y de frecuencias esperadas.
 En este objeto también se guarda el valor de los residuales, los residuos estandarizados y el valor del p-value.
 
-```{r obs versus esp}
+```{r obsversusesp}
 prueba$observed
 prueba$expected
 ```
@@ -232,7 +232,7 @@ La variable original "ed" está recogida como una variable numérica (años de e
 Esta variable tiene valores que van desde 0 a 18.
 Se recodifica de tal manera que aquellos con cero años de educación se les asigna el valor de 0 "Ninguna", aquellos entre 1 y 6 años de educación se les asigna el valor 1 "Primaria", aquellos entre 7 y 11 años de educación se les asigna el valor de 2 "Secundaria" y entre 12 y 18 años de educación el valor de 3 "Superior".
 
-```{r reco ed}
+```{r recoed}
 library(car)
 lapop18$educ <- car::recode(lapop18$ed, "0=0; 1:6=1; 7:11=2; 12:18=3")
 lapop18$educ <- as.factor(lapop18$educ)
@@ -242,7 +242,7 @@ table(lapop18$educ)
 
 Con la variable recodificada se puede calcular la tabla cruzada de satisfacción con la democracia según niveles educativos.
 
-```{r tabla ed}
+```{r tablaed}
 addmargins(prop.table(table(lapop18$satis, lapop18$educ), 2)*100, 1)
 ```
 
@@ -257,7 +257,7 @@ tabla2
 En este caso, como tenemos 4 categorías para satisfacción con la democracia y otras 4 para niveles educativo, un gráfico de barras separadas crearía 16 barras, lo que complicaría la comparación.
 Por eso, en este caso, se prefiere el tipo de barras apiladas.
 
-```{r barapiladased}
+```{r barrapiladased}
 library(ggplot2)
 ggplot(data=tabla2, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   geom_bar(position="stack", stat="identity")+
@@ -275,7 +275,7 @@ Los sectores "muy satisfechos" (en rosado) y "satisfechos" (en verde) disminuyen
 Para comprobar la relación entre estas variables, también se puede usar la prueba de independencia de $\chi^2$.
 Esta evaluación se guarda en un objeto "prueba2".
 
-```{r chi ed}
+```{r chied}
 prueba2 <- chisq.test(lapop18$satis, lapop18$genero)
 prueba2
 ```
@@ -310,3 +310,43 @@ Finalmente, el valor de las medidas de asociación son menores a 0.3, con lo que
 En esta sección hemos trabajado con relaciones bivariadas entre variables categóricas.
 Se ha calculado las tablas cruzadas y los gráficos de barras para mostrar los resultados descriptivos.
 Luego, se ha trabajado con la prueba de independencia de chi-cuadrado para inferir si existe una relación de dependencia entre las variables en la población y finalmente se evalúa la fuerza de la asociación entre las variables, diferenciando cuando se trata de variables nominales u ordinales.
+
+# Cálculos incluyendo el efecto de diseño
+
+Otra forma de ejecutar la prueba chi cuadrado, incluyendo el factor de expansión, es mediante de el uso de la librería `survey` y el comando `svychisq`.
+
+```{r diseno}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Se calcula la tabla de contingencia con el comando `svytable`.
+En este caso cruzando satisfacción con la democracia por género.
+Este comando se anida dentro de `prop.table` para presentar las frecuencias relativas y no las absolutas.
+A su vez, todo esto se vuelve a anidar dentro del comando `addmargins` para presentar las frecuencias relativas como porcentajes.
+De la misma manera que más arriba, esta tabla se puede guardar en un objeto para luego graficar estos resultados.
+
+```{r tablaw}
+addmargins(prop.table(svytable(~satis+genero, design=lapop.design),2)*100,1)
+```
+
+La prueba de independencia de Chi-cuadrado incorporando el efecto de diseño se calcula usando el comando `svychisq`.
+Se incluya la variable dependiente, la independiente y el objeto con el diseño muestral.
+
+```{r chiw}
+prueba3 =svychisq(~satis+genero,lapop.design)
+prueba3
+```
+
+Los resultados muestran un p-value menor a 0.05, por lo que se puede rechazar la H0 de igualdad de frecuencias esperadas con observadas, por lo que se concluye que existe una relación de dependencia estadística entre ambas variables.
+
+Se puede calcular los valores observados y esperados.
+Como se puede ver, los valores esperados difieren de los resultados sin el efecto de diseño.
+
+```{r obsvrexpw}
+prueba3$observed
+prueba3$expected
+```
+
+En este caso no se cuenta con un comando para poder calcular las medidas de asociación incorporando el efecto de diseño.
+Se pueden tomar las medidas de asociación no ponderados como valores rfeferenciales.

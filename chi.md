@@ -52,9 +52,9 @@ lapop18 <- subset(lapop18, pais<=35)
 
 # Evaluación de la democracia en la práctica
 
-Desde la página 20 del reporte El Pulso de la Democracia se hace una evaluación de la democracia en la práctica.
+Desde la página 20 del reporte *El Pulso de la Democracia* se hace una evaluación de la democracia en la práctica.
 En particular, esta sección del reporte usa la variable "pn4".
-Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en [país]?"
+Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en \[país\]?"
 
 En el reporte se indica que esta variable se recodifica como una variable dicotómica para poder trabajar con porcentajes.
 En esta sección vamos a trabajar con la variable original, que es una variable categórica (o de factor) ordinal.
@@ -382,7 +382,7 @@ ggplot(data=tabla2, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
   xlab("Nivel educativo")
 ```
 
-![](chi_files/figure-html/barapiladased-1.png)<!-- -->
+![](chi_files/figure-html/barrapiladased-1.png)<!-- -->
 
 En el Gráfico 1.14 se observa que se tiene un mayor porcentaje de satisfacción con la democracia entre los menos educados.
 Esta relación también puede observarse en este gráfico.
@@ -456,3 +456,86 @@ Finalmente, el valor de las medidas de asociación son menores a 0.3, con lo que
 En esta sección hemos trabajado con relaciones bivariadas entre variables categóricas.
 Se ha calculado las tablas cruzadas y los gráficos de barras para mostrar los resultados descriptivos.
 Luego, se ha trabajado con la prueba de independencia de chi-cuadrado para inferir si existe una relación de dependencia entre las variables en la población y finalmente se evalúa la fuerza de la asociación entre las variables, diferenciando cuando se trata de variables nominales u ordinales.
+
+# Cálculos incluyendo el efecto de diseño
+
+Otra forma de ejecutar la prueba chi cuadrado, incluyendo el factor de expansión, es mediante de el uso de la librería `survey` y el comando `svychisq`.
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Se calcula la tabla de contingencia con el comando `svytable`.
+En este caso cruzando satisfacción con la democracia por género.
+Este comando se anida dentro de `prop.table` para presentar las frecuencias relativas y no las absolutas.
+A su vez, todo esto se vuelve a anidar dentro del comando `addmargins` para presentar las frecuencias relativas como porcentajes.
+De la misma manera que más arriba, esta tabla se puede guardar en un objeto para luego graficar estos resultados.
+
+
+```r
+addmargins(prop.table(svytable(~satis+genero, design=lapop.design),2)*100,1)
+```
+
+```
+##                   genero
+## satis                  Hombre      Mujer
+##   Muy satisfecho     6.777875   6.025175
+##   Satisfecho        35.341585  30.695022
+##   Insatisfecho      44.119892  48.450745
+##   Muy insatisfecho  13.760648  14.829058
+##   Sum              100.000000 100.000000
+```
+
+La prueba de independencia de Chi-cuadrado incorporando el efecto de diseño se calcula usando el comando `svychisq`.
+Se incluya la variable dependiente, la independiente y el objeto con el diseño muestral.
+
+
+```r
+prueba3 =svychisq(~satis+genero,lapop.design)
+prueba3
+```
+
+```
+## 
+## 	Pearson's X^2: Rao & Scott adjustment
+## 
+## data:  svychisq(~satis + genero, lapop.design)
+## F = 28.172, ndf = 2.9969, ddf = 3985.8861, p-value < 2.2e-16
+```
+
+Los resultados muestran un p-value menor a 0.05, por lo que se puede rechazar la H0 de igualdad de frecuencias esperadas con observadas, por lo que se concluye que existe una relación de dependencia estadística entre ambas variables.
+
+Se puede calcular los valores observados y esperados.
+Como se puede ver, los valores esperados difieren de los resultados sin el efecto de diseño.
+
+
+```r
+prueba3$observed
+```
+
+```
+##                   genero
+## satis                 Hombre     Mujer
+##   Muy satisfecho    960.0493  836.1461
+##   Satisfecho       5005.9443 4259.7143
+##   Insatisfecho     6249.3440 6723.7720
+##   Muy insatisfecho 1949.1214 2057.9086
+```
+
+```r
+prueba3$expected
+```
+
+```
+##                   genero
+## satis                 Hombre     Mujer
+##   Muy satisfecho    907.2868  888.9086
+##   Satisfecho       4680.2311 4585.4274
+##   Insatisfecho     6552.9267 6420.1893
+##   Muy insatisfecho 2024.0144 1983.0156
+```
+
+En este caso no se cuenta con un comando para poder calcular las medidas de asociación incorporando el efecto de diseño.
+Se pueden tomar las medidas de asociación no ponderados como valores rfeferenciales.
