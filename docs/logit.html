@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Regresión logística con los datos del Barómetro de las Américas</title>
+
+<script src="site_libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<script src="site_libs/navigation-1.1/sourceembed.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+#rmd-source-code {
+  display: none;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">LAPOP_edu</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Preparación
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="instalando.html">Instalando R y RStudio</a>
+    </li>
+    <li>
+      <a href="bases.html">Importación de bases de datos</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Aspectos iniciales
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Manipulacion.html">Manejo de datos</a>
+    </li>
+    <li>
+      <a href="Expansion.html">Factor de expansión</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Describir y graficar
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="Descriptivos.html">Descriptivos variables nominales</a>
+    </li>
+    <li>
+      <a href="Descriptivos2.html">Descriptivos variables ordinales</a>
+    </li>
+    <li>
+      <a href="Descriptivos3.html">Descriptivos variables numéricas</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Inferencia básica
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="IC.html">Intervalos de confianza</a>
+    </li>
+    <li>
+      <a href="pruebat.html">Comparación de 2 medias</a>
+    </li>
+    <li>
+      <a href="anova.html">Comparación de varias medias</a>
+    </li>
+    <li>
+      <a href="chi.html">Tablas cruzadas y chi-cuadrado</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Modelamiento
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="correlacion.html">Correlación</a>
+    </li>
+    <li>
+      <a href="regresion1.html">Regresión lineal simple</a>
+    </li>
+    <li>
+      <a href="regresion2.html">Regresión lineal multivariada</a>
+    </li>
+    <li>
+      <a href="logit.html">Regresión logística</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Links.html">Contacto</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-download-source" href="#">Download Rmd</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Regresión logística con los datos del Barómetro de las Américas</h1>
+
+</div>
+
+
+<div id="introducción" class="section level1">
+<h1>Introducción</h1>
+<p>En la sección anterior vimos los aspectos básicos del modelo logístico para analizar la relación entre una variable dependiente binaria y una variable independiente.</p>
+<p>En esta sección se seguirá replicando los análisis del capítulo “Redes sociales y actitudes políticas” del reporte <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">El Pulso de la Democracia</a>. En ese capítulo se analiza una medición de apoyo a la democracia.</p>
+</div>
+<div id="sobre-la-base-de-datos" class="section level1">
+<h1>Sobre la base de datos</h1>
+<p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org. Pueden descargar los datos de manera libre <a href="http://datasets.americasbarometer.org/database/login.php">aquí</a>.</p>
+<p>Se recomienda limpiar el Environment antes de iniciar esta sección. En este documento nuevamente se carga una base de datos en formato RData. Este formato es eficiente en términos de espacio de almacenamiento. Esta base de datos se encuentra alojada en el repositorio”materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código.</p>
+<pre class="r"><code>library(rio)
+lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/lapop18.RData&quot;)
+lapop18 &lt;- subset(lapop18, pais&lt;=35)</code></pre>
+</div>
+<div id="determinantes-del-uso-de-redes-sociales" class="section level1">
+<h1>Determinantes del uso de redes sociales</h1>
+<p>En la sección sobre redes sociales, se presenta los resultados de un modelo de regresión logística en el Gráfico 3.4. Como dice el reporte, este gráfico “muestra los resultados de una regresión logística que modela el uso de redes sociales en las medidas del lugar de residencia (urbano versus rural), género (mujer vs. hombre), edad, educación y nivel de riqueza” (p. 59).</p>
+<p><img src="Graf3.4.png" width="479" /></p>
+<p>Como indica el reporte, “la variable dependiente, usuario de redes sociales, se basa en las respuestas a las tres preguntas sobre tener cuenta de Facebook, Twitter y Whatsapp. Esta medida dicotómica distingue entre las personas que son usuarios de cuentas en una o varias de estas plataformas, comparado con quienes no interactúan con ninguna cuenta en redes sociales” (p. 59). Además, como indica la nota, “quienes tienen una cuenta y dicen nunca acceder al contenido de cualquiera de estas plataformas se consideran no usuarios” (p. 64).</p>
+<p>En la sección sobre <a href="https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos.html">estadística descriptiva</a> se presenta el código para crear a los usuario de cada red social usando el comando <code>ifelse</code>.</p>
+<pre class="r"><code>lapop18$fb_user &lt;- ifelse(lapop18$smedia1==1 &amp; lapop18$smedia2&lt;=4, 1, 0)
+lapop18$tw_user &lt;- ifelse(lapop18$smedia4==1 &amp; lapop18$smedia5&lt;=4, 1, 0)
+lapop18$wa_user &lt;- ifelse(lapop18$smedia7==1 &amp; lapop18$smedia8&lt;=4, 1, 0)</code></pre>
+<p>Sobre la base de estas variables, se crea una variable de usuario de cualquier red social. Esta variable es dicotómica y toma el valor 1 si el entrevistado reporta ser usuario de alguna red social evaluada (Facebook o Twitter o WhatsApp).</p>
+<pre class="r"><code>lapop18$user = ifelse(lapop18$fb_user==1 | lapop18$wa_user==1 | lapop18$tw_user ==1, 1, 0)
+table(lapop18$user)</code></pre>
+<pre><code>## 
+##     0     1 
+##  8057 18973</code></pre>
+<p>El Gráfico 3.4 muestra los determinantes asociados al uso de redes sociales. Estas variables son:</p>
+<ul>
+<li><p>Nivel de riqueza: variable “quintall” en la base de datos.</p></li>
+<li><p>Años de educación: variable “ed” en la base de datos.</p></li>
+<li><p>Edad: variable “q2” en la base de datos.</p></li>
+<li><p>Mujer: variable “mujer” en la base de datos.</p></li>
+<li><p>Área urbana: variable “ur” en la base de datos.</p></li>
+</ul>
+<p>La nota 16 indica que “la edad y la educación se miden en años, recodificadas de 0 a 1, donde 0 indica a los más jóvenes o el nivel más bajo de educación, y 1 los más adultos o el nivel más alto de educación. La riqueza es una variable original, recodificada de 0 a 1, donde 0 indica el menor nivel de riqueza, y 1 el nivel más alto de riqueza. El lugar de residencia se codifica de tal forma que 1 indica la zona urbana y 0 la zona rural. El género se codifica de forma que 1 es mujer y 0 es hombre” (p. 64).</p>
+<p>Se procede a recodificar las variables “quintall”, “ed” y “q2” en variables que varíen entre 0 y 1, llamadas “riqueza”, “educ” y “edad”. La variable “mujer” y “urban”, disponibles en la base de datos, son variables dicotómicas que varían en los valores 0 y 1, por lo que no se tienen que recodificar.</p>
+<pre class="r"><code>lapop18$riqueza = (lapop18$quintall - 1)/4
+lapop18$educ = (lapop18$ed)/18
+lapop18$edad = (lapop18$q2 - 16)/83
+summary(lapop18$riqueza)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  0.0000  0.2500  0.5000  0.4935  0.7500  1.0000     423</code></pre>
+<pre class="r"><code>summary(lapop18$educ)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  0.0000  0.3889  0.6111  0.5519  0.6667  1.0000     472</code></pre>
+<pre class="r"><code>summary(lapop18$edad)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##  0.0000  0.1205  0.2530  0.2891  0.4217  1.0000      16</code></pre>
+<p>Con el comando <code>summary</code> se comprueba que las variables varíen entre 0 y 1. Se debe notar que estas variables tienen valores perdidos “NA’s” que no serán incluidos en los cálculos.</p>
+</div>
+<div id="modelo-de-regresión-logística" class="section level1">
+<h1>Modelo de regresión logística</h1>
+<p>Para evaluar los factores asociados al uso de redes sociales se puede calcular un modelo de regresión. En este caso, a diferencia del modelo de regresión lineal, la variable dependiente no es numérica, sino que se trata de una variable dicotómica, con valores 0, para indicar a los no usuarios, y 1 para identificar a los usuarios de redes sociales.</p>
+<p>Con este tipo de variable dependiente no es apropiado usar un modelo de regresión lineal. Las razones para esto son múltiples. Un modelo lineal para aproximar la relación entre una variable dependiente dicotómica y una independiente numérica podría dar valores predichos mayores que 1 o menores que 0, por lo que no es una buena aproximación para calcular probabilidades.</p>
+<p>Por el contrario, un modelo de regresión logística restringe los resultados entre 0 y 1, por lo que se puede interpretar como una probabilidad. En nuestro ejemplo, se calcula la probabilidad de ser usuario de redes sociales para diferentes valores de las variables independientes.</p>
+<p>Otras razones para no usar un modelo de regresión lineal son más técnicas y tienen que ver con los residuos. Si se usara un modelo de regresión lineal para aproximar la relación entre una variable dependiente dicotómica y una independiente numérica se tendría residuos no normalmente distribuidos y hererocedásticos</p>
+<p>El modelo se calcula con el comando <code>glm</code> donde se indica la variable Y y luego las variables independientes. Cada variable independiente se suma al modelo. El modelo incluye efectos fijos por país. En la sección sobre <a href="https://arturomaldonado.github.io/BarometroEdu_Web/regresion2.html#Incluyendo_variables_de_control">regresión lineal múltiple</a> se explicó el uso de efectos fijos por país para una regresión lineal, es decir, cuando la variable dependiente es numérica. Aquí se usará el mismo comando <code>factor()</code> para incluir variables dummy de cada país, tomando a México (país 1) como referencia.</p>
+<p>Este modelo de guarda en un objeto “modelo1” el que se puede describir con el comando <code>summary</code>.</p>
+<pre class="r"><code>modelo1 &lt;- glm(user ~ riqueza + educ + edad + mujer + urban + factor(pais), family = binomial, data=lapop18)
+summary(modelo1)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = user ~ riqueza + educ + edad + mujer + urban + 
+##     factor(pais), family = binomial, data = lapop18)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -3.4629  -0.4583   0.2897   0.5852   2.9097  
+## 
+## Coefficients:
+##                Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)    -0.76385    0.09468  -8.068 7.15e-16 ***
+## riqueza         2.03825    0.05708  35.710  &lt; 2e-16 ***
+## educ            2.86594    0.09167  31.265  &lt; 2e-16 ***
+## edad           -5.69441    0.10458 -54.448  &lt; 2e-16 ***
+## mujer           0.14776    0.03556   4.155 3.25e-05 ***
+## urban           0.74510    0.04060  18.353  &lt; 2e-16 ***
+## factor(pais)2  -0.20677    0.09583  -2.158 0.030965 *  
+## factor(pais)3  15.88183   85.89147   0.185 0.853303    
+## factor(pais)4  -0.26064    0.09604  -2.714 0.006649 ** 
+## factor(pais)5  -0.54242    0.09522  -5.696 1.22e-08 ***
+## factor(pais)6   1.92058    0.11207  17.137  &lt; 2e-16 ***
+## factor(pais)7  -0.44665    0.09503  -4.700 2.60e-06 ***
+## factor(pais)8   0.51202    0.09770   5.241 1.60e-07 ***
+## factor(pais)9   0.34890    0.10163   3.433 0.000597 ***
+## factor(pais)10  0.09251    0.09715   0.952 0.340992    
+## factor(pais)11 -0.06467    0.09814  -0.659 0.509967    
+## factor(pais)12  0.88679    0.10191   8.702  &lt; 2e-16 ***
+## factor(pais)13  1.00887    0.10400   9.701  &lt; 2e-16 ***
+## factor(pais)14  1.89743    0.10781  17.600  &lt; 2e-16 ***
+## factor(pais)15  1.11293    0.10544  10.555  &lt; 2e-16 ***
+## factor(pais)17  1.41948    0.11000  12.905  &lt; 2e-16 ***
+## factor(pais)21  0.80326    0.10380   7.739 1.00e-14 ***
+## factor(pais)23  0.54686    0.10213   5.354 8.58e-08 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 31852  on 26274  degrees of freedom
+## Residual deviance: 20156  on 26252  degrees of freedom
+##   (1767 observations deleted due to missingness)
+## AIC: 20202
+## 
+## Number of Fisher Scoring iterations: 15</code></pre>
+<p>Los resultados muestran los coeficientes, los errores estándar, el estadístico Z y el p-value asociado. Con estos datos se puede extraer conclusiones acerca de la dirección de la relación entre cada variable independiente y la variable dependiente. Por ejemplo, la relación entre riqueza y la probabilidad de ser usuario de redes sociales es directa, a medida que aumenta la riqueza aumenta las probabilidades de ser usuario. La relación entre edad y la probabilidad de ser usuario de redes sociales es negativa, a medida que aumenta la edad disminuyen las probabilidades de ser usuario de redes sociales. En ambos casos, dado que el p-value es menor a 0.05, se tienen relaciones estadísticamente significativas.</p>
+<p>Los coeficientes de la regresión se interpretan como el cambio en el log odds de la variable dependiente por cada incremento de una unidad de la variable independiente. Por ejemplo, por cada año adicional en la edad, el log odd de ser usuario de una red social (versus no ser usuario) disminuye en 5.69.</p>
+<p>Otra manera de presentar estos coeficientes es transformarlos con la función exponencial. De esta manera los resultados se pueden interpretar como aumentos en la probabilidad en un factor de acuerdo al resultado.</p>
+<p>Con el código siguiente se realiza esta operación para las principales variables independientes, excluyendo a las variables dummy por país.</p>
+<pre class="r"><code>exp(coef(modelo1)[1:6])</code></pre>
+<pre><code>##  (Intercept)      riqueza         educ         edad        mujer        urban 
+##  0.465868370  7.677171277 17.565547484  0.003364729  1.159238630  2.106646383</code></pre>
+<p>De esta manera se puede interpretar que un aumento de una unidad en la variable riqueza aumenta la probabilidad de ser usuario de una red social en un factor de 7.7. Como la variable riqueza fue recodificada para que varíe entre 0 y 1, un aumento de una unidad es el máximo aumento posible.</p>
+<p>Para el caso de las mujeres, se puede concluir que las mujeres tienen un 15.9% más de probabilidades de ser usuarias de una red social que los hombres.</p>
+<p>Para presentar los resultados de una manera más ordenada, se pueden usar varias librerías y comandos. En esta sección usamos la librería <code>jtools</code> y el comando <code>summs</code>. Este comando nos brinda además estadísticos para evaluar el ajuste del modelo. Por ejemplo, el estadístico de <span class="math inline">\(\chi^2\)</span> evalúa el modelo multivariado versus el modelo nulo. Como se obtiene un estadístico grande y un p-value menor a 0.05, se concluye que el modelo se ajusta a los datos.</p>
+<p>Otro estadístico es el Pseudo-<span class="math inline">\(R^2\)</span>, que aunque no se puede interpretar como el coeficiente de determinación de una regresión lineal, da una idea de la capacidad explicativa del modelo.</p>
+<pre class="r"><code>#library(stargazer)
+#stargazer(modelo1[1:6], align=T, type = &#39;text&#39;)
+library(jtools)
+summ(modelo1)</code></pre>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Observations
+</td>
+<td style="text-align:right;">
+26275 (1767 missing obs. deleted)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Dependent variable
+</td>
+<td style="text-align:right;">
+user
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Type
+</td>
+<td style="text-align:right;">
+Generalized linear model
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Family
+</td>
+<td style="text-align:right;">
+binomial
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Link
+</td>
+<td style="text-align:right;">
+logit
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+𝛘²(22)
+</td>
+<td style="text-align:right;">
+11696.30
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Pseudo-R² (Cragg-Uhler)
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Pseudo-R² (McFadden)
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+AIC
+</td>
+<td style="text-align:right;">
+20201.95
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+BIC
+</td>
+<td style="text-align:right;">
+20390.01
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Est.
+</th>
+<th style="text-align:right;">
+S.E.
+</th>
+<th style="text-align:right;">
+z val.
+</th>
+<th style="text-align:right;">
+p
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+-0.76
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+-8.07
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+riqueza
+</td>
+<td style="text-align:right;">
+2.04
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+35.71
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+educ
+</td>
+<td style="text-align:right;">
+2.87
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+31.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+edad
+</td>
+<td style="text-align:right;">
+-5.69
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-54.45
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+mujer
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+4.16
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+urban
+</td>
+<td style="text-align:right;">
+0.75
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+18.35
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)2
+</td>
+<td style="text-align:right;">
+-0.21
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-2.16
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)3
+</td>
+<td style="text-align:right;">
+15.88
+</td>
+<td style="text-align:right;">
+85.89
+</td>
+<td style="text-align:right;">
+0.18
+</td>
+<td style="text-align:right;">
+0.85
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)4
+</td>
+<td style="text-align:right;">
+-0.26
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-2.71
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)5
+</td>
+<td style="text-align:right;">
+-0.54
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-5.70
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)6
+</td>
+<td style="text-align:right;">
+1.92
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+17.14
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)7
+</td>
+<td style="text-align:right;">
+-0.45
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-4.70
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)8
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+5.24
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)9
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+3.43
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)10
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+0.95
+</td>
+<td style="text-align:right;">
+0.34
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)11
+</td>
+<td style="text-align:right;">
+-0.06
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-0.66
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)12
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+8.70
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)13
+</td>
+<td style="text-align:right;">
+1.01
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+9.70
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)14
+</td>
+<td style="text-align:right;">
+1.90
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+17.60
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)15
+</td>
+<td style="text-align:right;">
+1.11
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+10.56
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)17
+</td>
+<td style="text-align:right;">
+1.42
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+12.90
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)21
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+7.74
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)23
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+5.35
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: MLE
+</td>
+</tr>
+</tfoot>
+</table>
+<p>El Gráfico 3.4 muestra los coeficientes de cada variable y el intervalo de confianza al 95% de este estimado. Se incluye una línea vertical en el punto 0. Si un intervalo de confianza cruza esta línea vertical, se puede decir que no tiene una relación estadísticamente significativa con la variable dependiente de apoyo al sistema. Los intervalos de confianza que no cruzan esta línea y que se encuentran a la derecha (izquierda) de esta línea tienen una relación positiva (negativa) con el apoyo al sistema, es decir, cuando aumenta esta variable, el apoyo al sistema promedio aumenta (disminuye). En este ejemplo, las cinco variables son estadísticamente significativas y muestran tienen una relación positiva con el apoyo al sistema. Para aproximar un gráfico similar al mostrado en el reporte, se puede usar la librería <code>jtools</code> y el comando <code>plot_summs</code>. Se selecciona solo las variables independientes de relevancia.</p>
+<pre class="r"><code>library(jtools)
+plot_summs(modelo1, coefs=c(&quot;Nivel de riqueza&quot;=&quot;riqueza&quot;, &quot;Años de educación&quot;=&quot;educ&quot;, 
+                            &quot;Edad&quot;=&quot;edad&quot;, &quot;Mujer&quot;=&quot;mujer&quot;, &quot;Área urbana&quot;=&quot;urban&quot;))</code></pre>
+<pre><code>## Registered S3 methods overwritten by &#39;broom&#39;:
+##   method            from  
+##   tidy.glht         jtools
+##   tidy.summary.glht jtools</code></pre>
+<pre><code>## Loading required namespace: broom.mixed</code></pre>
+<p><img src="logit_files/figure-html/grafico-1.png" /><!-- --></p>
+<p>El gráfico producido es similar y sigue la misma tendencia que el Gráfico 3.4 presentado en el informe. Sin embargo, no presenta los mismos resultados pues, como indica el reporte, “los puntos en el Gráfico 3.4 son los cambios estimados en la probabilidad de que la variable dependiente tome un valor de”1” (usa redes sociales), dado un cambio del valor mínimo al máximo de la variable independiente” (p. 59). En este gráfico producido en esta sección se grafica el coeficiente de la regresión logística.</p>
+</div>
+<div id="resumen" class="section level1">
+<h1>Resumen</h1>
+<p>En esta sección hemos usado un modelo de regresión ligística para modelar la relación de variables independientes con una variable dependiente dicotómica. En particular, se ha presentado un modelo con cinco predictores del uso de redes sociales. Este modelo se ha presentado de manera estándar en una tabla de resultados y mediante un gráfico similar al Gráfico 3.4 del reporte.</p>
+</div>
+<div id="incluyendo-el-efecto-de-diseño" class="section level1">
+<h1>Incluyendo el efecto de diseño</h1>
+<p>Los cálculos realizados no incluyen el efecto de diseño muestral. Para hacer esto se debe considerar el factor de expansión. Se hizo una introducción al uso del factor de expansión <a href="https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html">aquí</a>. En este parte usaremos la librería <code>survey</code>.</p>
+<p>Usaremos el comando <code>svydesign</code> (similar al comando svyset en STATA). Con este comando se crea un nuevo objeto llamado “lapop.design”, que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión. Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto “lapop.design” incluya esta nueva variable.</p>
+<pre class="r"><code>library(survey)
+lapop.design&lt;-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)</code></pre>
+<p>La librería <code>survey</code> incluye el comando <code>svyglm</code> que permite calcular un modelo de regresión logística. Las mismas variables usadas en el modelo 1 se pueden incluir en este comando. Se tiene que especificar que se quiere calcular un modelo binomial con la especificación <code>family=quasibinomial</code>. También se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos. Este cálculo se guarda en un objeto “modelo2”. Se usa el comando <code>summ</code> de la librería <code>jtools</code> para describir el modelo.</p>
+<pre class="r"><code>modelo2 &lt;- svyglm(user ~ riqueza + educ + edad + mujer + urban + factor(pais), family=quasibinomial, design=lapop.design, na.action = na.omit)
+summ(modelo2)</code></pre>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Observations
+</td>
+<td style="text-align:right;">
+26275
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Dependent variable
+</td>
+<td style="text-align:right;">
+user
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Type
+</td>
+<td style="text-align:right;">
+Survey-weighted generalized linear model
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Family
+</td>
+<td style="text-align:right;">
+quasibinomial
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Link
+</td>
+<td style="text-align:right;">
+logit
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Pseudo-R² (Cragg-Uhler)
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Pseudo-R² (McFadden)
+</td>
+<td style="text-align:right;">
+0.37
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+AIC
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Est.
+</th>
+<th style="text-align:right;">
+S.E.
+</th>
+<th style="text-align:right;">
+t val.
+</th>
+<th style="text-align:right;">
+p
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+-0.76
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+-7.37
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+riqueza
+</td>
+<td style="text-align:right;">
+2.03
+</td>
+<td style="text-align:right;">
+0.06
+</td>
+<td style="text-align:right;">
+33.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+educ
+</td>
+<td style="text-align:right;">
+2.86
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+30.20
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+edad
+</td>
+<td style="text-align:right;">
+-5.69
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+-53.54
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+mujer
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+4.33
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+urban
+</td>
+<td style="text-align:right;">
+0.75
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+15.81
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)2
+</td>
+<td style="text-align:right;">
+-0.21
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+-1.80
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)3
+</td>
+<td style="text-align:right;">
+15.89
+</td>
+<td style="text-align:right;">
+0.15
+</td>
+<td style="text-align:right;">
+103.41
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)4
+</td>
+<td style="text-align:right;">
+-0.26
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+-2.75
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)5
+</td>
+<td style="text-align:right;">
+-0.54
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+-5.03
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)6
+</td>
+<td style="text-align:right;">
+1.92
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+13.65
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)7
+</td>
+<td style="text-align:right;">
+-0.45
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+-3.56
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)8
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+4.78
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)9
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+3.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)10
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+0.88
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)11
+</td>
+<td style="text-align:right;">
+-0.06
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+-0.59
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)12
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+0.10
+</td>
+<td style="text-align:right;">
+8.56
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)13
+</td>
+<td style="text-align:right;">
+1.01
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+8.81
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)14
+</td>
+<td style="text-align:right;">
+1.90
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+16.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)15
+</td>
+<td style="text-align:right;">
+1.16
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+<td style="text-align:right;">
+9.27
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)17
+</td>
+<td style="text-align:right;">
+1.42
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+11.55
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)21
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+<td style="text-align:right;">
+0.12
+</td>
+<td style="text-align:right;">
+6.93
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+factor(pais)23
+</td>
+<td style="text-align:right;">
+0.55
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+<td style="text-align:right;">
+4.82
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: Robust
+</td>
+</tr>
+</tfoot>
+</table>
+<p>De la misma manera que con el modelo 1, estos resultados también se pueden graficar usando el comando <code>plot_summs</code>, seleccionando las variables que se quieren mostrar.</p>
+<pre class="r"><code>plot_summs(modelo2, coefs=c(&quot;Nivel de riqueza&quot;=&quot;riqueza&quot;, &quot;Años de educación&quot;=&quot;educ&quot;, 
+                            &quot;Edad&quot;=&quot;edad&quot;, &quot;Mujer&quot;=&quot;mujer&quot;, &quot;Área urbana&quot;=&quot;urban&quot;))</code></pre>
+<p><img src="logit_files/figure-html/graficow-1.png" /><!-- --></p>
+<p>De la misma manera que con los resultados que no incluyen el efecto de diseño, este gráfico es similar al reportado en el informe, pero no es exactamente igual.</p>
+</div>
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUmVncmVzacOzbiBsb2fDrXN0aWNhIGNvbiBsb3MgZGF0b3MgZGVsIEJhcsOzbWV0cm8gZGUgbGFzIEFtw6lyaWNhcyIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICB0b2M6IHRydWUKICAgIHRvY19mbG9hdDogdHJ1ZQogICAgY29sbGFwc2VkOiBmYWxzZQogICAgbnVtYmVyX3NlY3Rpb25zOiBmYWxzZQogICAgdG9jX2RlcHRoOiAxCiAgICBjb2RlX2Rvd25sb2FkOiB0cnVlCiAgICB0aGVtZTogZmxhdGx5CiAgICBkZl9wcmludDogcGFnZWQKICAgIHNlbGZfY29udGFpbmVkOiBubwogICAga2VlcF9tZDogeWVzCmVkaXRvcl9vcHRpb25zOiAKICBtYXJrZG93bjogCiAgICB3cmFwOiBzZW50ZW5jZQotLS0KCmBgYHtyIHNldHVwLCBpbmNsdWRlPUZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpCmBgYAoKIyBJbnRyb2R1Y2Npw7NuCgpFbiBsYSBzZWNjacOzbiBhbnRlcmlvciB2aW1vcyBsb3MgYXNwZWN0b3MgYsOhc2ljb3MgZGVsIG1vZGVsbyBsb2fDrXN0aWNvIHBhcmEgYW5hbGl6YXIgbGEgcmVsYWNpw7NuIGVudHJlIHVuYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSBiaW5hcmlhIHkgdW5hIHZhcmlhYmxlIGluZGVwZW5kaWVudGUuCgpFbiBlc3RhIHNlY2Npw7NuIHNlIHNlZ3VpcsOhIHJlcGxpY2FuZG8gbG9zIGFuw6FsaXNpcyBkZWwgY2Fww610dWxvICJSZWRlcyBzb2NpYWxlcyB5IGFjdGl0dWRlcyBwb2zDrXRpY2FzIiBkZWwgcmVwb3J0ZSBbRWwgUHVsc28gZGUgbGEgRGVtb2NyYWNpYV0oaHR0cHM6Ly93d3cudmFuZGVyYmlsdC5lZHUvbGFwb3AvYWIyMDE4LzIwMTgtMTlfQW1lcmljYXNCYXJvbWV0ZXJfUmVnaW9uYWxfUmVwb3J0X1NwYW5pc2hfV18wMy4yNy4yMC5wZGYpLgpFbiBlc2UgY2Fww610dWxvIHNlIGFuYWxpemEgdW5hIG1lZGljacOzbiBkZSBhcG95byBhIGxhIGRlbW9jcmFjaWEuCgojIFNvYnJlIGxhIGJhc2UgZGUgZGF0b3MKCkxvcyBkYXRvcyBxdWUgdmFtb3MgYSB1c2FyIGRlYmVuIGNpdGFyc2UgZGUgbGEgc2lndWllbnRlIG1hbmVyYTogRnVlbnRlOiBCYXLDs21ldHJvIGRlIGxhcyBBbcOpcmljYXMgcG9yIGVsIFByb3llY3RvIGRlIE9waW5pw7NuIFDDumJsaWNhIGRlIEFtw6lyaWNhIExhdGluYSAoTEFQT1ApLCB3d3d3LkxhcG9wU3VydmV5cy5vcmcuClB1ZWRlbiBkZXNjYXJnYXIgbG9zIGRhdG9zIGRlIG1hbmVyYSBsaWJyZSBbYXF1w61dKGh0dHA6Ly9kYXRhc2V0cy5hbWVyaWNhc2Jhcm9tZXRlci5vcmcvZGF0YWJhc2UvbG9naW4ucGhwKS4KClNlIHJlY29taWVuZGEgbGltcGlhciBlbCBFbnZpcm9ubWVudCBhbnRlcyBkZSBpbmljaWFyIGVzdGEgc2VjY2nDs24uCkVuIGVzdGUgZG9jdW1lbnRvIG51ZXZhbWVudGUgc2UgY2FyZ2EgdW5hIGJhc2UgZGUgZGF0b3MgZW4gZm9ybWF0byBSRGF0YS4KRXN0ZSBmb3JtYXRvIGVzIGVmaWNpZW50ZSBlbiB0w6lybWlub3MgZGUgZXNwYWNpbyBkZSBhbG1hY2VuYW1pZW50by4KRXN0YSBiYXNlIGRlIGRhdG9zIHNlIGVuY3VlbnRyYSBhbG9qYWRhIGVuIGVsIHJlcG9zaXRvcmlvIm1hdGVyaWFsc19lZHUiIGRlIGxhIGN1ZW50YSBkZSBMQVBPUCBlbiBHaXRIdWIuCk1lZGlhbnRlIGxhIGxpYnJlcsOtYSBgcmlvYCB5IGVsIGNvbWFuZG8gYGltcG9ydGAgc2UgcHVlZGUgaW1wb3J0YXIgZXN0YSBiYXNlIGRlIGRhdG9zIGRlc2RlIGVzdGUgcmVwb3NpdG9yaW8sIHVzYW5kbyBlbCBzaWd1aWVudGUgY8OzZGlnby4KCmBgYHtyIGJhc2UsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9CmxpYnJhcnkocmlvKQpsYXBvcDE4IDwtIGltcG9ydCgiaHR0cHM6Ly9yYXcuZ2l0aHViLmNvbS9sYXBvcC1jZW50cmFsL21hdGVyaWFsc19lZHUvbWFpbi9sYXBvcDE4LlJEYXRhIikKbGFwb3AxOCA8LSBzdWJzZXQobGFwb3AxOCwgcGFpczw9MzUpCmBgYAoKIyBEZXRlcm1pbmFudGVzIGRlbCB1c28gZGUgcmVkZXMgc29jaWFsZXMKCkVuIGxhIHNlY2Npw7NuIHNvYnJlIHJlZGVzIHNvY2lhbGVzLCBzZSBwcmVzZW50YSBsb3MgcmVzdWx0YWRvcyBkZSB1biBtb2RlbG8gZGUgcmVncmVzacOzbiBsb2fDrXN0aWNhIGVuIGVsIEdyw6FmaWNvIDMuNC4KQ29tbyBkaWNlIGVsIHJlcG9ydGUsIGVzdGUgZ3LDoWZpY28gIm11ZXN0cmEgbG9zIHJlc3VsdGFkb3MgZGUgdW5hIHJlZ3Jlc2nDs24gbG9nw61zdGljYSBxdWUgbW9kZWxhIGVsIHVzbyBkZSByZWRlcyBzb2NpYWxlcyBlbiBsYXMgbWVkaWRhcyBkZWwgbHVnYXIgZGUgcmVzaWRlbmNpYSAodXJiYW5vIHZlcnN1cyBydXJhbCksIGfDqW5lcm8gKG11amVyIHZzLiBob21icmUpLCBlZGFkLCBlZHVjYWNpw7NuIHkgbml2ZWwgZGUgcmlxdWV6YSIgKHAuIDU5KS4KCiFbXShHcmFmMy40LnBuZyl7d2lkdGg9IjQ3OSJ9CgpDb21vIGluZGljYSBlbCByZXBvcnRlLCAibGEgdmFyaWFibGUgZGVwZW5kaWVudGUsIHVzdWFyaW8gZGUgcmVkZXMgc29jaWFsZXMsIHNlIGJhc2EgZW4gbGFzIHJlc3B1ZXN0YXMgYSBsYXMgdHJlcyBwcmVndW50YXMgc29icmUgdGVuZXIgY3VlbnRhIGRlIEZhY2Vib29rLCBUd2l0dGVyIHkgV2hhdHNhcHAuIEVzdGEgbWVkaWRhIGRpY290w7NtaWNhIGRpc3Rpbmd1ZSBlbnRyZSBsYXMgcGVyc29uYXMgcXVlIHNvbiB1c3VhcmlvcyBkZSBjdWVudGFzIGVuIHVuYSBvIHZhcmlhcyBkZSBlc3RhcyBwbGF0YWZvcm1hcywgY29tcGFyYWRvIGNvbiBxdWllbmVzIG5vIGludGVyYWN0w7phbiBjb24gbmluZ3VuYSBjdWVudGEgZW4gcmVkZXMgc29jaWFsZXMiIChwLiA1OSkuCkFkZW3DoXMsIGNvbW8gaW5kaWNhIGxhIG5vdGEsICJxdWllbmVzIHRpZW5lbiB1bmEgY3VlbnRhIHkgZGljZW4gbnVuY2EgYWNjZWRlciBhbCBjb250ZW5pZG8gZGUgY3VhbHF1aWVyYSBkZSBlc3RhcyBwbGF0YWZvcm1hcyBzZSBjb25zaWRlcmFuIG5vIHVzdWFyaW9zIiAocC4gNjQpLgoKRW4gbGEgc2VjY2nDs24gc29icmUgW2VzdGFkw61zdGljYSBkZXNjcmlwdGl2YV0oaHR0cHM6Ly9hcnR1cm9tYWxkb25hZG8uZ2l0aHViLmlvL0Jhcm9tZXRyb0VkdV9XZWIvRGVzY3JpcHRpdm9zLmh0bWwpIHNlIHByZXNlbnRhIGVsIGPDs2RpZ28gcGFyYSBjcmVhciBhIGxvcyB1c3VhcmlvIGRlIGNhZGEgcmVkIHNvY2lhbCB1c2FuZG8gZWwgY29tYW5kbyBgaWZlbHNlYC4KCmBgYHtyIHVzdWFyaW9zcmVkZXN9CmxhcG9wMTgkZmJfdXNlciA8LSBpZmVsc2UobGFwb3AxOCRzbWVkaWExPT0xICYgbGFwb3AxOCRzbWVkaWEyPD00LCAxLCAwKQpsYXBvcDE4JHR3X3VzZXIgPC0gaWZlbHNlKGxhcG9wMTgkc21lZGlhND09MSAmIGxhcG9wMTgkc21lZGlhNTw9NCwgMSwgMCkKbGFwb3AxOCR3YV91c2VyIDwtIGlmZWxzZShsYXBvcDE4JHNtZWRpYTc9PTEgJiBsYXBvcDE4JHNtZWRpYTg8PTQsIDEsIDApCmBgYAoKU29icmUgbGEgYmFzZSBkZSBlc3RhcyB2YXJpYWJsZXMsIHNlIGNyZWEgdW5hIHZhcmlhYmxlIGRlIHVzdWFyaW8gZGUgY3VhbHF1aWVyIHJlZCBzb2NpYWwuCkVzdGEgdmFyaWFibGUgZXMgZGljb3TDs21pY2EgeSB0b21hIGVsIHZhbG9yIDEgc2kgZWwgZW50cmV2aXN0YWRvIHJlcG9ydGEgc2VyIHVzdWFyaW8gZGUgYWxndW5hIHJlZCBzb2NpYWwgZXZhbHVhZGEgKEZhY2Vib29rIG8gVHdpdHRlciBvIFdoYXRzQXBwKS4KCmBgYHtyIHVzdWFyaW99CmxhcG9wMTgkdXNlciA9IGlmZWxzZShsYXBvcDE4JGZiX3VzZXI9PTEgfCBsYXBvcDE4JHdhX3VzZXI9PTEgfCBsYXBvcDE4JHR3X3VzZXIgPT0xLCAxLCAwKQp0YWJsZShsYXBvcDE4JHVzZXIpCmBgYAoKRWwgR3LDoWZpY28gMy40IG11ZXN0cmEgbG9zIGRldGVybWluYW50ZXMgYXNvY2lhZG9zIGFsIHVzbyBkZSByZWRlcyBzb2NpYWxlcy4KRXN0YXMgdmFyaWFibGVzIHNvbjoKCi0gICBOaXZlbCBkZSByaXF1ZXphOiB2YXJpYWJsZSAicXVpbnRhbGwiIGVuIGxhIGJhc2UgZGUgZGF0b3MuCgotICAgQcOxb3MgZGUgZWR1Y2FjacOzbjogdmFyaWFibGUgImVkIiBlbiBsYSBiYXNlIGRlIGRhdG9zLgoKLSAgIEVkYWQ6IHZhcmlhYmxlICJxMiIgZW4gbGEgYmFzZSBkZSBkYXRvcy4KCi0gICBNdWplcjogdmFyaWFibGUgIm11amVyIiBlbiBsYSBiYXNlIGRlIGRhdG9zLgoKLSAgIMOBcmVhIHVyYmFuYTogdmFyaWFibGUgInVyIiBlbiBsYSBiYXNlIGRlIGRhdG9zLgoKTGEgbm90YSAxNiBpbmRpY2EgcXVlICJsYSBlZGFkIHkgbGEgZWR1Y2FjacOzbiBzZSBtaWRlbiBlbiBhw7FvcywgcmVjb2RpZmljYWRhcyBkZSAwIGEgMSwgZG9uZGUgMCBpbmRpY2EgYSBsb3MgbcOhcyBqw7N2ZW5lcyBvIGVsIG5pdmVsIG3DoXMgYmFqbyBkZSBlZHVjYWNpw7NuLCB5IDEgbG9zIG3DoXMgYWR1bHRvcyBvIGVsIG5pdmVsIG3DoXMgYWx0byBkZSBlZHVjYWNpw7NuLiBMYSByaXF1ZXphIGVzIHVuYSB2YXJpYWJsZSBvcmlnaW5hbCwgcmVjb2RpZmljYWRhIGRlIDAgYSAxLCBkb25kZSAwIGluZGljYSBlbCBtZW5vciBuaXZlbCBkZSByaXF1ZXphLCB5IDEgZWwgbml2ZWwgbcOhcyBhbHRvIGRlIHJpcXVlemEuIEVsIGx1Z2FyIGRlIHJlc2lkZW5jaWEgc2UgY29kaWZpY2EgZGUgdGFsIGZvcm1hIHF1ZSAxIGluZGljYSBsYSB6b25hIHVyYmFuYSB5IDAgbGEgem9uYSBydXJhbC4gRWwgZ8OpbmVybyBzZSBjb2RpZmljYSBkZSBmb3JtYSBxdWUgMSBlcyBtdWplciB5IDAgZXMgaG9tYnJlIiAocC4gNjQpLgoKU2UgcHJvY2VkZSBhIHJlY29kaWZpY2FyIGxhcyB2YXJpYWJsZXMgInF1aW50YWxsIiwgImVkIiB5ICJxMiIgZW4gdmFyaWFibGVzIHF1ZSB2YXLDrWVuIGVudHJlIDAgeSAxLCBsbGFtYWRhcyAicmlxdWV6YSIsICJlZHVjIiB5ICJlZGFkIi4KTGEgdmFyaWFibGUgIm11amVyIiB5ICJ1cmJhbiIsIGRpc3BvbmlibGVzIGVuIGxhIGJhc2UgZGUgZGF0b3MsIHNvbiB2YXJpYWJsZXMgZGljb3TDs21pY2FzIHF1ZSB2YXLDrWFuIGVuIGxvcyB2YWxvcmVzIDAgeSAxLCBwb3IgbG8gcXVlIG5vIHNlIHRpZW5lbiBxdWUgcmVjb2RpZmljYXIuCgpgYGB7ciByZWNvZGlmaWNhcn0KbGFwb3AxOCRyaXF1ZXphID0gKGxhcG9wMTgkcXVpbnRhbGwgLSAxKS80CmxhcG9wMTgkZWR1YyA9IChsYXBvcDE4JGVkKS8xOApsYXBvcDE4JGVkYWQgPSAobGFwb3AxOCRxMiAtIDE2KS84MwpzdW1tYXJ5KGxhcG9wMTgkcmlxdWV6YSkKc3VtbWFyeShsYXBvcDE4JGVkdWMpCnN1bW1hcnkobGFwb3AxOCRlZGFkKQpgYGAKCkNvbiBlbCBjb21hbmRvIGBzdW1tYXJ5YCBzZSBjb21wcnVlYmEgcXVlIGxhcyB2YXJpYWJsZXMgdmFyw61lbiBlbnRyZSAwIHkgMS4KU2UgZGViZSBub3RhciBxdWUgZXN0YXMgdmFyaWFibGVzIHRpZW5lbiB2YWxvcmVzIHBlcmRpZG9zICJOQSdzIiBxdWUgbm8gc2Vyw6FuIGluY2x1aWRvcyBlbiBsb3MgY8OhbGN1bG9zLgoKIyBNb2RlbG8gZGUgcmVncmVzacOzbiBsb2fDrXN0aWNhCgpQYXJhIGV2YWx1YXIgbG9zIGZhY3RvcmVzIGFzb2NpYWRvcyBhbCB1c28gZGUgcmVkZXMgc29jaWFsZXMgc2UgcHVlZGUgY2FsY3VsYXIgdW4gbW9kZWxvIGRlIHJlZ3Jlc2nDs24uCkVuIGVzdGUgY2FzbywgYSBkaWZlcmVuY2lhIGRlbCBtb2RlbG8gZGUgcmVncmVzacOzbiBsaW5lYWwsIGxhIHZhcmlhYmxlIGRlcGVuZGllbnRlIG5vIGVzIG51bcOpcmljYSwgc2lubyBxdWUgc2UgdHJhdGEgZGUgdW5hIHZhcmlhYmxlIGRpY290w7NtaWNhLCBjb24gdmFsb3JlcyAwLCBwYXJhIGluZGljYXIgYSBsb3Mgbm8gdXN1YXJpb3MsIHkgMSBwYXJhIGlkZW50aWZpY2FyIGEgbG9zIHVzdWFyaW9zIGRlIHJlZGVzIHNvY2lhbGVzLgoKQ29uIGVzdGUgdGlwbyBkZSB2YXJpYWJsZSBkZXBlbmRpZW50ZSBubyBlcyBhcHJvcGlhZG8gdXNhciB1biBtb2RlbG8gZGUgcmVncmVzacOzbiBsaW5lYWwuCkxhcyByYXpvbmVzIHBhcmEgZXN0byBzb24gbcO6bHRpcGxlcy4KVW4gbW9kZWxvIGxpbmVhbCBwYXJhIGFwcm94aW1hciBsYSByZWxhY2nDs24gZW50cmUgdW5hIHZhcmlhYmxlIGRlcGVuZGllbnRlIGRpY290w7NtaWNhIHkgdW5hIGluZGVwZW5kaWVudGUgbnVtw6lyaWNhIHBvZHLDrWEgZGFyIHZhbG9yZXMgcHJlZGljaG9zIG1heW9yZXMgcXVlIDEgbyBtZW5vcmVzIHF1ZSAwLCBwb3IgbG8gcXVlIG5vIGVzIHVuYSBidWVuYSBhcHJveGltYWNpw7NuIHBhcmEgY2FsY3VsYXIgcHJvYmFiaWxpZGFkZXMuCgpQb3IgZWwgY29udHJhcmlvLCB1biBtb2RlbG8gZGUgcmVncmVzacOzbiBsb2fDrXN0aWNhIHJlc3RyaW5nZSBsb3MgcmVzdWx0YWRvcyBlbnRyZSAwIHkgMSwgcG9yIGxvIHF1ZSBzZSBwdWVkZSBpbnRlcnByZXRhciBjb21vIHVuYSBwcm9iYWJpbGlkYWQuCkVuIG51ZXN0cm8gZWplbXBsbywgc2UgY2FsY3VsYSBsYSBwcm9iYWJpbGlkYWQgZGUgc2VyIHVzdWFyaW8gZGUgcmVkZXMgc29jaWFsZXMgcGFyYSBkaWZlcmVudGVzIHZhbG9yZXMgZGUgbGFzIHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcy4KCk90cmFzIHJhem9uZXMgcGFyYSBubyB1c2FyIHVuIG1vZGVsbyBkZSByZWdyZXNpw7NuIGxpbmVhbCBzb24gbcOhcyB0w6ljbmljYXMgeSB0aWVuZW4gcXVlIHZlciBjb24gbG9zIHJlc2lkdW9zLgpTaSBzZSB1c2FyYSB1biBtb2RlbG8gZGUgcmVncmVzacOzbiBsaW5lYWwgcGFyYSBhcHJveGltYXIgbGEgcmVsYWNpw7NuIGVudHJlIHVuYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSBkaWNvdMOzbWljYSB5IHVuYSBpbmRlcGVuZGllbnRlIG51bcOpcmljYSBzZSB0ZW5kcsOtYSByZXNpZHVvcyBubyBub3JtYWxtZW50ZSBkaXN0cmlidWlkb3MgeSBoZXJlcm9jZWTDoXN0aWNvcwoKRWwgbW9kZWxvIHNlIGNhbGN1bGEgY29uIGVsIGNvbWFuZG8gYGdsbWAgZG9uZGUgc2UgaW5kaWNhIGxhIHZhcmlhYmxlIFkgeSBsdWVnbyBsYXMgdmFyaWFibGVzIGluZGVwZW5kaWVudGVzLgpDYWRhIHZhcmlhYmxlIGluZGVwZW5kaWVudGUgc2Ugc3VtYSBhbCBtb2RlbG8uCkVsIG1vZGVsbyBpbmNsdXllIGVmZWN0b3MgZmlqb3MgcG9yIHBhw61zLgpFbiBsYSBzZWNjacOzbiBzb2JyZSBbcmVncmVzacOzbiBsaW5lYWwgbcO6bHRpcGxlXShodHRwczovL2FydHVyb21hbGRvbmFkby5naXRodWIuaW8vQmFyb21ldHJvRWR1X1dlYi9yZWdyZXNpb24yLmh0bWwjSW5jbHV5ZW5kb192YXJpYWJsZXNfZGVfY29udHJvbCkgc2UgZXhwbGljw7MgZWwgdXNvIGRlIGVmZWN0b3MgZmlqb3MgcG9yIHBhw61zIHBhcmEgdW5hIHJlZ3Jlc2nDs24gbGluZWFsLCBlcyBkZWNpciwgY3VhbmRvIGxhIHZhcmlhYmxlIGRlcGVuZGllbnRlIGVzIG51bcOpcmljYS4KQXF1w60gc2UgdXNhcsOhIGVsIG1pc21vIGNvbWFuZG8gYGZhY3RvcigpYCBwYXJhIGluY2x1aXIgdmFyaWFibGVzIGR1bW15IGRlIGNhZGEgcGHDrXMsIHRvbWFuZG8gYSBNw6l4aWNvIChwYcOtcyAxKSBjb21vIHJlZmVyZW5jaWEuCgpFc3RlIG1vZGVsbyBkZSBndWFyZGEgZW4gdW4gb2JqZXRvICJtb2RlbG8xIiBlbCBxdWUgc2UgcHVlZGUgZGVzY3JpYmlyIGNvbiBlbCBjb21hbmRvIGBzdW1tYXJ5YC4KCmBgYHtyIG1vZGVsb30KbW9kZWxvMSA8LSBnbG0odXNlciB+IHJpcXVlemEgKyBlZHVjICsgZWRhZCArIG11amVyICsgdXJiYW4gKyBmYWN0b3IocGFpcyksIGZhbWlseSA9IGJpbm9taWFsLCBkYXRhPWxhcG9wMTgpCnN1bW1hcnkobW9kZWxvMSkKYGBgCgpMb3MgcmVzdWx0YWRvcyBtdWVzdHJhbiBsb3MgY29lZmljaWVudGVzLCBsb3MgZXJyb3JlcyBlc3TDoW5kYXIsIGVsIGVzdGFkw61zdGljbyBaIHkgZWwgcC12YWx1ZSBhc29jaWFkby4KQ29uIGVzdG9zIGRhdG9zIHNlIHB1ZWRlIGV4dHJhZXIgY29uY2x1c2lvbmVzIGFjZXJjYSBkZSBsYSBkaXJlY2Npw7NuIGRlIGxhIHJlbGFjacOzbiBlbnRyZSBjYWRhIHZhcmlhYmxlIGluZGVwZW5kaWVudGUgeSBsYSB2YXJpYWJsZSBkZXBlbmRpZW50ZS4KUG9yIGVqZW1wbG8sIGxhIHJlbGFjacOzbiBlbnRyZSByaXF1ZXphIHkgbGEgcHJvYmFiaWxpZGFkIGRlIHNlciB1c3VhcmlvIGRlIHJlZGVzIHNvY2lhbGVzIGVzIGRpcmVjdGEsIGEgbWVkaWRhIHF1ZSBhdW1lbnRhIGxhIHJpcXVlemEgYXVtZW50YSBsYXMgcHJvYmFiaWxpZGFkZXMgZGUgc2VyIHVzdWFyaW8uCkxhIHJlbGFjacOzbiBlbnRyZSBlZGFkIHkgbGEgcHJvYmFiaWxpZGFkIGRlIHNlciB1c3VhcmlvIGRlIHJlZGVzIHNvY2lhbGVzIGVzIG5lZ2F0aXZhLCBhIG1lZGlkYSBxdWUgYXVtZW50YSBsYSBlZGFkIGRpc21pbnV5ZW4gbGFzIHByb2JhYmlsaWRhZGVzIGRlIHNlciB1c3VhcmlvIGRlIHJlZGVzIHNvY2lhbGVzLgpFbiBhbWJvcyBjYXNvcywgZGFkbyBxdWUgZWwgcC12YWx1ZSBlcyBtZW5vciBhIDAuMDUsIHNlIHRpZW5lbiByZWxhY2lvbmVzIGVzdGFkw61zdGljYW1lbnRlIHNpZ25pZmljYXRpdmFzLgoKTG9zIGNvZWZpY2llbnRlcyBkZSBsYSByZWdyZXNpw7NuIHNlIGludGVycHJldGFuIGNvbW8gZWwgY2FtYmlvIGVuIGVsIGxvZyBvZGRzIGRlIGxhIHZhcmlhYmxlIGRlcGVuZGllbnRlIHBvciBjYWRhIGluY3JlbWVudG8gZGUgdW5hIHVuaWRhZCBkZSBsYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlLgpQb3IgZWplbXBsbywgcG9yIGNhZGEgYcOxbyBhZGljaW9uYWwgZW4gbGEgZWRhZCwgZWwgbG9nIG9kZCBkZSBzZXIgdXN1YXJpbyBkZSB1bmEgcmVkIHNvY2lhbCAodmVyc3VzIG5vIHNlciB1c3VhcmlvKSBkaXNtaW51eWUgZW4gNS42OS4KCk90cmEgbWFuZXJhIGRlIHByZXNlbnRhciBlc3RvcyBjb2VmaWNpZW50ZXMgZXMgdHJhbnNmb3JtYXJsb3MgY29uIGxhIGZ1bmNpw7NuIGV4cG9uZW5jaWFsLgpEZSBlc3RhIG1hbmVyYSBsb3MgcmVzdWx0YWRvcyBzZSBwdWVkZW4gaW50ZXJwcmV0YXIgY29tbyBhdW1lbnRvcyBlbiBsYSBwcm9iYWJpbGlkYWQgZW4gdW4gZmFjdG9yIGRlIGFjdWVyZG8gYWwgcmVzdWx0YWRvLgoKQ29uIGVsIGPDs2RpZ28gc2lndWllbnRlIHNlIHJlYWxpemEgZXN0YSBvcGVyYWNpw7NuIHBhcmEgbGFzIHByaW5jaXBhbGVzIHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcywgZXhjbHV5ZW5kbyBhIGxhcyB2YXJpYWJsZXMgZHVtbXkgcG9yIHBhw61zLgoKYGBge3Igb2Rkc30KZXhwKGNvZWYobW9kZWxvMSlbMTo2XSkKYGBgCgpEZSBlc3RhIG1hbmVyYSBzZSBwdWVkZSBpbnRlcnByZXRhciBxdWUgdW4gYXVtZW50byBkZSB1bmEgdW5pZGFkIGVuIGxhIHZhcmlhYmxlIHJpcXVlemEgYXVtZW50YSBsYSBwcm9iYWJpbGlkYWQgZGUgc2VyIHVzdWFyaW8gZGUgdW5hIHJlZCBzb2NpYWwgZW4gdW4gZmFjdG9yIGRlIDcuNy4KQ29tbyBsYSB2YXJpYWJsZSByaXF1ZXphIGZ1ZSByZWNvZGlmaWNhZGEgcGFyYSBxdWUgdmFyw61lIGVudHJlIDAgeSAxLCB1biBhdW1lbnRvIGRlIHVuYSB1bmlkYWQgZXMgZWwgbcOheGltbyBhdW1lbnRvIHBvc2libGUuCgpQYXJhIGVsIGNhc28gZGUgbGFzIG11amVyZXMsIHNlIHB1ZWRlIGNvbmNsdWlyIHF1ZSBsYXMgbXVqZXJlcyB0aWVuZW4gdW4gMTUuOSUgbcOhcyBkZSBwcm9iYWJpbGlkYWRlcyBkZSBzZXIgdXN1YXJpYXMgZGUgdW5hIHJlZCBzb2NpYWwgcXVlIGxvcyBob21icmVzLgoKUGFyYSBwcmVzZW50YXIgbG9zIHJlc3VsdGFkb3MgZGUgdW5hIG1hbmVyYSBtw6FzIG9yZGVuYWRhLCBzZSBwdWVkZW4gdXNhciB2YXJpYXMgbGlicmVyw61hcyB5IGNvbWFuZG9zLgpFbiBlc3RhIHNlY2Npw7NuIHVzYW1vcyBsYSBsaWJyZXLDrWEgYGp0b29sc2AgeSBlbCBjb21hbmRvIGBzdW1tc2AuCkVzdGUgY29tYW5kbyBub3MgYnJpbmRhIGFkZW3DoXMgZXN0YWTDrXN0aWNvcyBwYXJhIGV2YWx1YXIgZWwgYWp1c3RlIGRlbCBtb2RlbG8uClBvciBlamVtcGxvLCBlbCBlc3RhZMOtc3RpY28gZGUgJFxjaGleMiQgZXZhbMO6YSBlbCBtb2RlbG8gbXVsdGl2YXJpYWRvIHZlcnN1cyBlbCBtb2RlbG8gbnVsby4KQ29tbyBzZSBvYnRpZW5lIHVuIGVzdGFkw61zdGljbyBncmFuZGUgeSB1biBwLXZhbHVlIG1lbm9yIGEgMC4wNSwgc2UgY29uY2x1eWUgcXVlIGVsIG1vZGVsbyBzZSBhanVzdGEgYSBsb3MgZGF0b3MuCgpPdHJvIGVzdGFkw61zdGljbyBlcyBlbCBQc2V1ZG8tJFJeMiQsIHF1ZSBhdW5xdWUgbm8gc2UgcHVlZGUgaW50ZXJwcmV0YXIgY29tbyBlbCBjb2VmaWNpZW50ZSBkZSBkZXRlcm1pbmFjacOzbiBkZSB1bmEgcmVncmVzacOzbiBsaW5lYWwsIGRhIHVuYSBpZGVhIGRlIGxhIGNhcGFjaWRhZCBleHBsaWNhdGl2YSBkZWwgbW9kZWxvLgoKYGBge3IgdGFibGF9CiNsaWJyYXJ5KHN0YXJnYXplcikKI3N0YXJnYXplcihtb2RlbG8xWzE6Nl0sIGFsaWduPVQsIHR5cGUgPSAndGV4dCcpCmxpYnJhcnkoanRvb2xzKQpzdW1tKG1vZGVsbzEpCmBgYAoKRWwgR3LDoWZpY28gMy40IG11ZXN0cmEgbG9zIGNvZWZpY2llbnRlcyBkZSBjYWRhIHZhcmlhYmxlIHkgZWwgaW50ZXJ2YWxvIGRlIGNvbmZpYW56YSBhbCA5NSUgZGUgZXN0ZSBlc3RpbWFkby4KU2UgaW5jbHV5ZSB1bmEgbMOtbmVhIHZlcnRpY2FsIGVuIGVsIHB1bnRvIDAuClNpIHVuIGludGVydmFsbyBkZSBjb25maWFuemEgY3J1emEgZXN0YSBsw61uZWEgdmVydGljYWwsIHNlIHB1ZWRlIGRlY2lyIHF1ZSBubyB0aWVuZSB1bmEgcmVsYWNpw7NuIGVzdGFkw61zdGljYW1lbnRlIHNpZ25pZmljYXRpdmEgY29uIGxhIHZhcmlhYmxlIGRlcGVuZGllbnRlIGRlIGFwb3lvIGFsIHNpc3RlbWEuCkxvcyBpbnRlcnZhbG9zIGRlIGNvbmZpYW56YSBxdWUgbm8gY3J1emFuIGVzdGEgbMOtbmVhIHkgcXVlIHNlIGVuY3VlbnRyYW4gYSBsYSBkZXJlY2hhIChpenF1aWVyZGEpIGRlIGVzdGEgbMOtbmVhIHRpZW5lbiB1bmEgcmVsYWNpw7NuIHBvc2l0aXZhIChuZWdhdGl2YSkgY29uIGVsIGFwb3lvIGFsIHNpc3RlbWEsIGVzIGRlY2lyLCBjdWFuZG8gYXVtZW50YSBlc3RhIHZhcmlhYmxlLCBlbCBhcG95byBhbCBzaXN0ZW1hIHByb21lZGlvIGF1bWVudGEgKGRpc21pbnV5ZSkuCkVuIGVzdGUgZWplbXBsbywgbGFzIGNpbmNvIHZhcmlhYmxlcyBzb24gZXN0YWTDrXN0aWNhbWVudGUgc2lnbmlmaWNhdGl2YXMgeSBtdWVzdHJhbiB0aWVuZW4gdW5hIHJlbGFjacOzbiBwb3NpdGl2YSBjb24gZWwgYXBveW8gYWwgc2lzdGVtYS4KUGFyYSBhcHJveGltYXIgdW4gZ3LDoWZpY28gc2ltaWxhciBhbCBtb3N0cmFkbyBlbiBlbCByZXBvcnRlLCBzZSBwdWVkZSB1c2FyIGxhIGxpYnJlcsOtYSBganRvb2xzYCB5IGVsIGNvbWFuZG8gYHBsb3Rfc3VtbXNgLgpTZSBzZWxlY2Npb25hIHNvbG8gbGFzIHZhcmlhYmxlcyBpbmRlcGVuZGllbnRlcyBkZSByZWxldmFuY2lhLgoKYGBge3IgZ3JhZmljb30KbGlicmFyeShqdG9vbHMpCnBsb3Rfc3VtbXMobW9kZWxvMSwgY29lZnM9YygiTml2ZWwgZGUgcmlxdWV6YSI9InJpcXVlemEiLCAiQcOxb3MgZGUgZWR1Y2FjacOzbiI9ImVkdWMiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJFZGFkIj0iZWRhZCIsICJNdWplciI9Im11amVyIiwgIsOBcmVhIHVyYmFuYSI9InVyYmFuIikpCmBgYAoKRWwgZ3LDoWZpY28gcHJvZHVjaWRvIGVzIHNpbWlsYXIgeSBzaWd1ZSBsYSBtaXNtYSB0ZW5kZW5jaWEgcXVlIGVsIEdyw6FmaWNvIDMuNCBwcmVzZW50YWRvIGVuIGVsIGluZm9ybWUuClNpbiBlbWJhcmdvLCBubyBwcmVzZW50YSBsb3MgbWlzbW9zIHJlc3VsdGFkb3MgcHVlcywgY29tbyBpbmRpY2EgZWwgcmVwb3J0ZSwgImxvcyBwdW50b3MgZW4gZWwgR3LDoWZpY28gMy40IHNvbiBsb3MgY2FtYmlvcyBlc3RpbWFkb3MgZW4gbGEgcHJvYmFiaWxpZGFkIGRlIHF1ZSBsYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSB0b21lIHVuIHZhbG9yIGRlICIxIiAodXNhIHJlZGVzIHNvY2lhbGVzKSwgZGFkbyB1biBjYW1iaW8gZGVsIHZhbG9yIG3DrW5pbW8gYWwgbcOheGltbyBkZSBsYSB2YXJpYWJsZSBpbmRlcGVuZGllbnRlIiAocC4gNTkpLgpFbiBlc3RlIGdyw6FmaWNvIHByb2R1Y2lkbyBlbiBlc3RhIHNlY2Npw7NuIHNlIGdyYWZpY2EgZWwgY29lZmljaWVudGUgZGUgbGEgcmVncmVzacOzbiBsb2fDrXN0aWNhLgoKIyBSZXN1bWVuCgpFbiBlc3RhIHNlY2Npw7NuIGhlbW9zIHVzYWRvIHVuIG1vZGVsbyBkZSByZWdyZXNpw7NuIGxpZ8Otc3RpY2EgcGFyYSBtb2RlbGFyIGxhIHJlbGFjacOzbiBkZSB2YXJpYWJsZXMgaW5kZXBlbmRpZW50ZXMgY29uIHVuYSB2YXJpYWJsZSBkZXBlbmRpZW50ZSBkaWNvdMOzbWljYS4KRW4gcGFydGljdWxhciwgc2UgaGEgcHJlc2VudGFkbyB1biBtb2RlbG8gY29uIGNpbmNvIHByZWRpY3RvcmVzIGRlbCB1c28gZGUgcmVkZXMgc29jaWFsZXMuCkVzdGUgbW9kZWxvIHNlIGhhIHByZXNlbnRhZG8gZGUgbWFuZXJhIGVzdMOhbmRhciBlbiB1bmEgdGFibGEgZGUgcmVzdWx0YWRvcyB5IG1lZGlhbnRlIHVuIGdyw6FmaWNvIHNpbWlsYXIgYWwgR3LDoWZpY28gMy40IGRlbCByZXBvcnRlLgoKIyBJbmNsdXllbmRvIGVsIGVmZWN0byBkZSBkaXNlw7FvCgpMb3MgY8OhbGN1bG9zIHJlYWxpemFkb3Mgbm8gaW5jbHV5ZW4gZWwgZWZlY3RvIGRlIGRpc2XDsW8gbXVlc3RyYWwuClBhcmEgaGFjZXIgZXN0byBzZSBkZWJlIGNvbnNpZGVyYXIgZWwgZmFjdG9yIGRlIGV4cGFuc2nDs24uClNlIGhpem8gdW5hIGludHJvZHVjY2nDs24gYWwgdXNvIGRlbCBmYWN0b3IgZGUgZXhwYW5zacOzbiBbYXF1w61dKGh0dHBzOi8vYXJ0dXJvbWFsZG9uYWRvLmdpdGh1Yi5pby9CYXJvbWV0cm9FZHVfV2ViL0V4cGFuc2lvbi5odG1sKS4KRW4gZXN0ZSBwYXJ0ZSB1c2FyZW1vcyBsYSBsaWJyZXLDrWEgYHN1cnZleWAuCgpVc2FyZW1vcyBlbCBjb21hbmRvIGBzdnlkZXNpZ25gIChzaW1pbGFyIGFsIGNvbWFuZG8gc3Z5c2V0IGVuIFNUQVRBKS4KQ29uIGVzdGUgY29tYW5kbyBzZSBjcmVhIHVuIG51ZXZvIG9iamV0byBsbGFtYWRvICJsYXBvcC5kZXNpZ24iLCBxdWUgZ3VhcmRhIGxhIGluZm9ybWFjacOzbiBkZSBsYXMgdmFyaWFibGVzIGNvbnRlbmlkYXMgZW4gZWwgZGF0YWZyYW1lLCBpbmNsdXllbmRvIGVuIGxvcyBjw6FsY3Vsb3MgZWwgZmFjdG9yIGRlIGV4cGFuc2nDs24uClBvciB0YW50bywgc2kgbHVlZ28gc2UgY3JlYXJhIHVuYSBudWV2YSB2YXJpYWJsZSwgc2UgdGVuZHLDrWEgcXVlIGNhbGN1bGFyIG51ZXZhbWVudGUgZXN0w6kgY29tYW5kbyBwYXJhIHF1ZSBlc3RlIG9iamV0byAibGFwb3AuZGVzaWduIiBpbmNsdXlhIGVzdGEgbnVldmEgdmFyaWFibGUuCgpgYGB7ciBkaXNlbm8sIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9CmxpYnJhcnkoc3VydmV5KQpsYXBvcC5kZXNpZ248LXN2eWRlc2lnbihpZHMgPSB+dXBtLCBzdHJhdGEgPSB+ZXN0cmF0b3ByaSwgd2VpZ2h0cyA9IH53ZWlnaHQxNTAwLCBuZXN0PVRSVUUsIGRhdGE9bGFwb3AxOCkKYGBgCgpMYSBsaWJyZXLDrWEgYHN1cnZleWAgaW5jbHV5ZSBlbCBjb21hbmRvIGBzdnlnbG1gIHF1ZSBwZXJtaXRlIGNhbGN1bGFyIHVuIG1vZGVsbyBkZSByZWdyZXNpw7NuIGxvZ8Otc3RpY2EuCkxhcyBtaXNtYXMgdmFyaWFibGVzIHVzYWRhcyBlbiBlbCBtb2RlbG8gMSBzZSBwdWVkZW4gaW5jbHVpciBlbiBlc3RlIGNvbWFuZG8uClNlIHRpZW5lIHF1ZSBlc3BlY2lmaWNhciBxdWUgc2UgcXVpZXJlIGNhbGN1bGFyIHVuIG1vZGVsbyBiaW5vbWlhbCBjb24gbGEgZXNwZWNpZmljYWNpw7NuIGBmYW1pbHk9cXVhc2liaW5vbWlhbGAuClRhbWJpw6luIHNlIHRpZW5lIHF1ZSBlc3BlY2lmaWNhciBlbCBkaXNlw7FvIHF1ZSBzZSB1dGlsaXphIHkgZWwgdHJhdGFtaWVudG8gZGUgbG9zIHZhbG9yZXMgcGVyZGlkb3MuCkVzdGUgY8OhbGN1bG8gc2UgZ3VhcmRhIGVuIHVuIG9iamV0byAibW9kZWxvMiIuClNlIHVzYSBlbCBjb21hbmRvIGBzdW1tYCBkZSBsYSBsaWJyZXLDrWEgYGp0b29sc2AgcGFyYSBkZXNjcmliaXIgZWwgbW9kZWxvLgoKYGBge3IgbW9kZWxvdywgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0KbW9kZWxvMiA8LSBzdnlnbG0odXNlciB+IHJpcXVlemEgKyBlZHVjICsgZWRhZCArIG11amVyICsgdXJiYW4gKyBmYWN0b3IocGFpcyksIGZhbWlseT1xdWFzaWJpbm9taWFsLCBkZXNpZ249bGFwb3AuZGVzaWduLCBuYS5hY3Rpb24gPSBuYS5vbWl0KQpzdW1tKG1vZGVsbzIpCmBgYAoKRGUgbGEgbWlzbWEgbWFuZXJhIHF1ZSBjb24gZWwgbW9kZWxvIDEsIGVzdG9zIHJlc3VsdGFkb3MgdGFtYmnDqW4gc2UgcHVlZGVuIGdyYWZpY2FyIHVzYW5kbyBlbCBjb21hbmRvIGBwbG90X3N1bW1zYCwgc2VsZWNjaW9uYW5kbyBsYXMgdmFyaWFibGVzIHF1ZSBzZSBxdWllcmVuIG1vc3RyYXIuCgpgYGB7ciBncmFmaWNvd30KcGxvdF9zdW1tcyhtb2RlbG8yLCBjb2Vmcz1jKCJOaXZlbCBkZSByaXF1ZXphIj0icmlxdWV6YSIsICJBw7FvcyBkZSBlZHVjYWNpw7NuIj0iZWR1YyIsIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgIkVkYWQiPSJlZGFkIiwgIk11amVyIj0ibXVqZXIiLCAiw4FyZWEgdXJiYW5hIj0idXJiYW4iKSkKYGBgCgpEZSBsYSBtaXNtYSBtYW5lcmEgcXVlIGNvbiBsb3MgcmVzdWx0YWRvcyBxdWUgbm8gaW5jbHV5ZW4gZWwgZWZlY3RvIGRlIGRpc2XDsW8sIGVzdGUgZ3LDoWZpY28gZXMgc2ltaWxhciBhbCByZXBvcnRhZG8gZW4gZWwgaW5mb3JtZSwgcGVybyBubyBlcyBleGFjdGFtZW50ZSBpZ3VhbC4K</div>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeSourceEmbed("logit.Rmd");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

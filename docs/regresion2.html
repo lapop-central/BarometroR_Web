@@ -417,6 +417,9 @@ div.tocify {
     <li>
       <a href="regresion2.html">Regresión lineal multivariada</a>
     </li>
+    <li>
+      <a href="logit.html">Regresión logística</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -552,11 +555,6 @@ summary(modelo1)</code></pre>
 <p>El Gráfico 2.10 muestra los coeficientes de cada variable y el intervalo de confianza al 95% de este estimado. Se incluye una línea vertical en el punto 0. Si un intervalo de confianza cruza esta línea vertical, se puede decir que no tiene una relación estadísticamente significativa con la variable dependiente de apoyo al sistema. Los intervalos de confianza que no cruzan esta línea y que se encuentran a la derecha (izquierda) de esta línea tienen una relación positiva (negativa) con el apoyo al sistema, es decir, cuando aumenta esta variable, el apoyo al sistema promedio aumenta (disminuye). En este ejemplo, las cinco variables son estadísticamente significativas y muestran tienen una relación positiva con el apoyo al sistema. Para aproximar un gráfico similar al mostrado en el reporte, se puede usar la librería <code>jtools</code> y el comando <code>plot_summs</code>.</p>
 <pre class="r"><code>library(jtools)
 plot_summs(modelo1)</code></pre>
-<pre><code>## Registered S3 methods overwritten by &#39;broom&#39;:
-##   method            from  
-##   tidy.glht         jtools
-##   tidy.summary.glht jtools</code></pre>
-<pre><code>## Loading required namespace: broom.mixed</code></pre>
 <p><img src="regresion2_files/figure-html/grafico-1.png" /><!-- --></p>
 </div>
 <div id="interpretación" class="section level1">

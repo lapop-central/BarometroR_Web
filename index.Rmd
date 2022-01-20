@@ -63,6 +63,8 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 2.  [Regresión lineal simple](https://arturomaldonado.github.io/BarometroEdu_Web/regresion1.html)
 
 3.  [Regresión lineal multivariada](https://arturomaldonado.github.io/BarometroEdu_Web/regresion2.html)
+
+4.  [Regresión logística](https://arturomaldonado.github.io/BarometroEdu_Web/logit.html)
 :::
 
 ::: col-sm-6
