@@ -288,6 +288,18 @@ library(DescTools)
 ##     %nin%
 ```
 
+```
+## The following object is masked from 'package:data.table':
+## 
+##     %like%
+```
+
+```
+## The following object is masked from 'package:car':
+## 
+##     Recode
+```
+
 ```r
 LeveneTest(lapop18$psar, lapop18$mujer)
 ```

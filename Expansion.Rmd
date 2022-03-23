@@ -151,7 +151,7 @@ Uruguay muestra un 80% de apoyo a la democracia en el reporte, mientras que los 
 Para replicar los resultados del gráfico 1.1 se sigue un procedimiento similar al que se mostró en la ronda 2018/19.
 Primero recodificamos la variable y usamos el comando `compmeans`.
 
-```{r}
+```{r media apoyo 21}
 lapop21$ing4rec <- car::recode(lapop21$ing4, "1:4=0; 5:7=1")
 compmeans(lapop21$ing4rec, lapop21$pais, lapop21$weight1500, plot=FALSE)
 ```
@@ -163,13 +163,13 @@ Para poder crear el objeto de diseño que guarde las variables, se tiene que eli
 La base de datos con estas observaciones eliminadas se guarda en un nuevo dataframe "lapop21a".
 Es esta base de datos la que se usa con el comando `svydesign`.
 
-```{r}
+```{r survey 21}
 lapop21a = subset(lapop21, !is.na(estratopri))
 lapop21a = subset(lapop21a, !is.na(weight1500))
 diseño21<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop21a)
 ```
 
-```{r}
+```{r svyby 21}
 svyby(~ing4rec, ~pais, design=diseño21, svymean, na.rm=T)
 ```
 
