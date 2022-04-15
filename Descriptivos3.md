@@ -336,14 +336,14 @@ Para esto se tiene que definir el diseño muestral con el comando `svydesign` y 
 
 ```r
 library(survey)
-lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+diseno18 <-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
 ```
 
 Para calcular el promedio, se usa el comando `svymean` y se usa la especificación `na.rm=T` debido a que estas variables cuentan con valores perdidos.
 
 
 ```r
-svymean(~q2, lapop.design, na.rm=T)
+svymean(~q2, diseno18, na.rm=T)
 ```
 
 ```
@@ -352,7 +352,7 @@ svymean(~q2, lapop.design, na.rm=T)
 ```
 
 ```r
-svymean(~ed, lapop.design, na.rm=T)
+svymean(~ed, diseno18, na.rm=T)
 ```
 
 ```
@@ -364,7 +364,7 @@ Para las variables dummies el procedimiento es el mismo, salvo que se le multipl
 
 
 ```r
-svymean(~hombre, lapop.design, na.rm =T)*100
+svymean(~hombre, diseno18, na.rm =T)*100
 ```
 
 ```
@@ -373,7 +373,7 @@ svymean(~hombre, lapop.design, na.rm =T)*100
 ```
 
 ```r
-svymean(~urban, lapop.design, na.rm=T)*100
+svymean(~urban, diseno18, na.rm=T)*100
 ```
 
 ```
@@ -386,7 +386,7 @@ Por ejemplo, para calcular un histograma simple.
 
 
 ```r
-svyhist(~ed, lapop.design, freq = T)
+svyhist(~ed, diseno18, freq = T)
 ```
 
 ![](Descriptivos3_files/figure-html/weighted hist-1.png)<!-- -->
@@ -395,7 +395,7 @@ Para calcular estadísticos descriptivos por grupos, se puede usar el comando `s
 
 
 ```r
-svyby(~ed, ~fb_user, lapop.design, svymean, na.rm=T)
+svyby(~ed, ~fb_user, diseno18, svymean, na.rm=T)
 ```
 
 <div data-pagedtable="false">
@@ -408,7 +408,7 @@ Para reproducir un gráfico descriptivo por grupos, se puede usar el comando `sv
 
 
 ```r
-svyboxplot(~q2~factor(wa_user), lapop.design, all.outliers = T)
+svyboxplot(~q2~factor(wa_user), diseno18, all.outliers = T)
 ```
 
 ![](Descriptivos3_files/figure-html/weighted boxplot por grupos-1.png)<!-- -->

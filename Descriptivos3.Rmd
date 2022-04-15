@@ -226,38 +226,38 @@ Para esto se tiene que definir el diseño muestral con el comando `svydesign` y 
 
 ```{r survey, message=FALSE, warning=FALSE}
 library(survey)
-lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+diseno18 <-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
 ```
 
 Para calcular el promedio, se usa el comando `svymean` y se usa la especificación `na.rm=T` debido a que estas variables cuentan con valores perdidos.
 
 ```{r weighted mean edad y estudios}
-svymean(~q2, lapop.design, na.rm=T)
-svymean(~ed, lapop.design, na.rm=T)
+svymean(~q2, diseno18, na.rm=T)
+svymean(~ed, diseno18, na.rm=T)
 ```
 
 Para las variables dummies el procedimiento es el mismo, salvo que se le multiplica por 100 para presentarlo en formato de porcentaje
 
 ```{r weighted mean hombre y urbano}
-svymean(~hombre, lapop.design, na.rm =T)*100
-svymean(~urban, lapop.design, na.rm=T)*100
+svymean(~hombre, diseno18, na.rm =T)*100
+svymean(~urban, diseno18, na.rm=T)*100
 ```
 
 El paquete `survey` también tiene comandos para replicar gráficos.
 Por ejemplo, para calcular un histograma simple.
 
 ```{r weighted hist}
-svyhist(~ed, lapop.design, freq = T)
+svyhist(~ed, diseno18, freq = T)
 ```
 
 Para calcular estadísticos descriptivos por grupos, se puede usar el comando `svyby`, que permite definir la variable numérica que se quiere describir, la variable que define los grupos y el estadístico ponderado que se quiere calcular.
 
 ```{r weighted ed por grupos}
-svyby(~ed, ~fb_user, lapop.design, svymean, na.rm=T)
+svyby(~ed, ~fb_user, diseno18, svymean, na.rm=T)
 ```
 
 Para reproducir un gráfico descriptivo por grupos, se puede usar el comando `svyboxplot` para comparar la distribución de la variable edad entre grupos de una variable de tipo factor, como usuarios de Whatsapp.
 
 ```{r weighted boxplot por grupos}
-svyboxplot(~q2~factor(wa_user), lapop.design, all.outliers = T)
+svyboxplot(~q2~factor(wa_user), diseno18, all.outliers = T)
 ```

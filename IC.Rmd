@@ -29,11 +29,14 @@ h1 {color: #3366CC;}
 # Introducción
 
 En este documento veremos como construir intervalos de confianza de la media usando los datos del Barómetro de las Américas.
-Para eso, vamos a seguir usando el último informe regional "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas.
-Una de las secciones de este informe, reporta los datos sobre redes sociales y actitudes políticas.
+Para eso, vamos a usar los reportes "El pulso de la democracia" de 2018/19, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), y de 2021, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf).
+En la ronda 2018/19, una de las secciones de este informe, reporta los datos sobre redes sociales y actitudes políticas.
 En particular, se reporta, en el gráfico 3.9, el grado de satisfacción con la democracia por tipo de usuario de redes sociales.
+En la ronda 2021, una de las secciones reporta los datos sobre golpes ejecutivos.
+En el gráfico 1.7 se presenta el porcentaje de ciudadanos que toleran los golpes ejecutivos por país.
+En ambos casos, los resultados incluyen las estimaciones puntuales y los intervalos de confianza.
 
-# Sobre la base de datos
+# Sobre las bases de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 En este documento se carga una base de datos recortada.
@@ -49,9 +52,133 @@ lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
-# Descriptivos de la satisfacción con la democracia
+También cargamos la base de datos de la ronda 2021.
 
-El gráfico 3.9 presenta el porcentaje de entrevistados que está satisfecho con la democracia por tipo de usuarios de redes sociales.
+```{r base21}
+lapop21 = import("lapop21.RData")
+lapop21 <- subset(lapop21, pais<=35)
+```
+
+# Tolerancia a los golpes ejecutivos
+
+El gráfico 1.7 del reporte El pulso de la Democracia para la ronda del Barómetro de las Américas 2021 presenta los resultados del porcentaje de ciudadanos que tolera un golpe ejecutivo.
+Este gráfico, además, presente el intervalo de confianza al 95% de este porcentaje en cada país.
+
+![](Figure1.7.png){width="564"}
+
+La variable para construir este gráfico es "jc15a" que está fraseada: ¿Cree usted que cuando el país enfrenta momentos muy difíciles, se justifica que el presidente del país cierre el Congreso/Asamblea y gobierno sin Congreso/Asamblea?
+Las opciones de respuesta son:
+
+1.  Sí se justifica
+2.  No se justifica
+
+## Describiendo la tolerancia a los golpes ejecutivos
+
+Para calculas los porcentajes de ciudadanos que justifican o toleran los golpes ejecutivos se tiene que recodificar esta variable, de tal manera que aquellos que justifican tengan el valor 100 y los que no justifican, el valor 0.
+En este caso se usa el comando `recode` y se tabula, mediante `table`, para verificar la recodificación.
+
+```{r tolerancia}
+lapop21$jc15ar <- car::recode(lapop21$jc15a, "1=100; 2=0")
+table(lapop21$jc15ar)
+```
+
+Para calcular el porcentaje de ciudadanos que toleran los golpes ejecutivos se puede usar los comandos `table` y `prop.table`.
+La nueva variable "jc15ar" es una variable dummy.
+En este tipo de variables, la media corresponde a la proporción de respuestas 100.
+Es decir, si calculamos la media de esta variable, se está calculando el porcentaje para todos los entrevistados.
+En esta sección vamos a tratar a esta variable como si fuera una variable numérica.
+En sentido estricto es una variable categórica nominal.
+Los cálculos de desviaciones estándar y luego de intervalos de confianza, por lo tanto, son referenciales.
+
+El resultado indica que en toda la muestra, el porcentaje de ciudadanos que toleran los golpes ejecutivos es de 28.7%.
+
+```{r resumen tolerancia}
+summary(lapop21$jc15ar)
+```
+
+## Intervalos de confianza de tolerancia a los golpes ejecutivos
+
+Para calcular el intervalo de confianza al 95% de este porcentaje, se puede usar el comando `t.test` o la librería `lsr`, que tiene el comando `ciMean`.
+En ambos casos, el resultado nos indica que el porcentaje de ciudadanos que tolera los golpes ejecutivos en la región está entre 28% y 29.3%.
+
+```{r ic tolerancia}
+t.test(lapop21$jc15ar)
+library(lsr)
+ciMean(as.numeric(lapop21$jc15ar), na.rm=T)
+```
+
+## Tolerancia a los golpes ejecutivos por país
+
+El gráfico 1.7 muestra el porcentaje de ciudadanos que toleran los golpes ejecutivos por país.
+Para replicar este gráfico, primero tenemos que definir que la variable "pais" es de tipo factor.
+Se guarda este cambio en una nueva variable "paises", la que se etiqueta con las siglas de cada país.
+
+```{r pais}
+lapop21$paises <- as.factor(lapop21$pais)
+levels(lapop21$paises) <- c("MX", "GT", "SV", "HN", "NI", "CR",
+                            "PN", "CO", "EC", "BO", "PE",
+                            "PY", "CL", "UY", "BR", "AR", "DO",
+                            "HT", "JA", "GU")
+table(lapop21$paises)
+```
+
+Para calcular estos porcentajes por país, se puede usar varias alternativas.
+Por ejemplo, el comando `tapply` permite calcular la media de una variable por grupos de otra variable.
+
+```{r tolerancia por pais}
+tapply(lapop21$jc15ar, lapop21$paises, mean, na.rm=T)
+
+```
+
+Otra forma es usar las librerías `plyr` y `dplyr` que incluye el comando `ddply`.
+Este comando requiere que se defina el dataframe "lapop21", la variable de agrupamiento "paises" y luego las funciones que se requiere en cada grupo, que en este caso son "mean" y "sd".
+
+```{r tolerancia por pais 2}
+library(plyr)
+library(dplyr)
+ddply(lapop21, "paises", summarise, mean=mean(jc15ar, na.rm=T), sd=sd(jc15ar, na.rm=T))
+```
+
+Como se observa en la tabla, no hay datos para Costa Rica, ni para Guyana.
+Con el cálculo de la desviación estándar, se podría calcular el límite inferior y superior del intervalo de confianza.
+
+Esto se puede hacer de manera directa con la librería `Rmisc`.
+Esta librería tiene el comando `group.CI`, que calcula la media, el límite inferior y superior de una variable por grupos de otra variable.
+Esta tabla se guarda en un objeto llamado "golpe".
+Este comando no incluye las filas de los países donde no hay datos, por lo que no hay filas de Costa Rica ni de Guyana.
+
+```{r ic tolerancia por pais}
+library(Rmisc)
+golpe <- group.CI(jc15ar~paises, lapop21)
+golpe
+```
+
+Con esta tabla podemos replicar el gráfico 1.7 con la librería `ggplot2`.
+Para incluir los intervalos de confianza se tiene que agregar la especificación `geom_errorbar()`.
+La tabla "golpe" tiene el dato de "ymin" en la columna "jc15ar.lower" y el dato de "ymax" en la columna "jc15ar.upper".
+Estos datos se deben ingresar en la especificación `aes` dentro de `geom_errorbar`.
+Además, se tiene como opciones `width` para especificar el ancho de las bigotes de las barras de error, `color` para especificar el color, `cex` para especificar el ancho de las líneas y `linetype` para especificar el tipo de líneas, en este caso puntuadas.
+
+Para poder ordenar las barras de acuerdo al valor de la variable, se puede usar la especificación `reorder(grupo, variable)` dentro de la especificación `aes` de `ggplot`.
+
+```{r grafico tolerancia por pais}
+library(ggplot2)
+graf1 <- ggplot(golpe, aes(x=reorder(paises, -jc15ar.mean), y=jc15ar.mean))+
+  geom_bar(width=0.5, fill="darkslategray3", colour="#69b3a2", stat="identity")+
+  geom_errorbar(aes(ymin=jc15ar.lower, ymax=jc15ar.upper), width=0.4, 
+                color="darkcyan", cex=0.4, linetype=3)+
+  geom_text(aes(label=paste(round(jc15ar.mean, 1), "%")), vjust=-4.4, size=2.5)+
+  xlab("País") + ylab("Tolerancia a golpes ejecutivos (%)")+
+  ylim(0, 60)
+graf1
+```
+
+Estos datos, sin embargo, no son exactamente iguales a los presentados en el gráfico 1.7 debido a que estos cálculos no incluyen el efecto de diseño.
+Más adelante, se verá cómo incluir el efecto de diseño para replicar el gráfico exactamente.
+
+# Satisfacción con la democracia
+
+El gráfico 3.9 del reporte El Pulso de la Democracia de la ronda 2018/19 presenta el porcentaje de entrevistados que está satisfecho con la democracia por tipo de usuarios de redes sociales.
 
 ![](Graf3.9.png){width="413"}
 
@@ -62,11 +189,11 @@ La variable satisfacción con la democracia se llama "pn4" y está codificada de
 3.  Insatisfecho
 4.  Muy insatisfecho
 
-La nota 21 indica que "Se codifica a los entrevistados que seleccionan (1) o (2) como satisfechos con la democracia".
+La nota 21 de este reporte indica que "Se codifica a los entrevistados que seleccionan (1) o (2) como satisfechos con la democracia".
 Por lo tanto, se tiene que recodificar esta variable.
 En este caso se usa el comando `recode` y se tabula, mediante `table`, para verificar la recodificación.
 
-```{r recodificar, message=FALSE, warning=FALSE}
+```{r recodificar satisfaccion, message=FALSE, warning=FALSE}
 library(car)
 table(lapop18$pn4)
 lapop18$pn4rr <- car::recode(lapop18$pn4, "1:2=100; 3:4=0")
@@ -80,7 +207,7 @@ En esta sección vamos a tratar a esta variable como si fuera una variable numé
 En sentido estricto es una variable categórica nominal.
 Los cálculos de desviaciones estándar y luego de intervalos de confianza, por lo tanto, son referenciales.
 
-```{r describir}
+```{r describir satisfaccion}
 summary(lapop18$pn4rr)
 ```
 
@@ -89,7 +216,7 @@ Se puede calcular también el intervalo de confianza de esta variable de varias 
 Una primera es mediante la prueba t de una muestra, usando el comando `t.test`.
 Otra forma es usando el comando `ciMean` de la librería `lsr`.
 
-```{r IC}
+```{r ic satisfaccion}
 t.test(lapop18$pn4rr)
 library(lsr)
 ciMean(lapop18$pn4rr, na.rm=T)
@@ -98,7 +225,7 @@ ciMean(lapop18$pn4rr, na.rm=T)
 Estos resultados indican que el intervalo de confianza de la media de satisfacción con la democracia varía entre 38.9% y 40.1% con 95% de confianza.
 Se podría cambiar este valor por defecto a 99% de confianza agregando la especificación `conf = 0.99` al comando `ciMean`.
 
-# Satisfacción con la democracia por grupos de consumo de información en redes sociales
+## Satisfacción con la democracia por grupos de consumo de información en redes sociales
 
 El informe usa una variable que mide la "exposición frecuente a información política".
 Esta variable se construye de una manera compleja, sobre la base de las 3 redes sociales por las que se pregunta.
@@ -116,7 +243,7 @@ Vamos a recodificar estas variables de tal manera que aquellos que responden dia
 Un esquema similar de clasificación se usa para definir a los usuarios de las 3 redes sociales.
 Las nuevas variables recodificadas, se convierten a factor y se etiquetan.
 
-```{r recodificacion}
+```{r recodificacion redes}
 table(lapop18$smedia2)
 table(lapop18$smedia5)
 table(lapop18$smedia8)
@@ -174,7 +301,7 @@ Con estos datos, por ejemplo, la media de satisfacción con la democracia entre 
 El límite inferior del intervalo de confianza es 36.7% y el límite superior es 38.4%.
 Con estos datos se podría replicar un gráfico de barras similar al 3.9.
 
-# Graficando los intervalos de confianza
+## Intervalos de confianza de satisfacción con la democracia
 
 La forma más fácil de graficar los intervalos de confianza por grupos es usando el comando `plotmeans`.
 
@@ -200,18 +327,18 @@ Finalmente, se etiqueta el eje X y Y con `xlab` y `ylab` y se define los límite
 ```{r grafxgrup2, message=FALSE, warning=FALSE}
 tw.uso <- group.CI(pn4rr~smedia5r, lapop18)
 library(ggplot2)
-graf1 <- ggplot(tw.uso, aes(x=smedia5r, y=pn4rr.mean))+
+graf2 <- ggplot(tw.uso, aes(x=smedia5r, y=pn4rr.mean))+
   geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
   geom_errorbar(aes(ymin=pn4rr.lower, ymax=pn4rr.upper), width=0.2)+
   geom_text(aes(label=paste(round(pn4rr.mean, 1), "%")), vjust=-4.2, size=4)+
   xlab("Tipo de usuario de Twitter") + ylab("Satisfacción con la democracia (%)")+
   ylim(0, 50)
-graf1
+graf2
 ```
 
 Según estos resultados, la satisfacción con la democracia es más alta en aquellos que no son usuarios de Twitter, en comparación con los usuarios, aunque las diferencias no son estadísticamente significativas de una comparación visual entre los intervalos de confianza.
 
-# Replicando el tipo de usuario de redes sociales
+## Satisfacción con la democracia por tipo de usuario de redes sociales
 
 Hasta el momento se ha creado intervalos de confianza de satisfacción con la democracia por tipo de usuarios de Twitter.
 El reporte agrega a los usuarios de las tres redes sociales para ubicar tres tipos de usuarios: usuarios de alto uso, de bajo uso y no usuarios de cualquier red social.
@@ -291,17 +418,84 @@ Finalmente, se ha presentado cómo graficar los intervalos de confianza por grup
 
 # Cálculos incluyendo el efecto de diseño
 
-Otra forma de calcular el intervalo de confianza, incluyendo el factor de expansión, es mediante el uso de la librería `survey` y el comando `confint`junto al comando nativo `svymean`.
+## Resultados de tolerancia a los golpes ejecutivos ponderados
 
-```{r diseno}
-library(survey)
-lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+Como se mencionó, los resultados obtenidos acerca de la tolerancia de los golpes ejecutivos, gráfico 1.7 del reporte El Pulso de la Democracia 2021, no son iguales a los obtenidos aquí.
+Esto es debido a que los cálculos de más arriba no incluye el efecto de diseño.
+
+Para poder realizar los cálculos tomando en cuenta el efecto de diseño, se puede usar la librería `survey` para definir el diseño muestral.
+Primero, se tiene que adecuar la base de datos, eliminando los valores perdidos de las variables que definen el diseño muestral (como "weight1500").
+Un paso adicional es transformar las variables del dataframe.
+Esto es debido a que cuando se importan, el sistema lee las variables como tipo "haven_labelled", es decir, mantiene las etiquetas de las variables, con lo que se podría producir un libro de códigos.
+Esto es útil en otras ocasiones, pero genera problemas con la librería `survey`.
+Para esto transformamos las variables a otro tipo con el comando `sapply`.
+
+```{r preparacion de base, echo=TRUE, message=FALSE, warning=FALSE, results='hide'}
+lapop21 = subset(lapop21, !is.na(weight1500))
+sapply(lapop21, haven::zap_labels)
 ```
 
-De la misma manera que en los temas anteriores, se puede describir la variable de satisfacción con la democracia incorporando el factor de diseño usando el comando `svymean`.
+Con la base de datos adecuada, se puede definir el diseño muestra y se guarda en un objeto "diseno21".
+
+```{r diseno21}
+library(survey)
+diseno21 = svydesign(ids = ~upm, strata = ~strata, weights = ~weight1500, nest=TRUE, data=lapop21)
+```
+
+La librería `survey` tiene comandos nativos para calcular la media de la variable recodificada de tolerancia a los golpes ejecutivos.
+Este cálculo de la media nos brinda el porcentaje de ciudadanos en la región que son tolerantes a los golpes ejecutivos.
+
+```{r tolerancia ponderada}
+svymean(~jc15ar, diseno21, na.rm=T)
+```
+
+Para calcular el intervalo de confianza de esta medida se puede anidar el comando `svymean` dentro de otro comando `confint` que nos brinda el límite inferior y superior del intervalo de confianza.
+
+```{r ic tolerancia ponderada}
+confint(svymean(~jc15ar, diseno21, na.rm=T))
+```
+
+Para poder replicar el gráfico 1.7 requerimos el valor del porcentaje de ciudadanos que toleran los golpes ejecutivos por páis, así como el intervalo de confianza de cada uno.
+Para este cálculo, podemos usar el comando `svyby`.
+Este comando requiere definir la variable a ser calculada (`~jc15ar`), la variable que define los grupos (`~paises`), el objeto que guarda el diseño muestral (`diseno21`), el estadístico que se quiere calcular (`svymean, na.rm=T`) y definir el intervalo de confianza (`vartype = "ci"`).
+Estos cálculos se guardan en un objeto "golpepond".
+
+```{r tolerancia por pais ponderada}
+golpepond = svyby(~jc15ar, ~paises, diseno21, svymean, na.rm=T, vartype = "ci")
+golpepond = golpepond[-c(6,20),]
+```
+
+De la misma manera que con el gráfico con los resultados no poderados, usamos la librería `ggplot` para replicar el gráfico 1.7.
+Se debe tomar en cuenta que el comando `svybar` genera columnas con nombre diferentes a los que se generan con el comando `group.CI` usado más arriba.
+
+```{r grafico tolerancia ponderada}
+graf3 <- ggplot(golpepond, aes(x=reorder(paises, -jc15ar), y=jc15ar))+
+  geom_bar(width=0.5, fill="darkslategray3", colour="#69b3a2", stat="identity")+
+  geom_errorbar(aes(ymin=ci_l, ymax=ci_u), width=0.2, color="darkcyan",
+                cex=0.4, linetype=3)+
+  geom_text(aes(label=paste(round(jc15ar, 0), "%")), vjust=-4.4, size=2.5)+
+  xlab("País") + ylab("Tolerancia a golpes ejecutivos (%)")+
+  ylim(0, 60)
+graf3
+
+
+```
+
+De esta manera se ha replicado exactamente los resultados reportados en El Pulso de la Democracia 2021.
+
+## Resultados de satisfacción con la democracia ponderados
+
+De la misma manera que con la tolerancia a los golpes ejecutivos, se usa la librería `survey` y el comando `confint`junto al comando nativo `svymean`.
+
+```{r diseno18}
+library(survey)
+diseno18<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Se puede describir la variable de satisfacción con la democracia incorporando el factor de diseño usando el comando `svymean`.
 
 ```{r weightedpn4}
-svymean(~pn4rr, lapop.design, na.rm=T)
+svymean(~pn4rr, diseno18, na.rm=T)
 ```
 
 Para calcular el intervalo de confianza, se tiene que anidar el código anterior dentro del comando `confint`.
@@ -309,14 +503,14 @@ Este comando calcula el intervalo de confianza al 95% por defecto.
 Se podría cambiar este valor por defecto a 99% de confianza agregando la especificación `conf = 0.99` al comando.
 
 ```{r weightedci}
-confint(svymean(~pn4rr, lapop.design, na.rm=T))
+confint(svymean(~pn4rr, diseno18, na.rm=T))
 ```
 
 También se puede calcular la media y el intervalo de confianza de satisfacción con la democracia incorporando el efecto de diseño usando el comando `svyby`.
-Dentro de este comando se especifica la variable numérica a ser descrita (`~pn4rr`), la variable que forma los grupos (`~smedia5r`), el diseño muestral (`lapop.design`), la función que se quiere calcular (`svymean`), que no tome en cuenta los valores perdidos (`na.rm=T`) y que incluya el intervalo de confianza de cada grupo (`vartype="ci"`).
+Dentro de este comando se especifica la variable numérica a ser descrita (`~pn4rr`), la variable que forma los grupos (`~smedia5r`), el diseño muestral (`diseno18`), la función que se quiere calcular (`svymean`), que no tome en cuenta los valores perdidos (`na.rm=T`) y que incluya el intervalo de confianza de cada grupo (`vartype="ci"`).
 
 ```{r weightedcixgrupos}
-tw.uso.weighted <- svyby(~pn4rr, ~smedia5r, lapop.design, svymean, na.rm=T, vartype = "ci")
+tw.uso.weighted <- svyby(~pn4rr, ~smedia5r, diseno18, svymean, na.rm=T, vartype = "ci")
 tw.uso.weighted
 ```
 
@@ -325,11 +519,13 @@ De la misma manera que con los datos que no incluyen el efecto de diseño, se us
 Se usan especificaciones muy similares a los ejemplos anteriores.
 
 ```{r weightedbarras}
-graf2 <- ggplot(tw.uso.weighted, aes(x=smedia5r, y=pn4rr))+
+graf4 <- ggplot(tw.uso.weighted, aes(x=smedia5r, y=pn4rr))+
   geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
   geom_errorbar(aes(ymin=ci_l, ymax=ci_u), width=0.2)+
   geom_text(aes(label=paste(round(pn4rr, 1), "%")), vjust=-4.2, size=4)+
   xlab("Tipo de usuario de Twitter") + ylab("Satisfacción con la democracia (%)")+
   ylim(0, 50)
-graf2
+graf4
 ```
+
+Estos resultados incluyen el efecto de diseño, pero no son exactamente iguales a los reportados en el gráfico 3.9 del reporte El Pulso de la Democracia de la ronda 2018/19 debido a que el cálculo de la variable que define al tipo de usuario de Twitter es más complejo de lo que se hace en esta sección.
