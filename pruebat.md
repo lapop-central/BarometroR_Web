@@ -27,27 +27,111 @@ h1 {color: #3366CC;}
 # Introducción
 
 En este documento veremos como comparar dos medias y saber si las diferencias se pueden inferir a la población, mediante la prueba t de comparación de medias.
-Para eso, vamos a seguir usando el último informe regional "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas.
-En este informe se reportan los resultados sobre apoyo a la democracia electoral, variable que se cruza con algunas otras variables sociodemográficas como sexo o lugar de residencia (ver Gráfico 1.5).
+Para eso, vamos a seguir usando los últimos reportes "El pulso de la democracia", del 2021, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf), y del 2018/19, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos del Barómetro de las Américas.
+
+En el reporte 2021 se presentan los resultados sobre la victimización por el crimen por grupos de género, edad, educación y riqueza (vr Gráfico 3.12).
+En el informe de la ronda 2018/19 se reportan los resultados sobre apoyo a la democracia electoral, variable que se cruza con algunas otras variables sociodemográficas como sexo o lugar de residencia (ver Gráfico 1.5).
+
+En esta sección analizaremos los casos cuando la victimización por el crimen se compara entre hombres y mujeres y cuando el apoyo a la democracia se compara entre grupos de género y de residencia urbana o rural.
 
 # Sobre la base de datos
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
-En este documento se carga nuevamente una base de datos recortada.
-Se recomienda limpiar el Environment antes de empezar esta sección.
-
+En este documento se carga una base de datos recortada.
 Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+Se recomiendo limpiar el Environment antes de proceder con esta sección.
+
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio.
 Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.
 
 
 ```r
-library(rio)
-lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav")
+library(rio) 
+lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav") 
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
-# Descriptivos del apoyo a la democracia
+También cargamos la base de datos de la ronda 2021.
+
+
+```r
+lapop21 = import("lapop21.RData") 
+lapop21 <- subset(lapop21, pais<=35)
+```
+
+# Victimización por el crimen
+
+La victimización por el crimen está medida con la variable "vic1ext".
+La pregunta está fraseada: "Ahora, cambiando de tema, ¿ha sido usted víctima de algún acto de delincuencia en los últimos 12 meses? Es decir, ¿ha sido víctima de un robo, hurto, agresión, fraude, chantaje, extorsión, amenazas o algún otro tipo de acto delincuencial en los últimos 12 meses?".
+
+Esta variable está codificada como 1 "Sí" y 2 "No. Para poder replicar los resultados del gráfico 3.12 tenemos que recodificar esta variable. Como indicamos en el módulo anterior, esta codificación nos permite calcular el porcentaje de víctimas del crimen mediante el comando `mean`. El resultado nos indica que el 22% de ciudadanos en la región reporta haber sido víctima del crimen.
+
+
+```r
+library(car)
+lapop21$crimen <- car::recode(lapop21$vic1ext, "1=100; 2=0")
+mean(lapop21$crimen, na.rm=T)
+```
+
+```
+## [1] 21.92233
+```
+
+El gráfico 3.12 muestra la comparación de la victimización por el crimen cruzada por cuatro variables sociodemográficas: género, edad, educación y quintiles de riqueza.
+
+![](Figure3.12.png){width="534"}
+
+Para replicar las diferencias entre géneros, se tiene que recodificar la variable "q1tb" y luego declararla como factor.
+
+
+```r
+lapop21$genero = car::recode(lapop21$q1tb, "1=2; 2=1; 3=1")
+lapop21$genero = as.factor(lapop21$genero)
+levels(lapop21$genero) = c("Mujer", "Hombre")
+table(lapop21$genero)
+```
+
+```
+## 
+##  Mujer Hombre 
+##  31487  29174
+```
+
+De la misma manera que en el documento sobre intervalos de confianza, usamos el comando `tapply` para calcular el porcentaje de victimización por crimen por grupos de género.
+
+
+```r
+ tapply(lapop21$crimen, lapop21$genero, mean, na.rm=T) #Para género
+```
+
+```
+##    Mujer   Hombre 
+## 20.87127 23.06949
+```
+
+Para reproducir el gráfico de barras, incluyendo los intervalos de confianza, primero se puede producir una tabla que guarde el valor del porcentaje de cada grupo, así como el valor inferior y superior del intervalo de confianza.
+Esto se puede hacer con el comando `group.CI` del paquete `Rmisc`.
+
+Con esta table, se puede usar la librería `ggplot` para reproducir el primer panel del gráfico 3.12.
+Los resultados no son idénticos dado que no se ha usado el efecto de diseño.
+
+
+```r
+library(Rmisc)
+crxgen <- group.CI(crimen~genero, lapop21)
+library(ggplot2)
+graf3.12a <- ggplot(crxgen, aes(x=genero, y=crimen.mean))+
+  geom_bar(width=0.5, fill="darkcyan", colour="black", stat="identity")+
+  geom_errorbar(aes(ymin=crimen.lower, ymax=crimen.upper), width=0.2)+
+  geom_text(aes(label=paste(round(crimen.mean, 1), "%")), vjust=-1.5, size=4)+
+  xlab("Género") + ylab("Victimización por crimen (%)")+
+  ylim(0, 40)
+graf3.12a
+```
+
+![](pruebat_files/figure-html/grafico crimen por genero-1.png)<!-- -->
+
+# Apoyo a la democracia
 
 El apoyo a la democracia, variable "ING4", medida en una escala del 1 al 7, donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo", se tiene que recodificar.
 De acuerdo al reporte "Se consideran las respuestas en la porción de la escala que indica estar de acuerdo, esto es los valores de 5 a 7, para indicar el porcentaje que apoya a la democracia" (p. 11).
@@ -67,7 +151,7 @@ mean(lapop18$ing4r, na.rm=T)
 
 Se observa que en general, el 57.7% de entrevistados apoyo a la democracia en el conjunto de países evaluados en 2018.
 
-# Factores asociados al apoyo a la democracia
+## Factores asociados al apoyo a la democracia
 
 El gráfico 1.5 muestra cómo varía el apoyo a la democracia por grupos sociodemográficos.
 En particular, se presenta los resultados para la variable lugar de residencia que distingue el ámbito urbano y rural, y para la variable género, que distingue hombre y mujeres.
@@ -156,7 +240,7 @@ Si las barras se traslapan, eso significaría que no habrían diferencias estad�
 Por el contrario, si las barras grises no se traslapan, se podría decir que la diferencia entre los grupos es significativa al 95% de confianza.
 Sin embargo, para comprobar estas observaciones se tiene que calcular una prueba estadística.
 Cuando la comparación es entre las medias de dos grupos, la prueba estadística apropiada es la prueba t de diferencias de medias.
-En esta sección estamos asumiendo que podemos tratar a la variable "ing4r" como una variable numérica, de la que se puede calcular la media y la desviación estándar, aunque esta variable en estricto es una de tipo cualitativa nominal.
+En esta sección estamos asumiendo que podemos tratar a las variables "jc15a" o "ing4r" como variables numéricas, de las que se puede calcular la media y la desviación estándar, aunque estas variables en estricto son de tipo cualitativa nominal.
 
 # Prueba t
 
@@ -181,10 +265,52 @@ $$
 H_a: var_1 ≠ var_2
 $$
 
+## Prueba t para la diferencia de medias de victimización por crimen por género
+
+El primer paso es hacer la prueba de Levene para comprobar la igualdad o diferencia de varianzas, que es una condición que luego se usa en la prueba t.
+Para correr este test, se usa la librería `DescTools`, que incluye el comando `LeveneTest`.
+
+
+```r
+library(DescTools)
+LeveneTest(lapop21$crimen, lapop21$genero)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Df"],"name":[1],"type":["int"],"align":["right"]},{"label":["F value"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Pr(>F)"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"21.36284","3":"3.816323e-06","_rn_":"group"},{"1":"30305","2":"NA","3":"NA","_rn_":""}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Como el p-value (Pr(>F) es menor a 0.05, se rechaza la hipótesis cero y se afirma que las varianzas son diferentes.
+Con este resultado, se puede correr el comando `t.test`, cuya hipótesis cero indica que las medias de victimización por crimen son iguales entre hombre y mujeres y la hipótesis alternativa indica que ambas medias son diferentes.
+Se incluye la especificación `var.equal=F` debido al resultado de la prueba de Levene que indica que las varianzas parecen diferentes.
+
+
+```r
+t.test(crimen ~ genero, data = lapop21, var.equal=F)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  crimen by genero
+## t = -4.6147, df = 29850, p-value = 3.952e-06
+## alternative hypothesis: true difference in means between group Mujer and group Hombre is not equal to 0
+## 95 percent confidence interval:
+##  -3.131886 -1.264558
+## sample estimates:
+##  mean in group Mujer mean in group Hombre 
+##             20.87127             23.06949
+```
+
+El valor del p-value es menor a 0.05, con lo que se rechaza la hipótesis nula y se afirma la hipótesis alternativa de que las medias entre ambos grupos son diferentes.
+Con esto se concluye que los hombres reportan una mayor victimización por crimen que las mujeres en toda la región.
+
 ## Prueba t para la diferencia de medias de apoyo a la democracia por género
 
-El primer paso es hacer la prueba de Levene.
-Para correr este test, se usa la librería `DescTools`, que incluye el comando `LeveneTest`.
+De la misma manera que en el caso anterior, se corre primero la prueba de Levene para comprobar la igualdad o diferencia de varianzas.
 
 
 ```r
@@ -225,7 +351,8 @@ El valor del p-value (4.59e-09) es menor a 0.05, por lo que se rechaza la hipót
 
 ## Prueba t para la diferencia de medias de apoyo a la democracia por grupos de ámbito
 
-De la misma manera que en el caso anterior, en primer lugar se corre la prueba de Levene para analizar la igualdad de varianzas.
+Un último ejemplo es evaluar la diferencia en el apoyo a la democracia entre ámbito de residencia.
+Se corre la prueba de Levena.
 
 
 ```r
@@ -260,7 +387,7 @@ t.test(ing4r ~ ambito, data = lapop18, var.equal=F)
 ##             58.71664             55.07453
 ```
 
-En esta comparación el p-value también es menor a 0.05, por lo que se rechaza la hipótesis cero y se encuentra que las diferencias en el apoyo a la democracia entre el ámbito urbano y rural son estadísticamente significativas al 95% de confianza.
+A diferencia de los ejemplos anteriores, en esta comparación el p-value también es menor a 0.05, por lo que se rechaza la hipótesis cero y se encuentra que las diferencias en el apoyo a la democracia entre el ámbito urbano y rural son estadísticamente significativas al 95% de confianza.
 Tal como indica el reporte "Considerando la región en su conjunto, el Gráfico 1.5 muestra relaciones estadísticamente significativas entre cinco variables demográficas y grupos socioeconómicos (educación, riqueza, residencia urbana/rural, género y edad) y el apoyo a la democracia" (p. 13).
 En esta sección hemos comprobado estos resultados estadísticos para variables demográficas de dos grupos, como género y residencia urbana/rural.
 
@@ -271,31 +398,42 @@ Partiendo de la comparación de intervalos de confianza, formalizamos esta compa
 
 # Cálculos incluyendo el efecto de diseño
 
-Otra forma de calcular la diferencia de medias incluyendo el factor de expansión es mediante de el uso de la librería `survey`.
-Para esto se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "lapop.design".
+## Para victimización por crimen
+
+Para calcular la diferencia de medias incluyendo el factor de expansión se puede usar la librería `survey`.
+Este comando requiere una adecuación de la base de datos, de la misma manera que se hizo en este [módulo](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos2.html).
+
+
+```r
+lapop21 = subset(lapop21, !is.na(weight1500))
+sapply(lapop21, haven::zap_labels)
+```
+
+Una vez adecuada la base de datos, se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "diseno21".
 
 
 ```r
 library(survey)
-lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+diseno21 = svydesign(ids = ~upm, strata = ~strata, weights = ~weight1500, nest=TRUE, data=lapop21)
 ```
 
-En primer lugar, se puede calcular la tabla de la media de apoyo a la democracia para cada valor de la variable género incluyendo el factor de expansión.
+En primer lugar, se puede calcular la tabla de la media de victimización por crimen para cada valor de la variable género incluyendo el factor de expansión.
 De la misma manera que se vio en la sección sobre [intervalos de confianza](https://arturomaldonado.github.io/BarometroEdu_Web/IC.html), se usa el comando `svyby`.
 
 
 ```r
-apxgen.w <- svyby(~ing4r, ~genero, lapop.design, svymean, na.rm=T, vartype = "ci")
-apxgen.w
+crxgen.w <- svyby(~crimen, ~genero, diseno21, svymean, na.rm=T, vartype = "ci")
+crxgen.w
 ```
 
 <div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
-{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["genero"],"name":[1],"type":["fct"],"align":["left"]},{"label":["ing4r"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ci_l"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["ci_u"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Hombre","2":"59.45019","3":"58.60266","4":"60.29772","_rn_":"Hombre"},{"1":"Mujer","2":"55.95399","3":"55.09168","4":"56.81630","_rn_":"Mujer"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["genero"],"name":[1],"type":["fct"],"align":["left"]},{"label":["crimen"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ci_l"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["ci_u"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Mujer","2":"19.89003","3":"19.13471","4":"20.64535","_rn_":"Mujer"},{"1":"Hombre","2":"22.37644","3":"21.55720","4":"23.19569","_rn_":"Hombre"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 
-Con esta tabla se puede proceder a crear el gráfico de barras, de la misma manera que se realizó arriba en esta sección.
+Se debe notar que estos resultados son iguales a los presentados en el gráfico 3.12.
+Con esta tabla se puede proceder a replicar el gráfico de barras del panel izquierdo de ese gráfico, de la misma manera que se realizó arriba en esta sección.
 
 Para el cálculo de la prueba t de diferencia de medias, el paquete `survey` cuenta con un comando nativo que permite hacer este calculo `svyttest`.
 Sin embargo, en este caso no se cuenta con un comando para evaluar la igualdad de varianzas, como el `LeveneTest`.
@@ -307,7 +445,56 @@ El p-value es menor a 0.05, por lo que se puede rechazar la H0 de igualdad de me
 
 
 ```r
-svyttest(ing4r~genero, lapop.design)
+svyttest(crimen~genero, diseno21)
+```
+
+```
+## 
+## 	Design-based t-test
+## 
+## data:  crimen ~ genero
+## t = 4.3654, df = 30282, p-value = 1.273e-05
+## alternative hypothesis: true difference in mean is not equal to 0
+## 95 percent confidence interval:
+##  1.370025 3.602805
+## sample estimates:
+## difference in mean 
+##           2.486415
+```
+
+Como el p-value es menor a 0.05, se concluye que existen diferencias entre hombre y mujeres en sus niveles de victimización por el crimen en toda la región.
+
+## Para apoyo a la democracia
+
+De la misma manera que en el ejemplo anterior, en primer lugar se define el efecto de diseño y se guarda en un objeto "diseno18".
+
+
+```r
+library(survey)
+diseno18<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Luego, se usa el comando `svyby` para calcular la media de apoyo a la democracia por grupos de género.
+
+
+```r
+apxgen.w <- svyby(~ing4r, ~genero, diseno18, svymean, na.rm=T, vartype = "ci")
+apxgen.w
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["genero"],"name":[1],"type":["fct"],"align":["left"]},{"label":["ing4r"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["ci_l"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["ci_u"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"Hombre","2":"59.45019","3":"58.60266","4":"60.29772","_rn_":"Hombre"},{"1":"Mujer","2":"55.95399","3":"55.09168","4":"56.81630","_rn_":"Mujer"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Con esta tabla se puede proceder a crear el gráfico de barras, de la misma manera que se realizó arriba en esta sección.
+
+Igual que en el ejemplo anterior, se procede a usar el comando nativo `svyttest` para evaluar la diferencia de medias de apoyo a la democracia entre hombres y mujeres.
+
+
+```r
+svyttest(ing4r~genero, diseno18)
 ```
 
 ```
@@ -323,3 +510,5 @@ svyttest(ing4r~genero, lapop.design)
 ## difference in mean 
 ##          -3.496199
 ```
+
+Como el p-value es menor a 0.05, se concluye que sí existen diferencias entre hombre y mujeres en el apoyo a la democracia en toda la región.
