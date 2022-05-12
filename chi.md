@@ -50,9 +50,208 @@ lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
+También cargamos la base de datos de la ronda 2021.
+
+
+```r
+lapop21 = import("lapop21.RData") 
+lapop21 <- subset(lapop21, pais<=35)
+```
+
+# Los votos son contados correctamente
+
+El reporte *El Pulso de la Democracia* de la ronda 2021 del Barómetro de las Américas reporta los resultados de la variable **COUNTFAIR1.** Los votos son contados correcta y justamente.
+¿Diría usted que sucede siempre, algunas veces o nunca?
+Se reporta el porcentaje de cada categoría por país.
+
+Este gráfico está reportando el cruce entre una variable categórica (o de factor en el lenguaje de R) llamada "countfair" que tiene tres categorías (nunca, algunas veces y siempre) con otra variable categórica llamada "pais" que tiene 15 categorías (cada país mostrado).
+
+![](Figure2.5.png){width="625"}
+
+Esta variable es importada por R como una de tipo numérica.
+Para poder trabajarla en esta sección se tiene que declararla como una variable de tipo factor usando el comando `as.factor` y luego se etiqueta con el comando `levels`.
+
+
+```r
+library(haven)
+lapop21$countfair1r = as.factor(lapop21$countfair1)
+levels(lapop21$countfair1r) <- c("Siempre", "Algunas veces", "Nunca")
+table(lapop21$countfair1r)
+```
+
+```
+## 
+##       Siempre Algunas veces         Nunca 
+##          3477          5235          1698
+```
+
+## Tabla cruzada de si los votos se cuentan justamente por país
+
+Antes de replicar el gráfico, es útil ver estos resultados en forma de tabla cruzada.
+Esta table se puede crear con el comando `table`.
+Sin embargo, en esta tabla tenemos las frecuencias absolutas.
+Además, nos muestra que esta pregunta no se realizó en algunos países.
+
+
+```r
+table(lapop21$pais, lapop21$countfair1r)
+```
+
+```
+##     
+##      Siempre Algunas veces Nunca
+##   1        0             0     0
+##   2        0             0     0
+##   3        0             0     0
+##   4        0             0     0
+##   5      186           351   173
+##   6      354           272    51
+##   7      215           445   120
+##   8      130           362   226
+##   9      158           435   143
+##   10     169           408   112
+##   11     177           430    97
+##   12     169           315   168
+##   13     428           201    39
+##   14     525           111    20
+##   15     346           257   116
+##   17     216           350   120
+##   21     170           406    99
+##   22       0             0     0
+##   23     122           464    97
+##   24     112           428   117
+```
+
+Para poder reproducir las frecuencias relativas tenemos que usar el comando `prop.table`.
+Este comando nos brinda por defecto los porcentajes sobre el total.
+Lo que queremos calcular en este caso son los porcentajes por cada fila, es decir, por cada país.
+
+
+```r
+prop.table(table(lapop21$pais, lapop21$countfair1r))
+```
+
+```
+##     
+##          Siempre Algunas veces       Nunca
+##   1  0.000000000   0.000000000 0.000000000
+##   2  0.000000000   0.000000000 0.000000000
+##   3  0.000000000   0.000000000 0.000000000
+##   4  0.000000000   0.000000000 0.000000000
+##   5  0.017867435   0.033717579 0.016618636
+##   6  0.034005764   0.026128722 0.004899135
+##   7  0.020653218   0.042747358 0.011527378
+##   8  0.012487992   0.034774256 0.021709894
+##   9  0.015177714   0.041786744 0.013736792
+##   10 0.016234390   0.039193084 0.010758886
+##   11 0.017002882   0.041306436 0.009317963
+##   12 0.016234390   0.030259366 0.016138329
+##   13 0.041114313   0.019308357 0.003746398
+##   14 0.050432277   0.010662824 0.001921230
+##   15 0.033237272   0.024687800 0.011143132
+##   17 0.020749280   0.033621518 0.011527378
+##   21 0.016330451   0.039000961 0.009510086
+##   22 0.000000000   0.000000000 0.000000000
+##   23 0.011719500   0.044572526 0.009317963
+##   24 0.010758886   0.041114313 0.011239193
+```
+
+Para poder especificar que se calculen los porcentajes por fila se añade la especificación `, 1` en `prop.table`.
+También se anida todo el código en el comando `addmargins` que nos comprueba la suma de porcentajes horizontales.
+Estos son los mismos porcentajes que se presentarán en el gráfico de barras de más abajo.
+Estos porcentajes no son iguales a los mostrados en la figura 2.5 debido a que estos cálculos no incluyen el efecto de diseño.
+
+
+```r
+addmargins(prop.table(table(lapop21$pais, lapop21$countfair1r), 1)*100, 2)
+```
+
+```
+##     
+##         Siempre Algunas veces      Nunca        Sum
+##   1                                                
+##   2                                                
+##   3                                                
+##   4                                                
+##   5   26.197183     49.436620  24.366197 100.000000
+##   6   52.289513     40.177253   7.533235 100.000000
+##   7   27.564103     57.051282  15.384615 100.000000
+##   8   18.105850     50.417827  31.476323 100.000000
+##   9   21.467391     59.103261  19.429348 100.000000
+##   10  24.528302     59.216255  16.255443 100.000000
+##   11  25.142045     61.079545  13.778409 100.000000
+##   12  25.920245     48.312883  25.766871 100.000000
+##   13  64.071856     30.089820   5.838323 100.000000
+##   14  80.030488     16.920732   3.048780 100.000000
+##   15  48.122392     35.744089  16.133519 100.000000
+##   17  31.486880     51.020408  17.492711 100.000000
+##   21  25.185185     60.148148  14.666667 100.000000
+##   22                                               
+##   23  17.862372     67.935578  14.202050 100.000000
+##   24  17.047184     65.144597  17.808219 100.000000
+```
+
+## Gráfico de barras de si los votos se cuentan justamente por país
+
+De la misma manera que vimos en el módulo de variables ordinales, que se puede revisar [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos2.html), para replicar el gráfico comparativo por país se requiere crear la tabla de contingencia entre la variable "countfair" y "pais".
+Esta tabla cruzada se guarda en un objeto "count_pais".
+Se debe notar que el dataframe que se crea crea una fila por cada valor de "countfair" en cada país.
+De esta manera tenemos 3 opciones x 20 países = 60 filas.
+
+
+```r
+count_pais = as.data.frame(round(prop.table(table(lapop21$pais, lapop21$countfair1r), 1), 3)*100)
+count_pais
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Var2"],"name":[2],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"Siempre","3":"NaN"},{"1":"2","2":"Siempre","3":"NaN"},{"1":"3","2":"Siempre","3":"NaN"},{"1":"4","2":"Siempre","3":"NaN"},{"1":"5","2":"Siempre","3":"26.2"},{"1":"6","2":"Siempre","3":"52.3"},{"1":"7","2":"Siempre","3":"27.6"},{"1":"8","2":"Siempre","3":"18.1"},{"1":"9","2":"Siempre","3":"21.5"},{"1":"10","2":"Siempre","3":"24.5"},{"1":"11","2":"Siempre","3":"25.1"},{"1":"12","2":"Siempre","3":"25.9"},{"1":"13","2":"Siempre","3":"64.1"},{"1":"14","2":"Siempre","3":"80.0"},{"1":"15","2":"Siempre","3":"48.1"},{"1":"17","2":"Siempre","3":"31.5"},{"1":"21","2":"Siempre","3":"25.2"},{"1":"22","2":"Siempre","3":"NaN"},{"1":"23","2":"Siempre","3":"17.9"},{"1":"24","2":"Siempre","3":"17.0"},{"1":"1","2":"Algunas veces","3":"NaN"},{"1":"2","2":"Algunas veces","3":"NaN"},{"1":"3","2":"Algunas veces","3":"NaN"},{"1":"4","2":"Algunas veces","3":"NaN"},{"1":"5","2":"Algunas veces","3":"49.4"},{"1":"6","2":"Algunas veces","3":"40.2"},{"1":"7","2":"Algunas veces","3":"57.1"},{"1":"8","2":"Algunas veces","3":"50.4"},{"1":"9","2":"Algunas veces","3":"59.1"},{"1":"10","2":"Algunas veces","3":"59.2"},{"1":"11","2":"Algunas veces","3":"61.1"},{"1":"12","2":"Algunas veces","3":"48.3"},{"1":"13","2":"Algunas veces","3":"30.1"},{"1":"14","2":"Algunas veces","3":"16.9"},{"1":"15","2":"Algunas veces","3":"35.7"},{"1":"17","2":"Algunas veces","3":"51.0"},{"1":"21","2":"Algunas veces","3":"60.1"},{"1":"22","2":"Algunas veces","3":"NaN"},{"1":"23","2":"Algunas veces","3":"67.9"},{"1":"24","2":"Algunas veces","3":"65.1"},{"1":"1","2":"Nunca","3":"NaN"},{"1":"2","2":"Nunca","3":"NaN"},{"1":"3","2":"Nunca","3":"NaN"},{"1":"4","2":"Nunca","3":"NaN"},{"1":"5","2":"Nunca","3":"24.4"},{"1":"6","2":"Nunca","3":"7.5"},{"1":"7","2":"Nunca","3":"15.4"},{"1":"8","2":"Nunca","3":"31.5"},{"1":"9","2":"Nunca","3":"19.4"},{"1":"10","2":"Nunca","3":"16.3"},{"1":"11","2":"Nunca","3":"13.8"},{"1":"12","2":"Nunca","3":"25.8"},{"1":"13","2":"Nunca","3":"5.8"},{"1":"14","2":"Nunca","3":"3.0"},{"1":"15","2":"Nunca","3":"16.1"},{"1":"17","2":"Nunca","3":"17.5"},{"1":"21","2":"Nunca","3":"14.7"},{"1":"22","2":"Nunca","3":"NaN"},{"1":"23","2":"Nunca","3":"14.2"},{"1":"24","2":"Nunca","3":"17.8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+En esta tabla se calculan los datos por cada valor de la variable "pais", incluso cuando no se tiene datos de la variable "countfair", debido a que la pregunta no se realizó en ese país.
+Por este motivo se tienen que eliminar las filas de los países en los que no se recogió esta información.
+Esto se hace con la especificación `[-c(filas),]`.
+Luego se crea un vector con los nombres de los países.
+Esta lista se repite 3 veces (15 países restantes x 3 opciones).
+Este vector se agrega al dataframe en una columna "pais".
+
+
+```r
+count_pais = count_pais[-c(1:4,18,21:24,38,41:44,58),]
+pais = c("Nicaragua","Costa Rica", "Panamá", "Colombia", "Ecuador", "Bolivia", "Perú",
+        "Paraguay", "Chile", "Uruguay", "Brasil", "Argentina", "Rep. Dom.","Jamaica", "Guyana", "Nicaragua","Costa Rica", "Panamá", "Colombia", "Ecuador", "Bolivia", "Perú",
+        "Paraguay", "Chile", "Uruguay", "Brasil", "Argentina", "Rep. Dom.","Jamaica", "Guyana","Nicaragua","Costa Rica", "Panamá", "Colombia", "Ecuador", "Bolivia", "Perú",
+        "Paraguay", "Chile", "Uruguay", "Brasil", "Argentina", "Rep. Dom.","Jamaica", "Guyana")
+count_pais$pais = pais
+count_pais
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Var2"],"name":[2],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pais"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"5","2":"Siempre","3":"26.2","4":"Nicaragua","_rn_":"5"},{"1":"6","2":"Siempre","3":"52.3","4":"Costa Rica","_rn_":"6"},{"1":"7","2":"Siempre","3":"27.6","4":"Panamá","_rn_":"7"},{"1":"8","2":"Siempre","3":"18.1","4":"Colombia","_rn_":"8"},{"1":"9","2":"Siempre","3":"21.5","4":"Ecuador","_rn_":"9"},{"1":"10","2":"Siempre","3":"24.5","4":"Bolivia","_rn_":"10"},{"1":"11","2":"Siempre","3":"25.1","4":"Perú","_rn_":"11"},{"1":"12","2":"Siempre","3":"25.9","4":"Paraguay","_rn_":"12"},{"1":"13","2":"Siempre","3":"64.1","4":"Chile","_rn_":"13"},{"1":"14","2":"Siempre","3":"80.0","4":"Uruguay","_rn_":"14"},{"1":"15","2":"Siempre","3":"48.1","4":"Brasil","_rn_":"15"},{"1":"17","2":"Siempre","3":"31.5","4":"Argentina","_rn_":"16"},{"1":"21","2":"Siempre","3":"25.2","4":"Rep. Dom.","_rn_":"17"},{"1":"23","2":"Siempre","3":"17.9","4":"Jamaica","_rn_":"19"},{"1":"24","2":"Siempre","3":"17.0","4":"Guyana","_rn_":"20"},{"1":"5","2":"Algunas veces","3":"49.4","4":"Nicaragua","_rn_":"25"},{"1":"6","2":"Algunas veces","3":"40.2","4":"Costa Rica","_rn_":"26"},{"1":"7","2":"Algunas veces","3":"57.1","4":"Panamá","_rn_":"27"},{"1":"8","2":"Algunas veces","3":"50.4","4":"Colombia","_rn_":"28"},{"1":"9","2":"Algunas veces","3":"59.1","4":"Ecuador","_rn_":"29"},{"1":"10","2":"Algunas veces","3":"59.2","4":"Bolivia","_rn_":"30"},{"1":"11","2":"Algunas veces","3":"61.1","4":"Perú","_rn_":"31"},{"1":"12","2":"Algunas veces","3":"48.3","4":"Paraguay","_rn_":"32"},{"1":"13","2":"Algunas veces","3":"30.1","4":"Chile","_rn_":"33"},{"1":"14","2":"Algunas veces","3":"16.9","4":"Uruguay","_rn_":"34"},{"1":"15","2":"Algunas veces","3":"35.7","4":"Brasil","_rn_":"35"},{"1":"17","2":"Algunas veces","3":"51.0","4":"Argentina","_rn_":"36"},{"1":"21","2":"Algunas veces","3":"60.1","4":"Rep. Dom.","_rn_":"37"},{"1":"23","2":"Algunas veces","3":"67.9","4":"Jamaica","_rn_":"39"},{"1":"24","2":"Algunas veces","3":"65.1","4":"Guyana","_rn_":"40"},{"1":"5","2":"Nunca","3":"24.4","4":"Nicaragua","_rn_":"45"},{"1":"6","2":"Nunca","3":"7.5","4":"Costa Rica","_rn_":"46"},{"1":"7","2":"Nunca","3":"15.4","4":"Panamá","_rn_":"47"},{"1":"8","2":"Nunca","3":"31.5","4":"Colombia","_rn_":"48"},{"1":"9","2":"Nunca","3":"19.4","4":"Ecuador","_rn_":"49"},{"1":"10","2":"Nunca","3":"16.3","4":"Bolivia","_rn_":"50"},{"1":"11","2":"Nunca","3":"13.8","4":"Perú","_rn_":"51"},{"1":"12","2":"Nunca","3":"25.8","4":"Paraguay","_rn_":"52"},{"1":"13","2":"Nunca","3":"5.8","4":"Chile","_rn_":"53"},{"1":"14","2":"Nunca","3":"3.0","4":"Uruguay","_rn_":"54"},{"1":"15","2":"Nunca","3":"16.1","4":"Brasil","_rn_":"55"},{"1":"17","2":"Nunca","3":"17.5","4":"Argentina","_rn_":"56"},{"1":"21","2":"Nunca","3":"14.7","4":"Rep. Dom.","_rn_":"57"},{"1":"23","2":"Nunca","3":"14.2","4":"Jamaica","_rn_":"59"},{"1":"24","2":"Nunca","3":"17.8","4":"Guyana","_rn_":"60"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Con este dataframe "count_pais" ya tenemos los elementos para replicar el gráfico de barras apiladas.
+En la especificación `aes`se define que en el eje X se grafiquen los porcentajes, en el eje Y los países y cada barra se divida por la columna Var2.
+
+
+```r
+ggplot(data=count_pais, aes(x=Freq, y=pais, fill=Var2))+
+  geom_bar(stat="identity", width=0.3)+
+  geom_text(aes(label=paste(Freq, "%", sep="")), color="white", 
+            position=position_stack(vjust=0.5), size=2)+
+  labs(x="Porcentaje", y="País", fill="Los votos se cuentan justamente",
+       caption="Barómetro de las Américas por LAPOP, 2021")
+```
+
+![](chi_files/figure-html/figura 2.5-1.png)<!-- -->
+
 # Evaluación de la democracia en la práctica
 
-Desde la página 20 del reporte *El Pulso de la Democracia* se hace una evaluación de la democracia en la práctica.
+Desde la página 20 del reporte *El Pulso de la Democracia* de la ronda 2018/19 se hace una evaluación de la democracia en la práctica.
 En particular, esta sección del reporte usa la variable "pn4".
 Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en \[país\]?"
 
@@ -96,7 +295,7 @@ table(lapop18$satis)
 ##             1727             8916            12455             3855
 ```
 
-# Tabla cruzada de satisfacción con la democracia según género
+## Tabla cruzada de satisfacción con la democracia según género
 
 Con las nuevas variables de factor, lo primero es calcular la tabla cruzada o de contingencia.
 El comando `table` sirve para presentar las frecuencias de una o del cruce de dos variables.
@@ -161,7 +360,7 @@ En esta categoría, las mujeres tienen un porcentaje mayor (48.4%).
 
 De esta manera, se puede comparar los porcentajes de la variable dependiente "satisfacción con la democracia" por cada categoría de la variable independiente "género".
 
-# Gráficos de satisfacción con la democracia según género
+## Gráficos de satisfacción con la democracia según género
 
 En la sección sobre [Descriptivos de variables ordinales](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos2.html) se presentó un adelanto de lo que estamos viendo en esta sección.
 Se crearon tablas cruzadas y gráficos de dos variables.
@@ -235,82 +434,7 @@ ggplot(data=tabla, aes(x=Var2, y=Freq, fill=Var1, ymax=100))+
 
 ![](chi_files/figure-html/grafbarapila-1.png)<!-- -->
 
-# Prueba de independencia de chi-cuadrado de satisfacción con la democracia según género
-
-Se dice que dos variables categóricas con estadísticamente independientes si las distribuciones condicionales (poblacionales) son idénticas por cada categoría de la variable independiente En la relación bivariada anterior, esto significa que ser hombre o mujer no cambia las opiniones con respecto a la satisfacción con la democracia.
-A medida que estas distribuciones condicionales difieren más entre sí, se dice que ambas variables están más relacionadas o son más dependientes.
-
-Esta evaluación se hace mediante la prueba de independencia de chi-cuadrado o de $\chi^2$.
-Esta prueba se basa en la comparación de las frecuencias observadas (las observaciones que se recoge en campo) versus las frecuencias esperadas (las observaciones que deberían haber en cada celda si las variables fueran independientes).
-El estadístico de la prueba resume qué tan cerca están las frecuencias esperadas de las frecuencias observadas.
-
-$$
-\chi^2 = \sum\frac{(f_o-f_e)^2}{f_e}
-$$
-
-Mientras más pequeña la distancia en cada celda, menos probabilidad de rechazar la hipótesis nula.
-Mientras la distancia sea más grande en cada celda, mas probabilidades de rechazar la hipótesis nula.
-
-$$
-H0: f_o = f_e
-$$
-
-Con el valor de $\chi^2$ y con los grados de libertad (filas-1\*columnas-1), se calcula un p-value en la distribución de chi-cuadrado.
-Si este p-value es menor de 0.05, se rechaza la H0.
-Esta prueba requiere que haya al menos 5 observaciones en cada celda.
-
-En R se usa el comando `chisq.test` para calcular el estadístico y el p-value asociado.
-Esta prueba se puede guardar en un nuevo objeto "prueba".
-
-
-```r
-prueba <- chisq.test(lapop18$satis, lapop18$genero)
-prueba
-```
-
-```
-## 
-## 	Pearson's Chi-squared test
-## 
-## data:  lapop18$satis and lapop18$genero
-## X-squared = 84.828, df = 3, p-value < 2.2e-16
-```
-
-El p-value obtenido es menor de 0.05, por lo que se rechaza la H0, con lo que decimos que las frecuencias observadas parecen ser diferentes de las frecuencias esperadas que hubieran en cada celda si no hubiera relación, por lo que decimos que hay una relación entre las variables o que hay una dependencia entre ambas.
-
-Es importante notar que "prueba" es un objeto de tipo *lista*.
-Este tipo de objeto puede almacenar otra información de diferente tipo.
-Por ejemplo, "prueba" guarda las tablas de frecuencias observadas (mismo resultado que con el comando `table`) y de frecuencias esperadas.
-En este objeto también se guarda el valor de los residuales, los residuos estandarizados y el valor del p-value.
-
-
-```r
-prueba$observed
-```
-
-```
-##                   lapop18$genero
-## lapop18$satis      Hombre Mujer
-##   Muy satisfecho      919   803
-##   Satisfecho         4821  4091
-##   Insatisfecho       5994  6457
-##   Muy insatisfecho   1874  1979
-```
-
-```r
-prueba$expected
-```
-
-```
-##                   lapop18$genero
-## lapop18$satis         Hombre     Mujer
-##   Muy satisfecho    869.8855  852.1145
-##   Satisfecho       4501.9859 4410.0141
-##   Insatisfecho     6289.7471 6161.2529
-##   Muy insatisfecho 1946.3815 1906.6185
-```
-
-# Tabla cruzada de satisfacción con la democracia según nivel educativo
+## Tabla cruzada de satisfacción con la democracia según nivel educativo
 
 El Gráfico 1.14 del reporte muestra los datos de satisfacción con la democracia (según la variable recodificada dummy) por niveles educativo.
 Como segundo ejemplo, aquí vamos a replicar esa relación usando la variable original de tipo factor.
@@ -388,12 +512,145 @@ En el Gráfico 1.14 se observa que se tiene un mayor porcentaje de satisfacción
 Esta relación también puede observarse en este gráfico.
 Los sectores "muy satisfechos" (en rosado) y "satisfechos" (en verde) disminuyen a medida que se pasa de ninguna a primaria, secundaria y superior.
 
-Para comprobar la relación entre estas variables, también se puede usar la prueba de independencia de $\chi^2$.
+En todos los ejemplos que se han mostrado, se pueden observar diferencias porcentuales en una variable por categorías de otra variable.
+Estos porcentajes se pueden comparar directamente, pero para formalizar si existe una relación estadística entre ambas variables se tiene que correr una prueba de significancia.
+
+# Prueba de independencia de chi-cuadrado 
+
+Se dice que dos variables categóricas con estadísticamente independientes si las distribuciones condicionales (poblacionales) son idénticas por cada categoría de la variable independiente En la relación bivariada anterior, esto significa que ser hombre o mujer no cambia las opiniones con respecto a la satisfacción con la democracia.
+A medida que estas distribuciones condicionales difieren más entre sí, se dice que ambas variables están más relacionadas o son más dependientes.
+
+Esta evaluación se hace mediante la prueba de independencia de chi-cuadrado o de $\chi^2$.
+Esta prueba se basa en la comparación de las frecuencias observadas (las observaciones que se recoge en campo) versus las frecuencias esperadas (las observaciones que deberían haber en cada celda si las variables fueran independientes).
+El estadístico de la prueba resume qué tan cerca están las frecuencias esperadas de las frecuencias observadas.
+
+$$
+\chi^2 = \sum\frac{(f_o-f_e)^2}{f_e}
+$$
+
+Mientras más pequeña la distancia en cada celda, menos probabilidad de rechazar la hipótesis nula.
+Mientras la distancia sea más grande en cada celda, mas probabilidades de rechazar la hipótesis nula.
+
+$$
+H0: f_o = f_e
+$$
+
+Con el valor de $\chi^2$ y con los grados de libertad (filas-1\*columnas-1), se calcula un p-value en la distribución de chi-cuadrado.
+Si este p-value es menor de 0.05, se rechaza la H0.
+Esta prueba requiere que haya al menos 5 observaciones en cada celda.
+
+## Los votos se cuentan justamente por país
+
+En R se usa el comando `chisq.test` para calcular el estadístico y el p-value asociado.
+Esta prueba se puede guardar en un nuevo objeto "prueba1".
+
+
+```r
+prueba1 <- chisq.test(lapop21$countfair1r, lapop21$pais)
+prueba1
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  lapop21$countfair1r and lapop21$pais
+## X-squared = 1691.6, df = 28, p-value < 2.2e-16
+```
+
+El p-value obtenido es menor de 0.05, por lo que se rechaza la H0, con lo que decimos que las frecuencias observadas parecen ser diferentes de las frecuencias esperadas que hubieran en cada celda si no hubiera relación, por lo que decimos que hay una relación entre las variables o que hay una dependencia entre ambas.
+
+Es importante notar que "prueba" es un objeto de tipo *lista*.
+Este tipo de objeto puede almacenar otra información de diferente tipo.
+Por ejemplo, "prueba" guarda las tablas de frecuencias observadas (mismo resultado que con el comando `table`) y de frecuencias esperadas.
+En este objeto también se guarda el valor de los residuales, los residuos estandarizados y el valor del p-value.
+
+
+```r
+prueba1$observed
+```
+
+```
+##                    lapop21$pais
+## lapop21$countfair1r   5   6   7   8   9  10  11  12  13  14  15  17  21  23  24
+##       Siempre       186 354 215 130 158 169 177 169 428 525 346 216 170 122 112
+##       Algunas veces 351 272 445 362 435 408 430 315 201 111 257 350 406 464 428
+##       Nunca         173  51 120 226 143 112  97 168  39  20 116 120  99  97 117
+```
+
+```r
+prueba1$expected
+```
+
+```
+##                    lapop21$pais
+## lapop21$countfair1r        5        6        7        8        9       10
+##       Siempre       237.1441 226.1219 260.5245 239.8161 245.8282 230.1300
+##       Algunas veces 357.0461 340.4510 392.2478 361.0692 370.1210 346.4856
+##       Nunca         115.8098 110.4271 127.2277 117.1147 120.0507 112.3844
+##                    lapop21$pais
+## lapop21$countfair1r       11       12       13       14       15       17
+##       Siempre       235.1401 217.7718 223.1159 219.1078 240.1501 229.1280
+##       Algunas veces 354.0288 327.8790 335.9251 329.8905 361.5720 344.9769
+##       Nunca         114.8311 106.3493 108.9591 107.0017 117.2778 111.8951
+##                    lapop21$pais
+## lapop21$countfair1r       21       23       24
+##       Siempre       225.4539 228.1259 219.4418
+##       Algunas veces 339.4452 343.4683 330.3934
+##       Nunca         110.1009 111.4058 107.1648
+```
+
+Para evaluar la fuerza de la relación, se usa la librería `vcd` que cuenta con el comando `assocstats` que nos ofrece una serie de medidas de asociación adecuadas para el cruce entre una variable ordinal como "countfair1" y una variable nominal como "pais".
+
+El comando `assocstats` no puede calculos las medidas de asociación si se tiene celdas en la tabla cruzada con valores de cero.
+Como se tiene algunos países donde no se hizo la pregunta "countfair1" entonces se tiene que indicar que no se use las observaciones de esos países.
+Para esto creamos una nueva variable de país, donde las observaciones de estos países se ponen como NAs.
+
+
+```r
+lapop21$pais_r = lapop21$pais
+lapop21$pais_r[lapop21$pais==1] = NA
+lapop21$pais_r[lapop21$pais==2] = NA
+lapop21$pais_r[lapop21$pais==3] = NA
+lapop21$pais_r[lapop21$pais==4] = NA
+lapop21$pais_r[lapop21$pais==22] = NA
+```
+
+Con esta nueva variable se puede crear la tabla cruzada entre "countfair1" y "pais" y calcular las medidas de asociación.
+
+
+```r
+library(vcd)
+tabla3 <- table(lapop21$countfair1r, lapop21$pais_r)
+assocstats(tabla3)
+```
+
+```
+##                     X^2 df P(> X^2)
+## Likelihood Ratio 1639.2 28        0
+## Pearson          1691.6 28        0
+## 
+## Phi-Coefficient   : NA 
+## Contingency Coeff.: 0.374 
+## Cramer's V        : 0.285
+```
+
+El comando `assocstats` nos brinda el coeficiente de contingencia y la V de Cramer como medidas.
+Estas medidas varían entre 0 y 1.
+Mientras más cercano a cero, se asume que la relación es más débil.
+Por el contrario, mientras más cercano a 1, se asume que la relación es más fuerte.
+
+Por convención se asume que se tiene relaciones débiles con valores entre 0 y 0.3, relaciones moderadas con valores entre 0.3 y 0.6 y relaciones fuertes con valores mayores a 0.6.
+En este caso, podemos indicar que la relación entre si los votos se cuentan justamente y país es débil.
+
+## Satisfacción con la democracia según educación
+
+Para comprobar la relación entre la satisfacción con la democracia y el género, también se puede usar la prueba de independencia de $\chi^2$.
 Esta evaluación se guarda en un objeto "prueba2".
 
 
 ```r
-prueba2 <- chisq.test(lapop18$satis, lapop18$genero)
+prueba2 <- chisq.test(lapop18$satis, lapop18$educ)
 prueba2
 ```
 
@@ -401,14 +658,13 @@ prueba2
 ## 
 ## 	Pearson's Chi-squared test
 ## 
-## data:  lapop18$satis and lapop18$genero
-## X-squared = 84.828, df = 3, p-value < 2.2e-16
+## data:  lapop18$satis and lapop18$educ
+## X-squared = 312.2, df = 9, p-value < 2.2e-16
 ```
 
-Con el valor de estadístico se obtiene un p-value menor de 0.05, con lo que se rechaza la hipótesis nula y se afirma que las frecuencias observadas son diferentes de las esperadas, con lo que concluimos que existiría una relación de dependencia entre las variables.
+Nuevamente se obtiene un p-value menor de 0.05, con lo que se rechaza la hipótesis nula y se afirma que las frecuencias observadas son diferentes de las esperadas, con lo que concluimos que existiría una relación de dependencia entre las variables.
 
-Para evaluar la fuerza de la relación, se tiene que trabajar con otras medidas de asociación, debido a que se tiene una tabla con dos variables ordinales.
-Para esto usaremos la librería `oii` y el comando `association.measures`.
+Para evaluar la fuerza de la relación se usa la librería `oii` que cuenta con el comando `association.measures` que nos brinda una serie de medidas de asociación adecuadas para el tipo de variables que se están relacionando, que son ambas de tipo ordinal.
 
 
 ```r
@@ -459,12 +715,15 @@ Luego, se ha trabajado con la prueba de independencia de chi-cuadrado para infer
 
 # Cálculos incluyendo el efecto de diseño
 
-Otra forma de ejecutar la prueba chi cuadrado, incluyendo el factor de expansión, es mediante de el uso de la librería `survey` y el comando `svychisq`.
+En la sección sobre [descriptivos de variables ordinales](https://arturomaldonado.github.io/BarometroEdu_Web/Descriptivos2.html) se procedió a calcular los porcentajes de si los votos se cuentan justamente por país incorporando el efecto de diseño.
+Con estos datos, se procedió a replicar exactamente el gráfico 2.5.
+
+Para calcular la prueba chi cuadrado, incluyendo el factor de expansión, se puede usar la librería `survey` y el comando `svychisq`.
 
 
 ```r
 library(survey)
-lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+diseno18<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
 ```
 
 Se calcula la tabla de contingencia con el comando `svytable`.
@@ -475,7 +734,7 @@ De la misma manera que más arriba, esta tabla se puede guardar en un objeto par
 
 
 ```r
-addmargins(prop.table(svytable(~satis+genero, design=lapop.design),2)*100,1)
+addmargins(prop.table(svytable(~satis+genero, design=diseno18),2)*100,1)
 ```
 
 ```
@@ -493,7 +752,7 @@ Se incluya la variable dependiente, la independiente y el objeto con el diseño 
 
 
 ```r
-prueba3 =svychisq(~satis+genero,lapop.design)
+prueba3 =svychisq(~satis+genero,diseno18)
 prueba3
 ```
 
@@ -501,7 +760,7 @@ prueba3
 ## 
 ## 	Pearson's X^2: Rao & Scott adjustment
 ## 
-## data:  svychisq(~satis + genero, lapop.design)
+## data:  svychisq(~satis + genero, diseno18)
 ## F = 28.172, ndf = 2.9969, ddf = 3985.8861, p-value < 2.2e-16
 ```
 
@@ -538,4 +797,4 @@ prueba3$expected
 ```
 
 En este caso no se cuenta con un comando para poder calcular las medidas de asociación incorporando el efecto de diseño.
-Se pueden tomar las medidas de asociación no ponderados como valores rfeferenciales.
+Se pueden tomar las medidas de asociación no ponderados como valores referenciales.
