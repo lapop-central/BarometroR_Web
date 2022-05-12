@@ -29,7 +29,7 @@ h1 {color: #3366CC;}
 En este documento veremos como comparar dos medias y saber si las diferencias se pueden inferir a la población, mediante la prueba t de comparación de medias.
 Para eso, vamos a seguir usando los últimos reportes "El pulso de la democracia", del 2021, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf), y del 2018/19, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), donde se presentan los principales hallazgos del Barómetro de las Américas.
 
-En el reporte 2021 se presentan los resultados sobre la victimización por el crimen por grupos de género, edad, educación y riqueza (vr Gráfico 3.12).
+En el reporte 2021 se presentan los resultados sobre la victimización por el crimen por grupos de género, edad, educación y riqueza (ver Gráfico 3.12).
 En el informe de la ronda 2018/19 se reportan los resultados sobre apoyo a la democracia electoral, variable que se cruza con algunas otras variables sociodemográficas como sexo o lugar de residencia (ver Gráfico 1.5).
 
 En esta sección analizaremos los casos cuando la victimización por el crimen se compara entre hombres y mujeres y cuando el apoyo a la democracia se compara entre grupos de género y de residencia urbana o rural.
@@ -130,6 +130,11 @@ graf3.12a
 ```
 
 ![](pruebat_files/figure-html/grafico crimen por genero-1.png)<!-- -->
+
+En este gráfico se puede comparar visualmente los intervalos de confianza de cada grupo.
+Como estos no se traslapan, se puede concluir de manera inicial que existen diferencias estadísticamente significativas entre hombres y mujeres en sus niveles de victimización por el crimen.
+
+Estos resultados, sin embargo, se tienen que comprobar formalmente mediante una prueba de significancia, que veremos más adelante.
 
 # Apoyo a la democracia
 
