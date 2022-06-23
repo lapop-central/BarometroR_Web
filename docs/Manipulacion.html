@@ -442,7 +442,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Manejo de datos usando el Barómetro de las Américas</h1>
+<h1 class="title toc-ignore">Manejo de datos usando el Barómetro de las
+Américas</h1>
 
 </div>
 
@@ -453,77 +454,176 @@ h1 {color: #3366CC;}
 </style>
 <div id="introducción" class="section level1">
 <h1>Introducción</h1>
-<p>En este documento se verán aspectos básicos del manejo de datos, como la recodificación de una variable, la selección de datos y el cálculo de una nueva variable. Al final se incluye una nota acerca de los cálculos estadísticos considerando el efecto de diseño.</p>
+<p>En este documento se verán aspectos básicos del manejo de datos, como
+la recodificación de una variable, la selección de datos y el cálculo de
+una nueva variable. Al final se incluye una nota acerca de los cálculos
+estadísticos considerando el efecto de diseño.</p>
 </div>
 <div id="sobre-la-base-de-datos" class="section level1">
 <h1>Sobre la base de datos</h1>
-<p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.</p>
-<p>En este documento se carga una base que se encuentra alojada en el repositorio “materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio, usando el siguiente código. Se importa la base de datos en un objeto “lapop21”. Esta base de datos tiene extensión .RData y cuando se importa, carga las variables como del tipo double (“dbl”), que es un tipo de variable numérica que acepta decimales, a diferencia del tipo integer, “int”, que solo acepta enteros.</p>
+<p>Los datos que vamos a usar deben citarse de la siguiente manera:
+Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de
+América Latina (LAPOP), wwww.LapopSurveys.org.</p>
+<p>En este documento se carga una base que se encuentra alojada en el
+repositorio “materials_edu” de la cuenta de LAPOP en GitHub. Mediante la
+librería <code>rio</code> y el comando <code>import</code> se puede
+importar esta base de datos desde este repositorio, usando el siguiente
+código. Se importa la base de datos en un objeto “lapop21”. Esta base de
+datos tiene extensión .RData y cuando se importa, carga las variables
+como del tipo double (“dbl”), que es un tipo de variable numérica que
+acepta decimales, a diferencia del tipo integer, “int”, que solo acepta
+enteros.</p>
 <pre class="r"><code>library(rio)
 lapop21 = import(&quot;lapop21.RData&quot;)</code></pre>
-<p>En este repositorio también se encuentra la base de datos de la ronda anterior, la que también podemos cargar y llamarla “lapop18”. Es necesario aclarar que esta base de datos, importada desde un archivo SPSS, carga las variables como del tipo numéricas (“num”).</p>
+<p>En este repositorio también se encuentra la base de datos de la ronda
+anterior, la que también podemos cargar y llamarla “lapop18”. Es
+necesario aclarar que esta base de datos, importada desde un archivo
+SPSS, carga las variables como del tipo numéricas (“num”).</p>
 <pre class="r"><code>lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav&quot;)</code></pre>
 </div>
 <div id="recodificación-de-una-variable" class="section level1">
 <h1>Recodificación de una variable</h1>
-<p>En esta sección usaremos el reporte “El Pulso de la Democracia”, con los resultados de la última ronda 2021 del Barómetro de las Américas, disponible <a href="https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf">aquí</a>. Este reporte presenta los resultados acerca del apoyo a la democracia en las Américas. Estos resultados se basan en la variable ING4 de la base de datos. Esta variable está fraseada de la siguiente manera:</p>
-<p><strong>ING4.</strong> <em>Cambiando de nuevo de tema, puede que la democracia tenga problemas, pero es mejor que cualquier otra forma de gobierno. ¿Hasta qué punto está de acuerdo o en desacuerdo con esta frase?</em></p>
-<p>Esta variable está medida en una escala del 1 a 7, donde 1 significa “muy en desacuerdo” y 7 significa “muy de acuerdo”. Luego, los valores entre 5 a 7 son recodificados como apoyo a la democracia. Para ver la distribución de respuestas a esta variable, se puede usar el comando <code>table</code>.</p>
+<p>En esta sección usaremos el reporte “El Pulso de la Democracia”, con
+los resultados de la última ronda 2021 del Barómetro de las Américas,
+disponible <a
+href="https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf">aquí</a>.
+Este reporte presenta los resultados acerca del apoyo a la democracia en
+las Américas. Estos resultados se basan en la variable ING4 de la base
+de datos. Esta variable está fraseada de la siguiente manera:</p>
+<p><strong>ING4.</strong> <em>Cambiando de nuevo de tema, puede que la
+democracia tenga problemas, pero es mejor que cualquier otra forma de
+gobierno. ¿Hasta qué punto está de acuerdo o en desacuerdo con esta
+frase?</em></p>
+<p>Esta variable está medida en una escala del 1 a 7, donde 1 significa
+“muy en desacuerdo” y 7 significa “muy de acuerdo”. Luego, los valores
+entre 5 a 7 son recodificados como apoyo a la democracia. Para ver la
+distribución de respuestas a esta variable, se puede usar el comando
+<code>table</code>.</p>
 <pre class="r"><code>table(lapop21$ing4)</code></pre>
 <pre><code>## 
 ##     1     2     3     4     5     6     7 
 ##  5704  2567  4980  8177 13886  8390 16759</code></pre>
-<p>De esta manera se calculan las observaciones (frecuencias absolutas) por cada valor de la variable. Para calcular el porcentaje de personas que apoya a la democracia se tiene que recodificar esta variable y crear una nueva. Es decir, la variable original ING4, en una escala de 1-7, se tiene que recodificar en una nueva variable, siguiendo la siguiente regla:</p>
+<p>De esta manera se calculan las observaciones (frecuencias absolutas)
+por cada valor de la variable. Para calcular el porcentaje de personas
+que apoya a la democracia se tiene que recodificar esta variable y crear
+una nueva. Es decir, la variable original ING4, en una escala de 1-7, se
+tiene que recodificar en una nueva variable, siguiendo la siguiente
+regla:</p>
 <ol style="list-style-type: decimal">
-<li>Valores entre 1-4 de ING4 se transforman en 0 en una nueva variable ing4r</li>
-<li>Valores entre 5-7 de ING4 se transformen en 1 en una nueva variable ing4r</li>
+<li>Valores entre 1-4 de ING4 se transforman en 0 en una nueva variable
+ing4r</li>
+<li>Valores entre 5-7 de ING4 se transformen en 1 en una nueva variable
+ing4r</li>
 </ol>
-<p>Un ejemplo de cómo se presentan estos datos recodificados en el reporte se puede ver en el Gráfico 1.1. Este muestra el porcentaje de ciudadanos que apoya a la democracia por país. Es decir, se muestra el porcentaje de entrevistados que respondieron entre 5 y 7 a la pregunta ING4 en cada país. De acuerdo a la recodificación planteada, este gráfico representaría el porcentaje de entrevistados que registra un 1 en la variable recodificada.</p>
+<p>Un ejemplo de cómo se presentan estos datos recodificados en el
+reporte se puede ver en el Gráfico 1.1. Este muestra el porcentaje de
+ciudadanos que apoya a la democracia por país. Es decir, se muestra el
+porcentaje de entrevistados que respondieron entre 5 y 7 a la pregunta
+ING4 en cada país. De acuerdo a la recodificación planteada, este
+gráfico representaría el porcentaje de entrevistados que registra un 1
+en la variable recodificada.</p>
 <p><img src="Figure1.1.png" width="539" /></p>
-<p>En el informe El Pulso de la Democracia de la ronda 2018/19, disponible <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>, también se presenta un gráfico similar, usando la misma variable y la misma regla de recodificacíon.</p>
+<p>En el informe El Pulso de la Democracia de la ronda 2018/19,
+disponible <a
+href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>,
+también se presenta un gráfico similar, usando la misma variable y la
+misma regla de recodificacíon.</p>
 <p><img src="Graf1.2.png" width="350" /></p>
-<p>Para recodificar una variable en R hay varias formas. Una de las formas más eficientes de hacerlo es usando el comando <code>recode</code> del paquete <code>car</code>. El paquete <code>dplyr</code> tiene un comando <code>recode</code> que puede confundir a R. Para evitar confusiones usaremos la sintaxis <code>car::recode</code> para la recodificación, es decir para especificar que se use el comando <code>recode</code>del paquete <code>car</code> y no de otro. Se guarda la variable recodificada como “lapop21$ing4rec”. Luego, se usa el comando <code>table</code> para describir esta nueva variable.</p>
+<p>Para recodificar una variable en R hay varias formas. Una de las
+formas más eficientes de hacerlo es usando el comando
+<code>recode</code> del paquete <code>car</code>. El paquete
+<code>dplyr</code> tiene un comando <code>recode</code> que puede
+confundir a R. Para evitar confusiones usaremos la sintaxis
+<code>car::recode</code> para la recodificación, es decir para
+especificar que se use el comando <code>recode</code>del paquete
+<code>car</code> y no de otro. Se guarda la variable recodificada como
+“lapop21$ing4rec”. Luego, se usa el comando <code>table</code> para
+describir esta nueva variable.</p>
 <pre class="r"><code>library(car)
 lapop21$ing4rec &lt;- car::recode(lapop21$ing4, &quot;1:4=0; 5:7=1&quot;)
 table(lapop21$ing4rec)</code></pre>
 <pre><code>## 
 ##     0     1 
 ## 21428 39035</code></pre>
-<p>Si se suman las observaciones entre 1 y 4 de la variable original (5704+2567+4980+8177), vemos que es el resultado que se tiene en el valor 0 de la nueva variable (21428), tal como se escribió en la recodificación. También se debe notar que la base de datos en el Environment ahora tiene una variable más, totalizando 1826 variables.</p>
+<p>Si se suman las observaciones entre 1 y 4 de la variable original
+(5704+2567+4980+8177), vemos que es el resultado que se tiene en el
+valor 0 de la nueva variable (21428), tal como se escribió en la
+recodificación. También se debe notar que la base de datos en el
+Environment ahora tiene una variable más, totalizando 1826
+variables.</p>
 </div>
 <div id="selección-de-casos" class="section level1">
 <h1>Selección de casos</h1>
-<p>El gráfico 1.1 muestra que el apoyo a la democracia va de un máximo de 80% en Uruguay a un mínimo de 46% en Haití. Para replicar el resultado correspondiente a Uruguay se puede seleccionar las observaciones de ese país. De acuerdo a la codificación de la variable “pais”, Uruguay tiene el código 14.</p>
+<p>El gráfico 1.1 muestra que el apoyo a la democracia va de un máximo
+de 80% en Uruguay a un mínimo de 46% en Haití. Para replicar el
+resultado correspondiente a Uruguay se puede seleccionar las
+observaciones de ese país. De acuerdo a la codificación de la variable
+“pais”, Uruguay tiene el código 14.</p>
 <p><img src="pais.png" width="552" /></p>
-<p>La selección de casos en R se puede hacer de múltiples maneras. Una forma es usar los corchetes <span class="math display">\[ \]</span>. Otra forma es usando el comando <code>subset</code>. Con este comando seleccionamos las observaciones de este país y guardamos esta selección en un nuevo dataframe “lapop2” usando este último comando. Se tiene 3009 observaciones en Uruguay.</p>
+<p>La selección de casos en R se puede hacer de múltiples maneras. Una
+forma es usar los corchetes <span class="math display">\[ \]</span>.
+Otra forma es usando el comando <code>subset</code>. Con este comando
+seleccionamos las observaciones de este país y guardamos esta selección
+en un nuevo dataframe “lapop2” usando este último comando. Se tiene 3009
+observaciones en Uruguay.</p>
 <pre class="r"><code>lapop1 &lt;- subset(lapop21, pais==14)
 table(lapop1$pais)</code></pre>
 <pre><code>## 
 ##   14 
 ## 3009</code></pre>
-<p>Con esta selección de datos, se puede calcular el porcentaje (frecuencias relativas) usando el comando <code>prop.table</code>. Este comando nos brinda las frecuencias relativas (en valores entre 0 y 1) de una tabla de frecuencias calculada con <code>table</code>. Estas frecuencias relativas se multiplican por 100 para reproducir el porcentaje en cada país. En este caso se usan los <span class="math display">\[ \]</span> para hacer la selección de casos de cada país.</p>
+<p>Con esta selección de datos, se puede calcular el porcentaje
+(frecuencias relativas) usando el comando <code>prop.table</code>. Este
+comando nos brinda las frecuencias relativas (en valores entre 0 y 1) de
+una tabla de frecuencias calculada con <code>table</code>. Estas
+frecuencias relativas se multiplican por 100 para reproducir el
+porcentaje en cada país. En este caso se usan los <span
+class="math display">\[ \]</span> para hacer la selección de casos de
+cada país.</p>
 <pre class="r"><code>prop.table(table(lapop1$ing4rec[lapop1$pais==14]))*100</code></pre>
 <pre><code>## 
 ##        0        1 
 ## 15.47499 84.52501</code></pre>
-<p>Estos resultados son porcentajes (entre 0 y 100), pero incluyen muchos decimales. Para redondear a un decimal, como se muestra en el Gráfico 1.2, se puede usar el comando <code>round</code>, donde se anida toda la sintaxis anterior. En este comando, además, se tiene que especificar el número de decimales que se quiere, que en este caso es 1.</p>
+<p>Estos resultados son porcentajes (entre 0 y 100), pero incluyen
+muchos decimales. Para redondear a un decimal, como se muestra en el
+Gráfico 1.2, se puede usar el comando <code>round</code>, donde se anida
+toda la sintaxis anterior. En este comando, además, se tiene que
+especificar el número de decimales que se quiere, que en este caso es
+1.</p>
 <pre class="r"><code>round(prop.table(table(lapop1$ing4rec[lapop1$pais==14]))*100, 1)</code></pre>
 <pre><code>## 
 ##    0    1 
 ## 15.5 84.5</code></pre>
-<p>Según este resultado 84.5% de uruguayos apoya a la democracia. Este resultado es distinto al que se reporta en el gráfico 1.1, donde el valor reportado es 80%. Esta diferencia es debido a que estos primeros procedimientos no incluyen el efecto de diseño. Más abajo se verá el procedimiento para reproducir el resultado exacto reportado.</p>
-<p>En el reporte de la ronda 2018/19 el reporte indica que “El Gráfico 1.2 muestra el porcentaje de personas en cada país que expresa apoyar la democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45% en Honduras a un máximo de 76.2% en Uruguay” (p.11).</p>
-<p>Para replicar estos resultados acerca de Honduras y acerca de Uruguay para 2018/19, se podría seleccionar los datos de estos dos países. De acuerdo al cuestionario, que se puede ver <a href="https://www.vanderbilt.edu/lapop/ab2018/AB2018-v12.0-Spa-190131_W.pdf">aquí</a>, Honduras es el país 4 y Uruguay es el país 14 de la variable “pais”, que también se ha importando como una variable numérica.</p>
-<p>Se incluye el operador “o”, que en R se denota con “|”. De esta manera se indica que se selecciones las observaciones de Honduras o de Uruguay (<code>pais==4 | pais==14</code>). La descripción de la variable “pais” muestra que solo incluye los casos de Honduras (2) y Uruguay (14).</p>
+<p>Según este resultado 84.5% de uruguayos apoya a la democracia. Este
+resultado es distinto al que se reporta en el gráfico 1.1, donde el
+valor reportado es 80%. Esta diferencia es debido a que estos primeros
+procedimientos no incluyen el efecto de diseño. Más abajo se verá el
+procedimiento para reproducir el resultado exacto reportado.</p>
+<p>En el reporte de la ronda 2018/19 el reporte indica que “El Gráfico
+1.2 muestra el porcentaje de personas en cada país que expresa apoyar la
+democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45%
+en Honduras a un máximo de 76.2% en Uruguay” (p.11).</p>
+<p>Para replicar estos resultados acerca de Honduras y acerca de Uruguay
+para 2018/19, se podría seleccionar los datos de estos dos países. De
+acuerdo al cuestionario, que se puede ver <a
+href="https://www.vanderbilt.edu/lapop/ab2018/AB2018-v12.0-Spa-190131_W.pdf">aquí</a>,
+Honduras es el país 4 y Uruguay es el país 14 de la variable “pais”, que
+también se ha importando como una variable numérica.</p>
+<p>Se incluye el operador “o”, que en R se denota con “|”. De esta
+manera se indica que se selecciones las observaciones de Honduras o de
+Uruguay (<code>pais==4 | pais==14</code>). La descripción de la variable
+“pais” muestra que solo incluye los casos de Honduras (2) y Uruguay
+(14).</p>
 <pre class="r"><code># lapop2 &lt;- lapop18[lapop18$pais == 4 | lapop18$pais==14, ]
 lapop2 &lt;- subset(lapop18, pais==4 | pais==14)
 table(lapop2$pais)</code></pre>
 <pre><code>## 
 ##    4   14 
 ## 1560 1581</code></pre>
-<p>El nuevo dataframe “lapop2” tiene 3141 observaciones y 84 variables debido a que no se ha creado la variable recodificada.</p>
+<p>El nuevo dataframe “lapop2” tiene 3141 observaciones y 84 variables
+debido a que no se ha creado la variable recodificada.</p>
 <pre class="r"><code>lapop2$ing4rec &lt;- car::recode(lapop2$ing4, &quot;1:4=0; 5:7=1&quot;)</code></pre>
-<p>Con esta variable se pueden seguir los mismos procedimientos anteriormente descritos: producir la tabla de frecuencias relativas.</p>
+<p>Con esta variable se pueden seguir los mismos procedimientos
+anteriormente descritos: producir la tabla de frecuencias relativas.</p>
 <pre class="r"><code>prop.table(table(lapop2$ing4rec[lapop2$pais==4]))*100</code></pre>
 <pre><code>## 
 ##        0        1 
@@ -541,22 +641,63 @@ table(lapop2$pais)</code></pre>
 <pre><code>## 
 ##    0    1 
 ## 23.8 76.2</code></pre>
-<p>Con este código se ha reproducido los resultados de los países en los extremos del Gráfico 1.2 del reporte. En este caso, los resultados sí son similares a los reportados en el gráfico.</p>
-<p>Ambos reportes también indican que se excluye de los cálculos a Estados Unidos y Canadá. La base de datos cargada como “lapop18” incluye a todos los países de la ronda. Para excluir a estos dos países, se tiene que seleccionar los países que NO son EE.UU. y Canadá. Esta nueva selección se puede guardar en un nuevo dataframe o se puede sobreescribir en el dataframe original, como se hace en este caso debido a que la exclusión de estos países es para todos los cálculos que siguen. De acuerdo al cuestionario, EE.UU. tiene el código 40 y Canadá, el código 41 en la variable “pais”. Para excluirlos se tiene que incluir a los países que tengan un código menor a 40 (o de 35 o menos). Para esto nuevamente podemos usar el comando <code>subset</code>.</p>
+<p>Con este código se ha reproducido los resultados de los países en los
+extremos del Gráfico 1.2 del reporte. En este caso, los resultados sí
+son similares a los reportados en el gráfico.</p>
+<p>Ambos reportes también indican que se excluye de los cálculos a
+Estados Unidos y Canadá. La base de datos cargada como “lapop18” incluye
+a todos los países de la ronda. Para excluir a estos dos países, se
+tiene que seleccionar los países que NO son EE.UU. y Canadá. Esta nueva
+selección se puede guardar en un nuevo dataframe o se puede
+sobreescribir en el dataframe original, como se hace en este caso debido
+a que la exclusión de estos países es para todos los cálculos que
+siguen. De acuerdo al cuestionario, EE.UU. tiene el código 40 y Canadá,
+el código 41 en la variable “pais”. Para excluirlos se tiene que incluir
+a los países que tengan un código menor a 40 (o de 35 o menos). Para
+esto nuevamente podemos usar el comando <code>subset</code>.</p>
 <pre class="r"><code>lapop18 &lt;- subset(lapop18, pais&lt;=35)</code></pre>
-<p>Se puede observar en el Environment que se reducen las observaciones del dataframe “lapop18” luego de correr este código, pues se han eliminado las observaciones de entrevistados en estos dos países. El número de observaciones pasa de 31,050 a 28,042, número que coincide con el de la base de datos en formato .RData que usamos en el módulo anterior y que indicamos que no incluía a estos países.</p>
-<p>De la misma manera se puede proceder en la base de datos de la ronda 2021, con lo que disminuyen las observaciones a 60661.</p>
+<p>Se puede observar en el Environment que se reducen las observaciones
+del dataframe “lapop18” luego de correr este código, pues se han
+eliminado las observaciones de entrevistados en estos dos países. El
+número de observaciones pasa de 31,050 a 28,042, número que coincide con
+el de la base de datos en formato .RData que usamos en el módulo
+anterior y que indicamos que no incluía a estos países.</p>
+<p>De la misma manera se puede proceder en la base de datos de la ronda
+2021, con lo que disminuyen las observaciones a 60661.</p>
 <pre class="r"><code>lapop21 &lt;- subset(lapop21, pais&lt;=35)</code></pre>
 </div>
 <div id="calcular-una-variable" class="section level1">
 <h1>Calcular una variable</h1>
-<p>Una práctica frecuente de LAPOP con los datos del Barómetro de las Américas es el re-escalamiento de variables. El capítulo sobre legitimidad democrática del reporte brinda ejemplos de este re-escalamiento con variables relacionadas al apoyo al sistema. Para calcular este índice de apoyo al sistema se trabaja con un conjunto de cinco variables:</p>
-<p>B1. <em>¿Hasta qué punto cree usted que los tribunales de justicia de (país) garantizan un juicio justo? <span class="math display">\[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio\]</span>.</em></p>
-<p>B2. <em>¿Hasta qué punto tiene usted respeto por las instituciones políticas de (país)?</em></p>
-<p>B3. <em>¿Hasta qué punto cree usted que los derechos básicos del ciudadano están bien protegidos por el sistema político de (país)?</em></p>
-<p>B4. <em>¿Hasta qué punto se siente orgulloso de vivir bajo el sistema político de (país)?</em></p>
-<p>B6. <em>¿Hasta qué punto piensa usted que se debe apoyar al sistema político de (país)?</em></p>
-<p>Como indica el reporte “Para cada pregunta, la escala original de 1 (”Nada”) a 7 (“Mucho”) se recodifica en una escala de 0 a 100, de tal forma que 0 indica el menor nivel de apoyo al sistema político y 100 es el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la recodificación típica de LAPOP y puede ser interpretada como una medición del apoyo en unidades, o grados, en una escala continua que va de 0 a 100” (p.34). Para comprobar la escala original de estas variables, se puede describir estas variables usando el comando <code>table</code>.</p>
+<p>Una práctica frecuente de LAPOP con los datos del Barómetro de las
+Américas es el re-escalamiento de variables. El capítulo sobre
+legitimidad democrática del reporte brinda ejemplos de este
+re-escalamiento con variables relacionadas al apoyo al sistema. Para
+calcular este índice de apoyo al sistema se trabaja con un conjunto de
+cinco variables:</p>
+<p>B1. <em>¿Hasta qué punto cree usted que los tribunales de justicia de
+(país) garantizan un juicio justo? <span class="math display">\[Sondee:
+Si usted cree que los tribunales no garantizan para nada la justicia
+escoja el número 1; si cree que los tribunales garantizan mucho la
+justicia, escoja el número 7 o escoja un puntaje
+intermedio\]</span>.</em></p>
+<p>B2. <em>¿Hasta qué punto tiene usted respeto por las instituciones
+políticas de (país)?</em></p>
+<p>B3. <em>¿Hasta qué punto cree usted que los derechos básicos del
+ciudadano están bien protegidos por el sistema político de
+(país)?</em></p>
+<p>B4. <em>¿Hasta qué punto se siente orgulloso de vivir bajo el sistema
+político de (país)?</em></p>
+<p>B6. <em>¿Hasta qué punto piensa usted que se debe apoyar al sistema
+político de (país)?</em></p>
+<p>Como indica el reporte “Para cada pregunta, la escala original de 1
+(”Nada”) a 7 (“Mucho”) se recodifica en una escala de 0 a 100, de tal
+forma que 0 indica el menor nivel de apoyo al sistema político y 100 es
+el nivel máximo de apoyo al sistema político. Esta nueva escala sigue la
+recodificación típica de LAPOP y puede ser interpretada como una
+medición del apoyo en unidades, o grados, en una escala continua que va
+de 0 a 100” (p.34). Para comprobar la escala original de estas
+variables, se puede describir estas variables usando el comando
+<code>table</code>.</p>
 <pre class="r"><code>table(lapop18$b1)</code></pre>
 <pre><code>## 
 ##    1    2    3    4    5    6    7 
@@ -577,7 +718,12 @@ table(lapop2$pais)</code></pre>
 <pre><code>## 
 ##    1    2    3    4    5    6    7 
 ## 3713 2325 2971 4277 4616 3868 5572</code></pre>
-<p>Se observa que efectivamente todas las variables corren en una escala de 1 a 7. Para reescalar una variable en una escala original de 1 a 7 a otra de 0 a 100, lo primero que se tiene que hacer es restar 1 unidad, con lo que la variable tendría una escala de 0 a 6, luego dividirla entre 6, con lo que variaría entre 0 y 1 y, finalmente, multiplicarla por 100. Esto es:</p>
+<p>Se observa que efectivamente todas las variables corren en una escala
+de 1 a 7. Para reescalar una variable en una escala original de 1 a 7 a
+otra de 0 a 100, lo primero que se tiene que hacer es restar 1 unidad,
+con lo que la variable tendría una escala de 0 a 6, luego dividirla
+entre 6, con lo que variaría entre 0 y 1 y, finalmente, multiplicarla
+por 100. Esto es:</p>
 <p>Variable reescalada = ((variable original -1)/6)*100</p>
 <pre class="r"><code>lapop18$b1rec &lt;- ((lapop18$b1-1)/6)*100
 lapop18$b2rec &lt;- ((lapop18$b2-1)/6)*100
@@ -590,20 +736,44 @@ table(lapop18$b1rec)</code></pre>
 ##             4089             4067             5881             6137 
 ## 66.6666666666667 83.3333333333333              100 
 ##             4215             1631             1371</code></pre>
-<p>Con esta transformación se observa que los 4,089 entrevistados que marcaron 1 en la pregunta B1, ahora tienen un puntaje de 0. Los 4,067 que marcaron 2, ahora tienen un puntaje de 16.67, es decir 2-1=1/6=0.1667*100=16.67. Esta misma operación se pudo hacer con el comando <code>car::recode</code>, siguiendo la siguiente regla de recodificación:</p>
+<p>Con esta transformación se observa que los 4,089 entrevistados que
+marcaron 1 en la pregunta B1, ahora tienen un puntaje de 0. Los 4,067
+que marcaron 2, ahora tienen un puntaje de 16.67, es decir
+2-1=1/6=0.1667*100=16.67. Esta misma operación se pudo hacer con el
+comando <code>car::recode</code>, siguiendo la siguiente regla de
+recodificación:</p>
 <ul>
-<li>Valor de 1 en variable original se recodifica como 0 en nueva variable</li>
-<li>Valor de 2 en variable original se recodifica como 16.67 en nueva variable</li>
-<li>Valor de 3 en variable original se recodifica como 33.33 en nueva variable</li>
-<li>Valor de 4 en variable original se recodifica como 50 en nueva variable</li>
-<li>Valor de 5 en variable original se recodifica como 66.67 en nueva variable</li>
-<li>Valor de 6 en variable original se recodifica como 83.33 en nueva variable</li>
-<li>Valor de 7 en variable original se recodifica como 100 en nueva variable</li>
+<li>Valor de 1 en variable original se recodifica como 0 en nueva
+variable</li>
+<li>Valor de 2 en variable original se recodifica como 16.67 en nueva
+variable</li>
+<li>Valor de 3 en variable original se recodifica como 33.33 en nueva
+variable</li>
+<li>Valor de 4 en variable original se recodifica como 50 en nueva
+variable</li>
+<li>Valor de 5 en variable original se recodifica como 66.67 en nueva
+variable</li>
+<li>Valor de 6 en variable original se recodifica como 83.33 en nueva
+variable</li>
+<li>Valor de 7 en variable original se recodifica como 100 en nueva
+variable</li>
 </ul>
-<p>Esta manera de recodificar, sin embargo, es poco eficiente. Es más simple usar la fórmula para calcular la recodificación.</p>
-<p>Para calcular el índice de apoyo al sistema, el reporte indica que “El índice de apoyo al sistema es el promedio de cinco preguntas: B1, B2, B3, B4 y B6” (p.46). Es decir, con las variables reescaladas se tiene que calcular el promedio de estas cinco variables para cada individuo (es decir, en cada fila de la base de datos). Esta operación se podría realizar calculando el promedio de forma manual.</p>
+<p>Esta manera de recodificar, sin embargo, es poco eficiente. Es más
+simple usar la fórmula para calcular la recodificación.</p>
+<p>Para calcular el índice de apoyo al sistema, el reporte indica que
+“El índice de apoyo al sistema es el promedio de cinco preguntas: B1,
+B2, B3, B4 y B6” (p.46). Es decir, con las variables reescaladas se
+tiene que calcular el promedio de estas cinco variables para cada
+individuo (es decir, en cada fila de la base de datos). Esta operación
+se podría realizar calculando el promedio de forma manual.</p>
 <p>Apoyo al sistema = (b1rec + b2rec + b3rec + b4rec + b6rec)/5</p>
-<p>En R tenemos el comando <code>rowMeans</code> que sirva para calcular promedios de ciertas columnas por cada fila. La sintaxis <code>[, 86:90]</code> indica que se realizará el cálculo del promedio por filas para todas las filas y usando las columnas 86 a 90 del dataframe “lapop18” (se podría hacer el cálculo para algunas filas en particular definiendo <code>[fila_n:fila_m, 86:90]</code>). Este promedio se guarda en una nueva variable “apoyo”, que se describe.</p>
+<p>En R tenemos el comando <code>rowMeans</code> que sirva para calcular
+promedios de ciertas columnas por cada fila. La sintaxis
+<code>[, 86:90]</code> indica que se realizará el cálculo del promedio
+por filas para todas las filas y usando las columnas 86 a 90 del
+dataframe “lapop18” (se podría hacer el cálculo para algunas filas en
+particular definiendo <code>[fila_n:fila_m, 86:90]</code>). Este
+promedio se guarda en una nueva variable “apoyo”, que se describe.</p>
 <pre class="r"><code>lapop18$apoyo &lt;- rowMeans(lapop18[,86:90])
 table(lapop18$apoyo)</code></pre>
 <pre><code>## 
@@ -623,7 +793,13 @@ table(lapop18$apoyo)</code></pre>
 ##              820              572              445              369 
 ## 93.3333333333333 96.6666666666667              100 
 ##              245              131              210</code></pre>
-<p>Con este índice se puede calcular el apoyo al sistema promedio para la última ronda del Barómetro de las Américas, así como los promedios de cada una de las variables que componen el índice. Se usa el comando <code>mean</code> para el promedio y la especificación <code>na.rm=T</code> para indicarle al comando que no tome en cuenta los valores perdidos de estas variables. Estos estadísticos se verán en más detalle en otros documentos.</p>
+<p>Con este índice se puede calcular el apoyo al sistema promedio para
+la última ronda del Barómetro de las Américas, así como los promedios de
+cada una de las variables que componen el índice. Se usa el comando
+<code>mean</code> para el promedio y la especificación
+<code>na.rm=T</code> para indicarle al comando que no tome en cuenta los
+valores perdidos de estas variables. Estos estadísticos se verán en más
+detalle en otros documentos.</p>
 <pre class="r"><code>mean(lapop18$apoyo, na.rm=T)</code></pre>
 <pre><code>## [1] 48.79419</code></pre>
 <pre class="r"><code>mean(lapop18$b1rec, na.rm=T) #Cortes garantizan juicio justo</code></pre>
@@ -636,19 +812,48 @@ table(lapop18$apoyo)</code></pre>
 <pre><code>## [1] 47.41096</code></pre>
 <pre class="r"><code>mean(lapop18$b6rec, na.rm=T) #Se debería apoyar al sistema político</code></pre>
 <pre><code>## [1] 56.28337</code></pre>
-<p>Estos resultados son los que se muestran en el Gráfico 2.1 para la ronda 2018/19.</p>
+<p>Estos resultados son los que se muestran en el Gráfico 2.1 para la
+ronda 2018/19.</p>
 <p><img src="Graf2.1.png" width="629" /></p>
 </div>
-<div id="calcular-una-variable-de-manera-condicional" class="section level1">
+<div id="calcular-una-variable-de-manera-condicional"
+class="section level1">
 <h1>Calcular una variable de manera condicional</h1>
-<p>En algunas ocasiones el cálculo de una variable no requiere solamente la transformación numérica de la variable original, sino que los valores de la nueva variable dependen de valores de otras variables. Por ejemplo, el capítulo “Redes sociales y actitudes políticas” del reporte “El Pulso de la Democracia” presenta los resultados para las variables “usuario de Whatsapp”, “usuario de Twitter” y “usuario de Facebook”. Para calcular estas variables, el pie de página 7 de este capítulo indica: “Para cada plataforma, se identifican los usuarios con una combinación de dos conjuntos de preguntas. Primero, se identifican como usuarios a quienes responden positivamente a las preguntas, SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a quienes responden”nunca” a las preguntas siguientes, SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en Facebook/Twitter/Whatsapp?” (p. 64).</p>
+<p>En algunas ocasiones el cálculo de una variable no requiere solamente
+la transformación numérica de la variable original, sino que los valores
+de la nueva variable dependen de valores de otras variables. Por
+ejemplo, el capítulo “Redes sociales y actitudes políticas” del reporte
+“El Pulso de la Democracia” presenta los resultados para las variables
+“usuario de Whatsapp”, “usuario de Twitter” y “usuario de Facebook”.
+Para calcular estas variables, el pie de página 7 de este capítulo
+indica: “Para cada plataforma, se identifican los usuarios con una
+combinación de dos conjuntos de preguntas. Primero, se identifican como
+usuarios a quienes responden positivamente a las preguntas,
+SMEDIA1/SMEDIA4/SMEDIA7. ¿Tiene usted cuenta de
+Facebook/Twitter/Whatsapp? Luego, se recodifica como no usuario a
+quienes responden”nunca” a las preguntas siguientes,
+SMEDIA2/SMEDIA5/SMEDIA8. ¿Con qué frecuencia ve contenido en
+Facebook/Twitter/Whatsapp?” (p. 64).</p>
 <p><img src="smedia.png" width="466" /></p>
-<p>Es decir, el usuario no solo es el que tiene una cuenta (SMEDIA1=1), sino el que la usa con cierta frecuencia (SMEDIA2=1, 2, 3, 4). De esta manera, el no usuario puede tener una cuenta, pero nunca usarla. Por lo tanto, la variable “usuario” depende de los valores de 2 variables. La regla de codificación que se sigue es:</p>
+<p>Es decir, el usuario no solo es el que tiene una cuenta (SMEDIA1=1),
+sino el que la usa con cierta frecuencia (SMEDIA2=1, 2, 3, 4). De esta
+manera, el no usuario puede tener una cuenta, pero nunca usarla. Por lo
+tanto, la variable “usuario” depende de los valores de 2 variables. La
+regla de codificación que se sigue es:</p>
 <ul>
-<li><p>Usuario de Facebook = 1 (sí es usuario) si SMEDIA1 = 1 (tiene cuenta) y SMEDIA2 &lt;= 4 (la usa con alguna frecuencia)</p></li>
-<li><p>Usuario de Facebook = 0 (no es usuario) si SMEDIA2 = 2 (no tiene cuenta) o SMEDIA2 = 5 (tiene cuenta pero nunca la usa)</p></li>
+<li><p>Usuario de Facebook = 1 (sí es usuario) si SMEDIA1 = 1 (tiene
+cuenta) y SMEDIA2 &lt;= 4 (la usa con alguna frecuencia)</p></li>
+<li><p>Usuario de Facebook = 0 (no es usuario) si SMEDIA2 = 2 (no tiene
+cuenta) o SMEDIA2 = 5 (tiene cuenta pero nunca la usa)</p></li>
 </ul>
-<p>Esta regla se transforma en la siguiente sintaxis de R, que usa el comando <code>ìfelse</code>. Esta sintaxis incluye la condición para asignar valores de 1 a una nueva variable y asigna a todas las demás observaciones el valor de 0. Se describen estas nuevas variables usando los comandos <code>table</code> para generar las frecuencias absolutas, <code>prop.table</code> para las frecuencias relativas y <code>round</code> para redondear los decimales. Estos comandos se verán en más detalle en los siguientes documentos.</p>
+<p>Esta regla se transforma en la siguiente sintaxis de R, que usa el
+comando <code>ìfelse</code>. Esta sintaxis incluye la condición para
+asignar valores de 1 a una nueva variable y asigna a todas las demás
+observaciones el valor de 0. Se describen estas nuevas variables usando
+los comandos <code>table</code> para generar las frecuencias absolutas,
+<code>prop.table</code> para las frecuencias relativas y
+<code>round</code> para redondear los decimales. Estos comandos se verán
+en más detalle en los siguientes documentos.</p>
 <pre class="r"><code>lapop18$fb_user &lt;- ifelse(lapop18$smedia1==1 &amp; lapop18$smedia2&lt;=4, 1, 0)
 lapop18$tw_user &lt;- ifelse(lapop18$smedia4==1 &amp; lapop18$smedia5&lt;=4, 1, 0)
 lapop18$wa_user &lt;- ifelse(lapop18$smedia7==1 &amp; lapop18$smedia8&lt;=4, 1, 0)
@@ -664,16 +869,35 @@ round(prop.table(table(lapop18$fb_user))*100, 1)</code></pre>
 <pre><code>## 
 ##    0    1 
 ## 35.8 64.2</code></pre>
-<p>Estos resultados son los que se presentan en el Gráfico 3.1 del reporte en forma de gráficos circulares. Este tipo de gráficos se verán en la sección siguiente.</p>
+<p>Estos resultados son los que se presentan en el Gráfico 3.1 del
+reporte en forma de gráficos circulares. Este tipo de gráficos se verán
+en la sección siguiente.</p>
 <p><img src="Graf3.1.png" width="323" /></p>
 </div>
 <div id="observación-del-efecto-de-diseño" class="section level1">
 <h1>Observación del efecto de diseño</h1>
-<p>Tanto los resultados para apoyo al sistema, como los de usuarios de redes sociales difieren de los que aparecen en el reporte por dos motivos. En primer lugar, para apoyo al sistema, debido a que “Los valores a lo largo del tiempo se calculan incluyendo únicamente los países que el Barómetro de las Américas ha estudiado regularmente desde 2006: Argentina, Brasil, Bolivia, Chile, Colombia, Costa Rica, República Dominicana, Ecuador, El Salvador, Guatemala, Honduras, Jamaica, México, Nicaragua, Panamá, Paraguay, Perú, Uruguay” (p.46). El código solo filtra la última ronda, que incluye países que no están en esa lista, como Estados Unidos o Canadá. De otro lado, los cálculos reportados en la publicación incluyen el uso de factores de expansión, que no se han incluido en estos cálculos, pero que en otros documentos se incorporarán (ver <a href="https://rpubs.com/arturo_maldonado/728626">aquí</a>).</p>
+<p>Tanto los resultados para apoyo al sistema, como los de usuarios de
+redes sociales difieren de los que aparecen en el reporte por dos
+motivos. En primer lugar, para apoyo al sistema, debido a que “Los
+valores a lo largo del tiempo se calculan incluyendo únicamente los
+países que el Barómetro de las Américas ha estudiado regularmente desde
+2006: Argentina, Brasil, Bolivia, Chile, Colombia, Costa Rica, República
+Dominicana, Ecuador, El Salvador, Guatemala, Honduras, Jamaica, México,
+Nicaragua, Panamá, Paraguay, Perú, Uruguay” (p.46). El código solo
+filtra la última ronda, que incluye países que no están en esa lista,
+como Estados Unidos o Canadá. De otro lado, los cálculos reportados en
+la publicación incluyen el uso de factores de expansión, que no se han
+incluido en estos cálculos, pero que en otros documentos se incorporarán
+(ver <a href="https://rpubs.com/arturo_maldonado/728626">aquí</a>).</p>
 </div>
 <div id="resumen" class="section level1">
 <h1>Resumen</h1>
-<p>En este documento se han visto los elementos básicos de la manipulación y transformación de datos usando el Barómetro de las Américas. Se ha recodificado una variable usando el comando <code>recode</code>, se ha seleccionado casos usando <code>subset</code> y se ha calculado una nueva variable algebraicamente y con el comando <code>ìfelse</code>.</p>
+<p>En este documento se han visto los elementos básicos de la
+manipulación y transformación de datos usando el Barómetro de las
+Américas. Se ha recodificado una variable usando el comando
+<code>recode</code>, se ha seleccionado casos usando <code>subset</code>
+y se ha calculado una nueva variable algebraicamente y con el comando
+<code>ìfelse</code>.</p>
 </div>
 
 <div id="rmd-source-code">LS0tCnRpdGxlOiAiTWFuZWpvIGRlIGRhdG9zIHVzYW5kbyBlbCBCYXLDs21ldHJvIGRlIGxhcyBBbcOpcmljYXMiCm91dHB1dDoKICBodG1sX2RvY3VtZW50OgogICAgdG9jOiB0cnVlCiAgICB0b2NfZmxvYXQ6IHRydWUKICAgIGNvbGxhcHNlZDogZmFsc2UKICAgIG51bWJlcl9zZWN0aW9uczogZmFsc2UKICAgIHRvY19kZXB0aDogMQogICAgY29kZV9kb3dubG9hZDogdHJ1ZQogICAgdGhlbWU6IGZsYXRseQogICAgI2NvZGVfZm9sZGluZzogaGlkZQplZGl0b3Jfb3B0aW9uczogCiAgbWFya2Rvd246IAogICAgd3JhcDogc2VudGVuY2UKLS0tCgpgYGB7ciBzZXR1cCwgaW5jbHVkZT1GQUxTRX0Ka25pdHI6Om9wdHNfY2h1bmskc2V0KG1lc3NhZ2U9RkFMU0Usd2FybmluZz1GQUxTRSwgY2FjaGU9VFJVRSkKYGBgCgpgYGB7Y3NzIGNvbG9yLCBlY2hvPUZBTFNFfQouY29sdW1ucyB7ZGlzcGxheTogZmxleDt9CmgxIHtjb2xvcjogIzMzNjZDQzt9CmBgYAoKIyBJbnRyb2R1Y2Npw7NuCgpFbiBlc3RlIGRvY3VtZW50byBzZSB2ZXLDoW4gYXNwZWN0b3MgYsOhc2ljb3MgZGVsIG1hbmVqbyBkZSBkYXRvcywgY29tbyBsYSByZWNvZGlmaWNhY2nDs24gZGUgdW5hIHZhcmlhYmxlLCBsYSBzZWxlY2Npw7NuIGRlIGRhdG9zIHkgZWwgY8OhbGN1bG8gZGUgdW5hIG51ZXZhIHZhcmlhYmxlLgpBbCBmaW5hbCBzZSBpbmNsdXllIHVuYSBub3RhIGFjZXJjYSBkZSBsb3MgY8OhbGN1bG9zIGVzdGFkw61zdGljb3MgY29uc2lkZXJhbmRvIGVsIGVmZWN0byBkZSBkaXNlw7FvLgoKIyBTb2JyZSBsYSBiYXNlIGRlIGRhdG9zCgpMb3MgZGF0b3MgcXVlIHZhbW9zIGEgdXNhciBkZWJlbiBjaXRhcnNlIGRlIGxhIHNpZ3VpZW50ZSBtYW5lcmE6IEZ1ZW50ZTogQmFyw7NtZXRybyBkZSBsYXMgQW3DqXJpY2FzIHBvciBlbCBQcm95ZWN0byBkZSBPcGluacOzbiBQw7pibGljYSBkZSBBbcOpcmljYSBMYXRpbmEgKExBUE9QKSwgd3d3dy5MYXBvcFN1cnZleXMub3JnLgoKRW4gZXN0ZSBkb2N1bWVudG8gc2UgY2FyZ2EgdW5hIGJhc2UgcXVlIHNlIGVuY3VlbnRyYSBhbG9qYWRhIGVuIGVsIHJlcG9zaXRvcmlvICJtYXRlcmlhbHNfZWR1IiBkZSBsYSBjdWVudGEgZGUgTEFQT1AgZW4gR2l0SHViLgpNZWRpYW50ZSBsYSBsaWJyZXLDrWEgYHJpb2AgeSBlbCBjb21hbmRvIGBpbXBvcnRgIHNlIHB1ZWRlIGltcG9ydGFyIGVzdGEgYmFzZSBkZSBkYXRvcyBkZXNkZSBlc3RlIHJlcG9zaXRvcmlvLCB1c2FuZG8gZWwgc2lndWllbnRlIGPDs2RpZ28uClNlIGltcG9ydGEgbGEgYmFzZSBkZSBkYXRvcyBlbiB1biBvYmpldG8gImxhcG9wMjEiLgpFc3RhIGJhc2UgZGUgZGF0b3MgdGllbmUgZXh0ZW5zacOzbiAuUkRhdGEgeSBjdWFuZG8gc2UgaW1wb3J0YSwgY2FyZ2EgbGFzIHZhcmlhYmxlcyBjb21vIGRlbCB0aXBvIGRvdWJsZSAoImRibCIpLCBxdWUgZXMgdW4gdGlwbyBkZSB2YXJpYWJsZSBudW3DqXJpY2EgcXVlIGFjZXB0YSBkZWNpbWFsZXMsIGEgZGlmZXJlbmNpYSBkZWwgdGlwbyBpbnRlZ2VyLCAiaW50IiwgcXVlIHNvbG8gYWNlcHRhIGVudGVyb3MuCgpgYGB7ciBiYXNlMjEsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9CmxpYnJhcnkocmlvKQpsYXBvcDIxID0gaW1wb3J0KCJsYXBvcDIxLlJEYXRhIikKYGBgCgpFbiBlc3RlIHJlcG9zaXRvcmlvIHRhbWJpw6luIHNlIGVuY3VlbnRyYSBsYSBiYXNlIGRlIGRhdG9zIGRlIGxhIHJvbmRhIGFudGVyaW9yLCBsYSBxdWUgdGFtYmnDqW4gcG9kZW1vcyBjYXJnYXIgeSBsbGFtYXJsYSAibGFwb3AxOCIuCkVzIG5lY2VzYXJpbyBhY2xhcmFyIHF1ZSBlc3RhIGJhc2UgZGUgZGF0b3MsIGltcG9ydGFkYSBkZXNkZSB1biBhcmNoaXZvIFNQU1MsIGNhcmdhIGxhcyB2YXJpYWJsZXMgY29tbyBkZWwgdGlwbyBudW3DqXJpY2FzICgibnVtIikuCgpgYGB7ciBiYXNlMTh9CmxhcG9wMTggPC0gaW1wb3J0KCJodHRwczovL3Jhdy5naXRodWIuY29tL2xhcG9wLWNlbnRyYWwvbWF0ZXJpYWxzX2VkdS9tYWluL0xBUE9QX0FCX01lcmdlXzIwMThfdjEuMC5zYXYiKQpgYGAKCiMgUmVjb2RpZmljYWNpw7NuIGRlIHVuYSB2YXJpYWJsZQoKRW4gZXN0YSBzZWNjacOzbiB1c2FyZW1vcyBlbCByZXBvcnRlICJFbCBQdWxzbyBkZSBsYSBEZW1vY3JhY2lhIiwgY29uIGxvcyByZXN1bHRhZG9zIGRlIGxhIMO6bHRpbWEgcm9uZGEgMjAyMSBkZWwgQmFyw7NtZXRybyBkZSBsYXMgQW3DqXJpY2FzLCBkaXNwb25pYmxlIFthcXXDrV0oaHR0cHM6Ly93d3cudmFuZGVyYmlsdC5lZHUvbGFwb3AvYWIyMDIxLzIwMjFfTEFQT1BfQW1lcmljYXNCYXJvbWV0ZXJfUHVsc2Vfb2ZfRGVtb2NyYWN5LnBkZikuCkVzdGUgcmVwb3J0ZSBwcmVzZW50YSBsb3MgcmVzdWx0YWRvcyBhY2VyY2EgZGVsIGFwb3lvIGEgbGEgZGVtb2NyYWNpYSBlbiBsYXMgQW3DqXJpY2FzLgpFc3RvcyByZXN1bHRhZG9zIHNlIGJhc2FuIGVuIGxhIHZhcmlhYmxlIElORzQgZGUgbGEgYmFzZSBkZSBkYXRvcy4KRXN0YSB2YXJpYWJsZSBlc3TDoSBmcmFzZWFkYSBkZSBsYSBzaWd1aWVudGUgbWFuZXJhOgoKKipJTkc0LioqICpDYW1iaWFuZG8gZGUgbnVldm8gZGUgdGVtYSwgcHVlZGUgcXVlIGxhIGRlbW9jcmFjaWEgdGVuZ2EgcHJvYmxlbWFzLCBwZXJvIGVzIG1lam9yIHF1ZSBjdWFscXVpZXIgb3RyYSBmb3JtYSBkZSBnb2JpZXJuby4gwr9IYXN0YSBxdcOpIHB1bnRvIGVzdMOhIGRlIGFjdWVyZG8gbyBlbiBkZXNhY3VlcmRvIGNvbiBlc3RhIGZyYXNlPyoKCkVzdGEgdmFyaWFibGUgZXN0w6EgbWVkaWRhIGVuIHVuYSBlc2NhbGEgZGVsIDEgYSA3LCBkb25kZSAxIHNpZ25pZmljYSAibXV5IGVuIGRlc2FjdWVyZG8iIHkgNyBzaWduaWZpY2EgIm11eSBkZSBhY3VlcmRvIi4KTHVlZ28sIGxvcyB2YWxvcmVzIGVudHJlIDUgYSA3IHNvbiByZWNvZGlmaWNhZG9zIGNvbW8gYXBveW8gYSBsYSBkZW1vY3JhY2lhLgpQYXJhIHZlciBsYSBkaXN0cmlidWNpw7NuIGRlIHJlc3B1ZXN0YXMgYSBlc3RhIHZhcmlhYmxlLCBzZSBwdWVkZSB1c2FyIGVsIGNvbWFuZG8gYHRhYmxlYC4KCmBgYHtyIGRlc2NyaWJpciBpbmc0fQp0YWJsZShsYXBvcDIxJGluZzQpCmBgYAoKRGUgZXN0YSBtYW5lcmEgc2UgY2FsY3VsYW4gbGFzIG9ic2VydmFjaW9uZXMgKGZyZWN1ZW5jaWFzIGFic29sdXRhcykgcG9yIGNhZGEgdmFsb3IgZGUgbGEgdmFyaWFibGUuClBhcmEgY2FsY3VsYXIgZWwgcG9yY2VudGFqZSBkZSBwZXJzb25hcyBxdWUgYXBveWEgYSBsYSBkZW1vY3JhY2lhIHNlIHRpZW5lIHF1ZSByZWNvZGlmaWNhciBlc3RhIHZhcmlhYmxlIHkgY3JlYXIgdW5hIG51ZXZhLgpFcyBkZWNpciwgbGEgdmFyaWFibGUgb3JpZ2luYWwgSU5HNCwgZW4gdW5hIGVzY2FsYSBkZSAxLTcsIHNlIHRpZW5lIHF1ZSByZWNvZGlmaWNhciBlbiB1bmEgbnVldmEgdmFyaWFibGUsIHNpZ3VpZW5kbyBsYSBzaWd1aWVudGUgcmVnbGE6CgoxLiAgVmFsb3JlcyBlbnRyZSAxLTQgZGUgSU5HNCBzZSB0cmFuc2Zvcm1hbiBlbiAwIGVuIHVuYSBudWV2YSB2YXJpYWJsZSBpbmc0cgoyLiAgVmFsb3JlcyBlbnRyZSA1LTcgZGUgSU5HNCBzZSB0cmFuc2Zvcm1lbiBlbiAxIGVuIHVuYSBudWV2YSB2YXJpYWJsZSBpbmc0cgoKVW4gZWplbXBsbyBkZSBjw7NtbyBzZSBwcmVzZW50YW4gZXN0b3MgZGF0b3MgcmVjb2RpZmljYWRvcyBlbiBlbCByZXBvcnRlIHNlIHB1ZWRlIHZlciBlbiBlbCBHcsOhZmljbyAxLjEuCkVzdGUgbXVlc3RyYSBlbCBwb3JjZW50YWplIGRlIGNpdWRhZGFub3MgcXVlIGFwb3lhIGEgbGEgZGVtb2NyYWNpYSBwb3IgcGHDrXMuCkVzIGRlY2lyLCBzZSBtdWVzdHJhIGVsIHBvcmNlbnRhamUgZGUgZW50cmV2aXN0YWRvcyBxdWUgcmVzcG9uZGllcm9uIGVudHJlIDUgeSA3IGEgbGEgcHJlZ3VudGEgSU5HNCBlbiBjYWRhIHBhw61zLgpEZSBhY3VlcmRvIGEgbGEgcmVjb2RpZmljYWNpw7NuIHBsYW50ZWFkYSwgZXN0ZSBncsOhZmljbyByZXByZXNlbnRhcsOtYSBlbCBwb3JjZW50YWplIGRlIGVudHJldmlzdGFkb3MgcXVlIHJlZ2lzdHJhIHVuIDEgZW4gbGEgdmFyaWFibGUgcmVjb2RpZmljYWRhLgoKIVtdKEZpZ3VyZTEuMS5wbmcpe3dpZHRoPSI1MzkifQoKRW4gZWwgaW5mb3JtZSBFbCBQdWxzbyBkZSBsYSBEZW1vY3JhY2lhIGRlIGxhIHJvbmRhIDIwMTgvMTksIGRpc3BvbmlibGUgW2FxdcOtXShodHRwczovL3d3dy52YW5kZXJiaWx0LmVkdS9sYXBvcC9hYjIwMTgvMjAxOC0xOV9BbWVyaWNhc0Jhcm9tZXRlcl9SZWdpb25hbF9SZXBvcnRfU3BhbmlzaF9XXzAzLjI3LjIwLnBkZiksIHRhbWJpw6luIHNlIHByZXNlbnRhIHVuIGdyw6FmaWNvIHNpbWlsYXIsIHVzYW5kbyBsYSBtaXNtYSB2YXJpYWJsZSB5IGxhIG1pc21hIHJlZ2xhIGRlIHJlY29kaWZpY2Fjw61vbi4KCiFbXShHcmFmMS4yLnBuZyl7d2lkdGg9IjM1MCJ9CgpQYXJhIHJlY29kaWZpY2FyIHVuYSB2YXJpYWJsZSBlbiBSIGhheSB2YXJpYXMgZm9ybWFzLgpVbmEgZGUgbGFzIGZvcm1hcyBtw6FzIGVmaWNpZW50ZXMgZGUgaGFjZXJsbyBlcyB1c2FuZG8gZWwgY29tYW5kbyBgcmVjb2RlYCBkZWwgcGFxdWV0ZSBgY2FyYC4KRWwgcGFxdWV0ZSBgZHBseXJgIHRpZW5lIHVuIGNvbWFuZG8gYHJlY29kZWAgcXVlIHB1ZWRlIGNvbmZ1bmRpciBhIFIuClBhcmEgZXZpdGFyIGNvbmZ1c2lvbmVzIHVzYXJlbW9zIGxhIHNpbnRheGlzIGBjYXI6OnJlY29kZWAgcGFyYSBsYSByZWNvZGlmaWNhY2nDs24sIGVzIGRlY2lyIHBhcmEgZXNwZWNpZmljYXIgcXVlIHNlIHVzZSBlbCBjb21hbmRvIGByZWNvZGVgZGVsIHBhcXVldGUgYGNhcmAgeSBubyBkZSBvdHJvLgpTZSBndWFyZGEgbGEgdmFyaWFibGUgcmVjb2RpZmljYWRhIGNvbW8gImxhcG9wMjFcJGluZzRyZWMiLgpMdWVnbywgc2UgdXNhIGVsIGNvbWFuZG8gYHRhYmxlYCBwYXJhIGRlc2NyaWJpciBlc3RhIG51ZXZhIHZhcmlhYmxlLgoKYGBge3IgcmVjb2RpZmljYWNpb24sIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9CmxpYnJhcnkoY2FyKQpsYXBvcDIxJGluZzRyZWMgPC0gY2FyOjpyZWNvZGUobGFwb3AyMSRpbmc0LCAiMTo0PTA7IDU6Nz0xIikKdGFibGUobGFwb3AyMSRpbmc0cmVjKQpgYGAKClNpIHNlIHN1bWFuIGxhcyBvYnNlcnZhY2lvbmVzIGVudHJlIDEgeSA0IGRlIGxhIHZhcmlhYmxlIG9yaWdpbmFsICg1NzA0KzI1NjcrNDk4MCs4MTc3KSwgdmVtb3MgcXVlIGVzIGVsIHJlc3VsdGFkbyBxdWUgc2UgdGllbmUgZW4gZWwgdmFsb3IgMCBkZSBsYSBudWV2YSB2YXJpYWJsZSAoMjE0MjgpLCB0YWwgY29tbyBzZSBlc2NyaWJpw7MgZW4gbGEgcmVjb2RpZmljYWNpw7NuLgpUYW1iacOpbiBzZSBkZWJlIG5vdGFyIHF1ZSBsYSBiYXNlIGRlIGRhdG9zIGVuIGVsIEVudmlyb25tZW50IGFob3JhIHRpZW5lIHVuYSB2YXJpYWJsZSBtw6FzLCB0b3RhbGl6YW5kbyAxODI2IHZhcmlhYmxlcy4KCiMgU2VsZWNjacOzbiBkZSBjYXNvcwoKRWwgZ3LDoWZpY28gMS4xIG11ZXN0cmEgcXVlIGVsIGFwb3lvIGEgbGEgZGVtb2NyYWNpYSB2YSBkZSB1biBtw6F4aW1vIGRlIDgwJSBlbiBVcnVndWF5IGEgdW4gbcOtbmltbyBkZSA0NiUgZW4gSGFpdMOtLgpQYXJhIHJlcGxpY2FyIGVsIHJlc3VsdGFkbyBjb3JyZXNwb25kaWVudGUgYSBVcnVndWF5IHNlIHB1ZWRlIHNlbGVjY2lvbmFyIGxhcyBvYnNlcnZhY2lvbmVzIGRlIGVzZSBwYcOtcy4KRGUgYWN1ZXJkbyBhIGxhIGNvZGlmaWNhY2nDs24gZGUgbGEgdmFyaWFibGUgInBhaXMiLCBVcnVndWF5IHRpZW5lIGVsIGPDs2RpZ28gMTQuCgohW10ocGFpcy5wbmcpe3dpZHRoPSI1NTIifQoKTGEgc2VsZWNjacOzbiBkZSBjYXNvcyBlbiBSIHNlIHB1ZWRlIGhhY2VyIGRlIG3Dumx0aXBsZXMgbWFuZXJhcy4KVW5hIGZvcm1hIGVzIHVzYXIgbG9zIGNvcmNoZXRlcyBcWyBcXS4KT3RyYSBmb3JtYSBlcyB1c2FuZG8gZWwgY29tYW5kbyBgc3Vic2V0YC4KQ29uIGVzdGUgY29tYW5kbyBzZWxlY2Npb25hbW9zIGxhcyBvYnNlcnZhY2lvbmVzIGRlIGVzdGUgcGHDrXMgeSBndWFyZGFtb3MgZXN0YSBzZWxlY2Npw7NuIGVuIHVuIG51ZXZvIGRhdGFmcmFtZSAibGFwb3AyIiB1c2FuZG8gZXN0ZSDDumx0aW1vIGNvbWFuZG8uClNlIHRpZW5lIDMwMDkgb2JzZXJ2YWNpb25lcyBlbiBVcnVndWF5LgoKYGBge3Igc2VsZWNjaW9uYXIgVXJ1fQpsYXBvcDEgPC0gc3Vic2V0KGxhcG9wMjEsIHBhaXM9PTE0KQp0YWJsZShsYXBvcDEkcGFpcykKYGBgCgpDb24gZXN0YSBzZWxlY2Npw7NuIGRlIGRhdG9zLCBzZSBwdWVkZSBjYWxjdWxhciBlbCBwb3JjZW50YWplIChmcmVjdWVuY2lhcyByZWxhdGl2YXMpIHVzYW5kbyBlbCBjb21hbmRvIGBwcm9wLnRhYmxlYC4KRXN0ZSBjb21hbmRvIG5vcyBicmluZGEgbGFzIGZyZWN1ZW5jaWFzIHJlbGF0aXZhcyAoZW4gdmFsb3JlcyBlbnRyZSAwIHkgMSkgZGUgdW5hIHRhYmxhIGRlIGZyZWN1ZW5jaWFzIGNhbGN1bGFkYSBjb24gYHRhYmxlYC4KRXN0YXMgZnJlY3VlbmNpYXMgcmVsYXRpdmFzIHNlIG11bHRpcGxpY2FuIHBvciAxMDAgcGFyYSByZXByb2R1Y2lyIGVsIHBvcmNlbnRhamUgZW4gY2FkYSBwYcOtcy4KRW4gZXN0ZSBjYXNvIHNlIHVzYW4gbG9zIFxbIFxdIHBhcmEgaGFjZXIgbGEgc2VsZWNjacOzbiBkZSBjYXNvcyBkZSBjYWRhIHBhw61zLgoKYGBge3IgcG9yY2VudGFqZSBVcnV9CnByb3AudGFibGUodGFibGUobGFwb3AxJGluZzRyZWNbbGFwb3AxJHBhaXM9PTE0XSkpKjEwMApgYGAKCkVzdG9zIHJlc3VsdGFkb3Mgc29uIHBvcmNlbnRhamVzIChlbnRyZSAwIHkgMTAwKSwgcGVybyBpbmNsdXllbiBtdWNob3MgZGVjaW1hbGVzLgpQYXJhIHJlZG9uZGVhciBhIHVuIGRlY2ltYWwsIGNvbW8gc2UgbXVlc3RyYSBlbiBlbCBHcsOhZmljbyAxLjIsIHNlIHB1ZWRlIHVzYXIgZWwgY29tYW5kbyBgcm91bmRgLCBkb25kZSBzZSBhbmlkYSB0b2RhIGxhIHNpbnRheGlzIGFudGVyaW9yLgpFbiBlc3RlIGNvbWFuZG8sIGFkZW3DoXMsIHNlIHRpZW5lIHF1ZSBlc3BlY2lmaWNhciBlbCBuw7ptZXJvIGRlIGRlY2ltYWxlcyBxdWUgc2UgcXVpZXJlLCBxdWUgZW4gZXN0ZSBjYXNvIGVzIDEuCgpgYGB7ciByZWRvbmRlYXIgVXJ1fQpyb3VuZChwcm9wLnRhYmxlKHRhYmxlKGxhcG9wMSRpbmc0cmVjW2xhcG9wMSRwYWlzPT0xNF0pKSoxMDAsIDEpCmBgYAoKU2Vnw7puIGVzdGUgcmVzdWx0YWRvIDg0LjUlIGRlIHVydWd1YXlvcyBhcG95YSBhIGxhIGRlbW9jcmFjaWEuCkVzdGUgcmVzdWx0YWRvIGVzIGRpc3RpbnRvIGFsIHF1ZSBzZSByZXBvcnRhIGVuIGVsIGdyw6FmaWNvIDEuMSwgZG9uZGUgZWwgdmFsb3IgcmVwb3J0YWRvIGVzIDgwJS4KRXN0YSBkaWZlcmVuY2lhIGVzIGRlYmlkbyBhIHF1ZSBlc3RvcyBwcmltZXJvcyBwcm9jZWRpbWllbnRvcyBubyBpbmNsdXllbiBlbCBlZmVjdG8gZGUgZGlzZcOxby4KTcOhcyBhYmFqbyBzZSB2ZXLDoSBlbCBwcm9jZWRpbWllbnRvIHBhcmEgcmVwcm9kdWNpciBlbCByZXN1bHRhZG8gZXhhY3RvIHJlcG9ydGFkby4KCkVuIGVsIHJlcG9ydGUgZGUgbGEgcm9uZGEgMjAxOC8xOSBlbCByZXBvcnRlIGluZGljYSBxdWUgIkVsIEdyw6FmaWNvIDEuMiBtdWVzdHJhIGVsIHBvcmNlbnRhamUgZGUgcGVyc29uYXMgZW4gY2FkYSBwYcOtcyBxdWUgZXhwcmVzYSBhcG95YXIgbGEgZGVtb2NyYWNpYSBlbiAyMDE4LzE5LiBFbCBhcG95byBhIGxhIGRlbW9jcmFjaWEgdmEgZGUgdW4gbcOtbmltbyBkZSA0NSUgZW4gSG9uZHVyYXMgYSB1biBtw6F4aW1vIGRlIDc2LjIlIGVuIFVydWd1YXkiIChwLjExKS4KClBhcmEgcmVwbGljYXIgZXN0b3MgcmVzdWx0YWRvcyBhY2VyY2EgZGUgSG9uZHVyYXMgeSBhY2VyY2EgZGUgVXJ1Z3VheSBwYXJhIDIwMTgvMTksIHNlIHBvZHLDrWEgc2VsZWNjaW9uYXIgbG9zIGRhdG9zIGRlIGVzdG9zIGRvcyBwYcOtc2VzLgpEZSBhY3VlcmRvIGFsIGN1ZXN0aW9uYXJpbywgcXVlIHNlIHB1ZWRlIHZlciBbYXF1w61dKGh0dHBzOi8vd3d3LnZhbmRlcmJpbHQuZWR1L2xhcG9wL2FiMjAxOC9BQjIwMTgtdjEyLjAtU3BhLTE5MDEzMV9XLnBkZiksIEhvbmR1cmFzIGVzIGVsIHBhw61zIDQgeSBVcnVndWF5IGVzIGVsIHBhw61zIDE0IGRlIGxhIHZhcmlhYmxlICJwYWlzIiwgcXVlIHRhbWJpw6luIHNlIGhhIGltcG9ydGFuZG8gY29tbyB1bmEgdmFyaWFibGUgbnVtw6lyaWNhLgoKU2UgaW5jbHV5ZSBlbCBvcGVyYWRvciAibyIsIHF1ZSBlbiBSIHNlIGRlbm90YSBjb24gIlx8Ii4KRGUgZXN0YSBtYW5lcmEgc2UgaW5kaWNhIHF1ZSBzZSBzZWxlY2Npb25lcyBsYXMgb2JzZXJ2YWNpb25lcyBkZSBIb25kdXJhcyBvIGRlIFVydWd1YXkgKGBwYWlzPT00IHwgcGFpcz09MTRgKS4KTGEgZGVzY3JpcGNpw7NuIGRlIGxhIHZhcmlhYmxlICJwYWlzIiBtdWVzdHJhIHF1ZSBzb2xvIGluY2x1eWUgbG9zIGNhc29zIGRlIEhvbmR1cmFzICgyKSB5IFVydWd1YXkgKDE0KS4KCmBgYHtyIHNlbGVjY2lvbmFyIEhvbiB5IFVydX0KIyBsYXBvcDIgPC0gbGFwb3AxOFtsYXBvcDE4JHBhaXMgPT0gNCB8IGxhcG9wMTgkcGFpcz09MTQsIF0KbGFwb3AyIDwtIHN1YnNldChsYXBvcDE4LCBwYWlzPT00IHwgcGFpcz09MTQpCnRhYmxlKGxhcG9wMiRwYWlzKQpgYGAKCkVsIG51ZXZvIGRhdGFmcmFtZSAibGFwb3AyIiB0aWVuZSAzMTQxIG9ic2VydmFjaW9uZXMgeSA4NCB2YXJpYWJsZXMgZGViaWRvIGEgcXVlIG5vIHNlIGhhIGNyZWFkbyBsYSB2YXJpYWJsZSByZWNvZGlmaWNhZGEuCgpgYGB7ciBhcG95byBIb24geSBVcnV9CmxhcG9wMiRpbmc0cmVjIDwtIGNhcjo6cmVjb2RlKGxhcG9wMiRpbmc0LCAiMTo0PTA7IDU6Nz0xIikKYGBgCgpDb24gZXN0YSB2YXJpYWJsZSBzZSBwdWVkZW4gc2VndWlyIGxvcyBtaXNtb3MgcHJvY2VkaW1pZW50b3MgYW50ZXJpb3JtZW50ZSBkZXNjcml0b3M6IHByb2R1Y2lyIGxhIHRhYmxhIGRlIGZyZWN1ZW5jaWFzIHJlbGF0aXZhcy4KCmBgYHtyIHBvcmNlbnRhamVzIEhvbiB5IFVydX0KcHJvcC50YWJsZSh0YWJsZShsYXBvcDIkaW5nNHJlY1tsYXBvcDIkcGFpcz09NF0pKSoxMDAKcHJvcC50YWJsZSh0YWJsZShsYXBvcDIkaW5nNHJlY1tsYXBvcDIkcGFpcz09MTRdKSkqMTAwCmBgYAoKWSBsdWVnbyBpbmNsdWlyIGVsIHJlZG9uZGVvLgoKYGBge3IgcmVkb25kZWFyIEhvbiB5IFVydX0Kcm91bmQocHJvcC50YWJsZSh0YWJsZShsYXBvcDIkaW5nNHJlY1tsYXBvcDIkcGFpcz09NF0pKSoxMDAsIDEpCnJvdW5kKHByb3AudGFibGUodGFibGUobGFwb3AyJGluZzRyZWNbbGFwb3AyJHBhaXM9PTE0XSkpKjEwMCwgMSkKYGBgCgpDb24gZXN0ZSBjw7NkaWdvIHNlIGhhIHJlcHJvZHVjaWRvIGxvcyByZXN1bHRhZG9zIGRlIGxvcyBwYcOtc2VzIGVuIGxvcyBleHRyZW1vcyBkZWwgR3LDoWZpY28gMS4yIGRlbCByZXBvcnRlLgpFbiBlc3RlIGNhc28sIGxvcyByZXN1bHRhZG9zIHPDrSBzb24gc2ltaWxhcmVzIGEgbG9zIHJlcG9ydGFkb3MgZW4gZWwgZ3LDoWZpY28uCgpBbWJvcyByZXBvcnRlcyB0YW1iacOpbiBpbmRpY2FuIHF1ZSBzZSBleGNsdXllIGRlIGxvcyBjw6FsY3Vsb3MgYSBFc3RhZG9zIFVuaWRvcyB5IENhbmFkw6EuCkxhIGJhc2UgZGUgZGF0b3MgY2FyZ2FkYSBjb21vICJsYXBvcDE4IiBpbmNsdXllIGEgdG9kb3MgbG9zIHBhw61zZXMgZGUgbGEgcm9uZGEuClBhcmEgZXhjbHVpciBhIGVzdG9zIGRvcyBwYcOtc2VzLCBzZSB0aWVuZSBxdWUgc2VsZWNjaW9uYXIgbG9zIHBhw61zZXMgcXVlIE5PIHNvbiBFRS5VVS4KeSBDYW5hZMOhLgpFc3RhIG51ZXZhIHNlbGVjY2nDs24gc2UgcHVlZGUgZ3VhcmRhciBlbiB1biBudWV2byBkYXRhZnJhbWUgbyBzZSBwdWVkZSBzb2JyZWVzY3JpYmlyIGVuIGVsIGRhdGFmcmFtZSBvcmlnaW5hbCwgY29tbyBzZSBoYWNlIGVuIGVzdGUgY2FzbyBkZWJpZG8gYSBxdWUgbGEgZXhjbHVzacOzbiBkZSBlc3RvcyBwYcOtc2VzIGVzIHBhcmEgdG9kb3MgbG9zIGPDoWxjdWxvcyBxdWUgc2lndWVuLgpEZSBhY3VlcmRvIGFsIGN1ZXN0aW9uYXJpbywgRUUuVVUuCnRpZW5lIGVsIGPDs2RpZ28gNDAgeSBDYW5hZMOhLCBlbCBjw7NkaWdvIDQxIGVuIGxhIHZhcmlhYmxlICJwYWlzIi4KUGFyYSBleGNsdWlybG9zIHNlIHRpZW5lIHF1ZSBpbmNsdWlyIGEgbG9zIHBhw61zZXMgcXVlIHRlbmdhbiB1biBjw7NkaWdvIG1lbm9yIGEgNDAgKG8gZGUgMzUgbyBtZW5vcykuClBhcmEgZXN0byBudWV2YW1lbnRlIHBvZGVtb3MgdXNhciBlbCBjb21hbmRvIGBzdWJzZXRgLgoKYGBge3IgZWxpbWluYXIgVVNBIHkgQ2FuYWRhIDE4fQpsYXBvcDE4IDwtIHN1YnNldChsYXBvcDE4LCBwYWlzPD0zNSkKYGBgCgpTZSBwdWVkZSBvYnNlcnZhciBlbiBlbCBFbnZpcm9ubWVudCBxdWUgc2UgcmVkdWNlbiBsYXMgb2JzZXJ2YWNpb25lcyBkZWwgZGF0YWZyYW1lICJsYXBvcDE4IiBsdWVnbyBkZSBjb3JyZXIgZXN0ZSBjw7NkaWdvLCBwdWVzIHNlIGhhbiBlbGltaW5hZG8gbGFzIG9ic2VydmFjaW9uZXMgZGUgZW50cmV2aXN0YWRvcyBlbiBlc3RvcyBkb3MgcGHDrXNlcy4KRWwgbsO6bWVybyBkZSBvYnNlcnZhY2lvbmVzIHBhc2EgZGUgMzEsMDUwIGEgMjgsMDQyLCBuw7ptZXJvIHF1ZSBjb2luY2lkZSBjb24gZWwgZGUgbGEgYmFzZSBkZSBkYXRvcyBlbiBmb3JtYXRvIC5SRGF0YSBxdWUgdXNhbW9zIGVuIGVsIG3Ds2R1bG8gYW50ZXJpb3IgeSBxdWUgaW5kaWNhbW9zIHF1ZSBubyBpbmNsdcOtYSBhIGVzdG9zIHBhw61zZXMuCgpEZSBsYSBtaXNtYSBtYW5lcmEgc2UgcHVlZGUgcHJvY2VkZXIgZW4gbGEgYmFzZSBkZSBkYXRvcyBkZSBsYSByb25kYSAyMDIxLCBjb24gbG8gcXVlIGRpc21pbnV5ZW4gbGFzIG9ic2VydmFjaW9uZXMgYSA2MDY2MS4KCmBgYHtyIGVsaW1pbmFyIFVTQSB5IENhbmFkYSAyMX0KbGFwb3AyMSA8LSBzdWJzZXQobGFwb3AyMSwgcGFpczw9MzUpCmBgYAoKIyBDYWxjdWxhciB1bmEgdmFyaWFibGUKClVuYSBwcsOhY3RpY2EgZnJlY3VlbnRlIGRlIExBUE9QIGNvbiBsb3MgZGF0b3MgZGVsIEJhcsOzbWV0cm8gZGUgbGFzIEFtw6lyaWNhcyBlcyBlbCByZS1lc2NhbGFtaWVudG8gZGUgdmFyaWFibGVzLgpFbCBjYXDDrXR1bG8gc29icmUgbGVnaXRpbWlkYWQgZGVtb2Nyw6F0aWNhIGRlbCByZXBvcnRlIGJyaW5kYSBlamVtcGxvcyBkZSBlc3RlIHJlLWVzY2FsYW1pZW50byBjb24gdmFyaWFibGVzIHJlbGFjaW9uYWRhcyBhbCBhcG95byBhbCBzaXN0ZW1hLgpQYXJhIGNhbGN1bGFyIGVzdGUgw61uZGljZSBkZSBhcG95byBhbCBzaXN0ZW1hIHNlIHRyYWJhamEgY29uIHVuIGNvbmp1bnRvIGRlIGNpbmNvIHZhcmlhYmxlczoKCkIxLgoqwr9IYXN0YSBxdcOpIHB1bnRvIGNyZWUgdXN0ZWQgcXVlIGxvcyB0cmlidW5hbGVzIGRlIGp1c3RpY2lhIGRlIChwYcOtcykgZ2FyYW50aXphbiB1biBqdWljaW8ganVzdG8/IFxbU29uZGVlOiBTaSB1c3RlZCBjcmVlIHF1ZSBsb3MgdHJpYnVuYWxlcyBubyBnYXJhbnRpemFuIHBhcmEgbmFkYSBsYSBqdXN0aWNpYSBlc2NvamEgZWwgbsO6bWVybyAxOyBzaSBjcmVlIHF1ZSBsb3MgdHJpYnVuYWxlcyBnYXJhbnRpemFuIG11Y2hvIGxhIGp1c3RpY2lhLCBlc2NvamEgZWwgbsO6bWVybyA3IG8gZXNjb2phIHVuIHB1bnRhamUgaW50ZXJtZWRpb1xdLioKCkIyLgoqwr9IYXN0YSBxdcOpIHB1bnRvIHRpZW5lIHVzdGVkIHJlc3BldG8gcG9yIGxhcyBpbnN0aXR1Y2lvbmVzIHBvbMOtdGljYXMgZGUgKHBhw61zKT8qCgpCMy4KKsK/SGFzdGEgcXXDqSBwdW50byBjcmVlIHVzdGVkIHF1ZSBsb3MgZGVyZWNob3MgYsOhc2ljb3MgZGVsIGNpdWRhZGFubyBlc3TDoW4gYmllbiBwcm90ZWdpZG9zIHBvciBlbCBzaXN0ZW1hIHBvbMOtdGljbyBkZSAocGHDrXMpPyoKCkI0Lgoqwr9IYXN0YSBxdcOpIHB1bnRvIHNlIHNpZW50ZSBvcmd1bGxvc28gZGUgdml2aXIgYmFqbyBlbCBzaXN0ZW1hIHBvbMOtdGljbyBkZSAocGHDrXMpPyoKCkI2Lgoqwr9IYXN0YSBxdcOpIHB1bnRvIHBpZW5zYSB1c3RlZCBxdWUgc2UgZGViZSBhcG95YXIgYWwgc2lzdGVtYSBwb2zDrXRpY28gZGUgKHBhw61zKT8qCgpDb21vIGluZGljYSBlbCByZXBvcnRlICJQYXJhIGNhZGEgcHJlZ3VudGEsIGxhIGVzY2FsYSBvcmlnaW5hbCBkZSAxICgiTmFkYSIpIGEgNyAoIk11Y2hvIikgc2UgcmVjb2RpZmljYSBlbiB1bmEgZXNjYWxhIGRlIDAgYSAxMDAsIGRlIHRhbCBmb3JtYSBxdWUgMCBpbmRpY2EgZWwgbWVub3Igbml2ZWwgZGUgYXBveW8gYWwgc2lzdGVtYSBwb2zDrXRpY28geSAxMDAgZXMgZWwgbml2ZWwgbcOheGltbyBkZSBhcG95byBhbCBzaXN0ZW1hIHBvbMOtdGljby4gRXN0YSBudWV2YSBlc2NhbGEgc2lndWUgbGEgcmVjb2RpZmljYWNpw7NuIHTDrXBpY2EgZGUgTEFQT1AgeSBwdWVkZSBzZXIgaW50ZXJwcmV0YWRhIGNvbW8gdW5hIG1lZGljacOzbiBkZWwgYXBveW8gZW4gdW5pZGFkZXMsIG8gZ3JhZG9zLCBlbiB1bmEgZXNjYWxhIGNvbnRpbnVhIHF1ZSB2YSBkZSAwIGEgMTAwIiAocC4zNCkuClBhcmEgY29tcHJvYmFyIGxhIGVzY2FsYSBvcmlnaW5hbCBkZSBlc3RhcyB2YXJpYWJsZXMsIHNlIHB1ZWRlIGRlc2NyaWJpciBlc3RhcyB2YXJpYWJsZXMgdXNhbmRvIGVsIGNvbWFuZG8gYHRhYmxlYC4KCmBgYHtyIGRlc2NyaWJpcn0KdGFibGUobGFwb3AxOCRiMSkKdGFibGUobGFwb3AxOCRiMikKdGFibGUobGFwb3AxOCRiMykKdGFibGUobGFwb3AxOCRiNCkKdGFibGUobGFwb3AxOCRiNikKYGBgCgpTZSBvYnNlcnZhIHF1ZSBlZmVjdGl2YW1lbnRlIHRvZGFzIGxhcyB2YXJpYWJsZXMgY29ycmVuIGVuIHVuYSBlc2NhbGEgZGUgMSBhIDcuClBhcmEgcmVlc2NhbGFyIHVuYSB2YXJpYWJsZSBlbiB1bmEgZXNjYWxhIG9yaWdpbmFsIGRlIDEgYSA3IGEgb3RyYSBkZSAwIGEgMTAwLCBsbyBwcmltZXJvIHF1ZSBzZSB0aWVuZSBxdWUgaGFjZXIgZXMgcmVzdGFyIDEgdW5pZGFkLCBjb24gbG8gcXVlIGxhIHZhcmlhYmxlIHRlbmRyw61hIHVuYSBlc2NhbGEgZGUgMCBhIDYsIGx1ZWdvIGRpdmlkaXJsYSBlbnRyZSA2LCBjb24gbG8gcXVlIHZhcmlhcsOtYSBlbnRyZSAwIHkgMSB5LCBmaW5hbG1lbnRlLCBtdWx0aXBsaWNhcmxhIHBvciAxMDAuCkVzdG8gZXM6CgpWYXJpYWJsZSByZWVzY2FsYWRhID0gKCh2YXJpYWJsZSBvcmlnaW5hbCAtMSkvNilcKjEwMAoKYGBge3IgY2FsY3VsYXJ9CmxhcG9wMTgkYjFyZWMgPC0gKChsYXBvcDE4JGIxLTEpLzYpKjEwMApsYXBvcDE4JGIycmVjIDwtICgobGFwb3AxOCRiMi0xKS82KSoxMDAKbGFwb3AxOCRiM3JlYyA8LSAoKGxhcG9wMTgkYjMtMSkvNikqMTAwCmxhcG9wMTgkYjRyZWMgPC0gKChsYXBvcDE4JGI0LTEpLzYpKjEwMApsYXBvcDE4JGI2cmVjIDwtICgobGFwb3AxOCRiNi0xKS82KSoxMDAKdGFibGUobGFwb3AxOCRiMXJlYykKYGBgCgpDb24gZXN0YSB0cmFuc2Zvcm1hY2nDs24gc2Ugb2JzZXJ2YSBxdWUgbG9zIDQsMDg5IGVudHJldmlzdGFkb3MgcXVlIG1hcmNhcm9uIDEgZW4gbGEgcHJlZ3VudGEgQjEsIGFob3JhIHRpZW5lbiB1biBwdW50YWplIGRlIDAuCkxvcyA0LDA2NyBxdWUgbWFyY2Fyb24gMiwgYWhvcmEgdGllbmVuIHVuIHB1bnRhamUgZGUgMTYuNjcsIGVzIGRlY2lyIDItMT0xLzY9MC4xNjY3XCoxMDA9MTYuNjcuCkVzdGEgbWlzbWEgb3BlcmFjacOzbiBzZSBwdWRvIGhhY2VyIGNvbiBlbCBjb21hbmRvIGBjYXI6OnJlY29kZWAsIHNpZ3VpZW5kbyBsYSBzaWd1aWVudGUgcmVnbGEgZGUgcmVjb2RpZmljYWNpw7NuOgoKLSAgIFZhbG9yIGRlIDEgZW4gdmFyaWFibGUgb3JpZ2luYWwgc2UgcmVjb2RpZmljYSBjb21vIDAgZW4gbnVldmEgdmFyaWFibGUKLSAgIFZhbG9yIGRlIDIgZW4gdmFyaWFibGUgb3JpZ2luYWwgc2UgcmVjb2RpZmljYSBjb21vIDE2LjY3IGVuIG51ZXZhIHZhcmlhYmxlCi0gICBWYWxvciBkZSAzIGVuIHZhcmlhYmxlIG9yaWdpbmFsIHNlIHJlY29kaWZpY2EgY29tbyAzMy4zMyBlbiBudWV2YSB2YXJpYWJsZQotICAgVmFsb3IgZGUgNCBlbiB2YXJpYWJsZSBvcmlnaW5hbCBzZSByZWNvZGlmaWNhIGNvbW8gNTAgZW4gbnVldmEgdmFyaWFibGUKLSAgIFZhbG9yIGRlIDUgZW4gdmFyaWFibGUgb3JpZ2luYWwgc2UgcmVjb2RpZmljYSBjb21vIDY2LjY3IGVuIG51ZXZhIHZhcmlhYmxlCi0gICBWYWxvciBkZSA2IGVuIHZhcmlhYmxlIG9yaWdpbmFsIHNlIHJlY29kaWZpY2EgY29tbyA4My4zMyBlbiBudWV2YSB2YXJpYWJsZQotICAgVmFsb3IgZGUgNyBlbiB2YXJpYWJsZSBvcmlnaW5hbCBzZSByZWNvZGlmaWNhIGNvbW8gMTAwIGVuIG51ZXZhIHZhcmlhYmxlCgpFc3RhIG1hbmVyYSBkZSByZWNvZGlmaWNhciwgc2luIGVtYmFyZ28sIGVzIHBvY28gZWZpY2llbnRlLgpFcyBtw6FzIHNpbXBsZSB1c2FyIGxhIGbDs3JtdWxhIHBhcmEgY2FsY3VsYXIgbGEgcmVjb2RpZmljYWNpw7NuLgoKUGFyYSBjYWxjdWxhciBlbCDDrW5kaWNlIGRlIGFwb3lvIGFsIHNpc3RlbWEsIGVsIHJlcG9ydGUgaW5kaWNhIHF1ZSAiRWwgw61uZGljZSBkZSBhcG95byBhbCBzaXN0ZW1hIGVzIGVsIHByb21lZGlvIGRlIGNpbmNvIHByZWd1bnRhczogQjEsIEIyLCBCMywgQjQgeSBCNiIgKHAuNDYpLgpFcyBkZWNpciwgY29uIGxhcyB2YXJpYWJsZXMgcmVlc2NhbGFkYXMgc2UgdGllbmUgcXVlIGNhbGN1bGFyIGVsIHByb21lZGlvIGRlIGVzdGFzIGNpbmNvIHZhcmlhYmxlcyBwYXJhIGNhZGEgaW5kaXZpZHVvIChlcyBkZWNpciwgZW4gY2FkYSBmaWxhIGRlIGxhIGJhc2UgZGUgZGF0b3MpLgpFc3RhIG9wZXJhY2nDs24gc2UgcG9kcsOtYSByZWFsaXphciBjYWxjdWxhbmRvIGVsIHByb21lZGlvIGRlIGZvcm1hIG1hbnVhbC4KCkFwb3lvIGFsIHNpc3RlbWEgPSAoYjFyZWMgKyBiMnJlYyArIGIzcmVjICsgYjRyZWMgKyBiNnJlYykvNQoKRW4gUiB0ZW5lbW9zIGVsIGNvbWFuZG8gYHJvd01lYW5zYCBxdWUgc2lydmEgcGFyYSBjYWxjdWxhciBwcm9tZWRpb3MgZGUgY2llcnRhcyBjb2x1bW5hcyBwb3IgY2FkYSBmaWxhLgpMYSBzaW50YXhpcyBgWywgODY6OTBdYCBpbmRpY2EgcXVlIHNlIHJlYWxpemFyw6EgZWwgY8OhbGN1bG8gZGVsIHByb21lZGlvIHBvciBmaWxhcyBwYXJhIHRvZGFzIGxhcyBmaWxhcyB5IHVzYW5kbyBsYXMgY29sdW1uYXMgODYgYSA5MCBkZWwgZGF0YWZyYW1lICJsYXBvcDE4IiAoc2UgcG9kcsOtYSBoYWNlciBlbCBjw6FsY3VsbyBwYXJhIGFsZ3VuYXMgZmlsYXMgZW4gcGFydGljdWxhciBkZWZpbmllbmRvIGBbZmlsYV9uOmZpbGFfbSwgODY6OTBdYCkuCkVzdGUgcHJvbWVkaW8gc2UgZ3VhcmRhIGVuIHVuYSBudWV2YSB2YXJpYWJsZSAiYXBveW8iLCBxdWUgc2UgZGVzY3JpYmUuCgpgYGB7ciBhcG95byBhbCBzaXN0ZW1hfQpsYXBvcDE4JGFwb3lvIDwtIHJvd01lYW5zKGxhcG9wMThbLDg2OjkwXSkKdGFibGUobGFwb3AxOCRhcG95bykKYGBgCgpDb24gZXN0ZSDDrW5kaWNlIHNlIHB1ZWRlIGNhbGN1bGFyIGVsIGFwb3lvIGFsIHNpc3RlbWEgcHJvbWVkaW8gcGFyYSBsYSDDumx0aW1hIHJvbmRhIGRlbCBCYXLDs21ldHJvIGRlIGxhcyBBbcOpcmljYXMsIGFzw60gY29tbyBsb3MgcHJvbWVkaW9zIGRlIGNhZGEgdW5hIGRlIGxhcyB2YXJpYWJsZXMgcXVlIGNvbXBvbmVuIGVsIMOtbmRpY2UuClNlIHVzYSBlbCBjb21hbmRvIGBtZWFuYCBwYXJhIGVsIHByb21lZGlvIHkgbGEgZXNwZWNpZmljYWNpw7NuIGBuYS5ybT1UYCBwYXJhIGluZGljYXJsZSBhbCBjb21hbmRvIHF1ZSBubyB0b21lIGVuIGN1ZW50YSBsb3MgdmFsb3JlcyBwZXJkaWRvcyBkZSBlc3RhcyB2YXJpYWJsZXMuCkVzdG9zIGVzdGFkw61zdGljb3Mgc2UgdmVyw6FuIGVuIG3DoXMgZGV0YWxsZSBlbiBvdHJvcyBkb2N1bWVudG9zLgoKYGBge3IgYXBveW8gYWwgc2lzdGVtYSAyMDE4LzE5fQptZWFuKGxhcG9wMTgkYXBveW8sIG5hLnJtPVQpCm1lYW4obGFwb3AxOCRiMXJlYywgbmEucm09VCkgI0NvcnRlcyBnYXJhbnRpemFuIGp1aWNpbyBqdXN0bwptZWFuKGxhcG9wMTgkYjJyZWMsIG5hLnJtPVQpICNSZXNwZXRvIGEgbGFzIGluc3RpdHVjaW9uZXMKbWVhbihsYXBvcDE4JGIzcmVjLCBuYS5ybT1UKSAjRGVyZWNob3MgYsOhc2ljb3MgZXN0w6FuIHByb3RlZ2lkb3MKbWVhbihsYXBvcDE4JGI0cmVjLCBuYS5ybT1UKSAjT3JndWxsb3MgcG9yIGVsIHNpc3RlbWEgcG9sw610aWNvCm1lYW4obGFwb3AxOCRiNnJlYywgbmEucm09VCkgI1NlIGRlYmVyw61hIGFwb3lhciBhbCBzaXN0ZW1hIHBvbMOtdGljbwpgYGAKCkVzdG9zIHJlc3VsdGFkb3Mgc29uIGxvcyBxdWUgc2UgbXVlc3RyYW4gZW4gZWwgR3LDoWZpY28gMi4xIHBhcmEgbGEgcm9uZGEgMjAxOC8xOS4KCiFbXShHcmFmMi4xLnBuZyl7d2lkdGg9IjYyOSJ9CgojIENhbGN1bGFyIHVuYSB2YXJpYWJsZSBkZSBtYW5lcmEgY29uZGljaW9uYWwKCkVuIGFsZ3VuYXMgb2Nhc2lvbmVzIGVsIGPDoWxjdWxvIGRlIHVuYSB2YXJpYWJsZSBubyByZXF1aWVyZSBzb2xhbWVudGUgbGEgdHJhbnNmb3JtYWNpw7NuIG51bcOpcmljYSBkZSBsYSB2YXJpYWJsZSBvcmlnaW5hbCwgc2lubyBxdWUgbG9zIHZhbG9yZXMgZGUgbGEgbnVldmEgdmFyaWFibGUgZGVwZW5kZW4gZGUgdmFsb3JlcyBkZSBvdHJhcyB2YXJpYWJsZXMuClBvciBlamVtcGxvLCBlbCBjYXDDrXR1bG8gIlJlZGVzIHNvY2lhbGVzIHkgYWN0aXR1ZGVzIHBvbMOtdGljYXMiIGRlbCByZXBvcnRlICJFbCBQdWxzbyBkZSBsYSBEZW1vY3JhY2lhIiBwcmVzZW50YSBsb3MgcmVzdWx0YWRvcyBwYXJhIGxhcyB2YXJpYWJsZXMgInVzdWFyaW8gZGUgV2hhdHNhcHAiLCAidXN1YXJpbyBkZSBUd2l0dGVyIiB5ICJ1c3VhcmlvIGRlIEZhY2Vib29rIi4KUGFyYSBjYWxjdWxhciBlc3RhcyB2YXJpYWJsZXMsIGVsIHBpZSBkZSBww6FnaW5hIDcgZGUgZXN0ZSBjYXDDrXR1bG8gaW5kaWNhOiAiUGFyYSBjYWRhIHBsYXRhZm9ybWEsIHNlIGlkZW50aWZpY2FuIGxvcyB1c3VhcmlvcyBjb24gdW5hIGNvbWJpbmFjacOzbiBkZSBkb3MgY29uanVudG9zIGRlIHByZWd1bnRhcy4gUHJpbWVybywgc2UgaWRlbnRpZmljYW4gY29tbyB1c3VhcmlvcyBhIHF1aWVuZXMgcmVzcG9uZGVuIHBvc2l0aXZhbWVudGUgYSBsYXMgcHJlZ3VudGFzLCBTTUVESUExL1NNRURJQTQvU01FRElBNy4gwr9UaWVuZSB1c3RlZCBjdWVudGEgZGUgRmFjZWJvb2svVHdpdHRlci9XaGF0c2FwcD8gTHVlZ28sIHNlIHJlY29kaWZpY2EgY29tbyBubyB1c3VhcmlvIGEgcXVpZW5lcyByZXNwb25kZW4gIm51bmNhIiBhIGxhcyBwcmVndW50YXMgc2lndWllbnRlcywgU01FRElBMi9TTUVESUE1L1NNRURJQTguIMK/Q29uIHF1w6kgZnJlY3VlbmNpYSB2ZSBjb250ZW5pZG8gZW4gRmFjZWJvb2svVHdpdHRlci9XaGF0c2FwcD8iIChwLiA2NCkuCgohW10oc21lZGlhLnBuZyl7d2lkdGg9IjQ2NiJ9CgpFcyBkZWNpciwgZWwgdXN1YXJpbyBubyBzb2xvIGVzIGVsIHF1ZSB0aWVuZSB1bmEgY3VlbnRhIChTTUVESUExPTEpLCBzaW5vIGVsIHF1ZSBsYSB1c2EgY29uIGNpZXJ0YSBmcmVjdWVuY2lhIChTTUVESUEyPTEsIDIsIDMsIDQpLgpEZSBlc3RhIG1hbmVyYSwgZWwgbm8gdXN1YXJpbyBwdWVkZSB0ZW5lciB1bmEgY3VlbnRhLCBwZXJvIG51bmNhIHVzYXJsYS4KUG9yIGxvIHRhbnRvLCBsYSB2YXJpYWJsZSAidXN1YXJpbyIgZGVwZW5kZSBkZSBsb3MgdmFsb3JlcyBkZSAyIHZhcmlhYmxlcy4KTGEgcmVnbGEgZGUgY29kaWZpY2FjacOzbiBxdWUgc2Ugc2lndWUgZXM6CgotICAgVXN1YXJpbyBkZSBGYWNlYm9vayA9IDEgKHPDrSBlcyB1c3VhcmlvKSBzaSBTTUVESUExID0gMSAodGllbmUgY3VlbnRhKSB5IFNNRURJQTIgXDw9IDQgKGxhIHVzYSBjb24gYWxndW5hIGZyZWN1ZW5jaWEpCgotICAgVXN1YXJpbyBkZSBGYWNlYm9vayA9IDAgKG5vIGVzIHVzdWFyaW8pIHNpIFNNRURJQTIgPSAyIChubyB0aWVuZSBjdWVudGEpIG8gU01FRElBMiA9IDUgKHRpZW5lIGN1ZW50YSBwZXJvIG51bmNhIGxhIHVzYSkKCkVzdGEgcmVnbGEgc2UgdHJhbnNmb3JtYSBlbiBsYSBzaWd1aWVudGUgc2ludGF4aXMgZGUgUiwgcXVlIHVzYSBlbCBjb21hbmRvIGDDrGZlbHNlYC4KRXN0YSBzaW50YXhpcyBpbmNsdXllIGxhIGNvbmRpY2nDs24gcGFyYSBhc2lnbmFyIHZhbG9yZXMgZGUgMSBhIHVuYSBudWV2YSB2YXJpYWJsZSB5IGFzaWduYSBhIHRvZGFzIGxhcyBkZW3DoXMgb2JzZXJ2YWNpb25lcyBlbCB2YWxvciBkZSAwLgpTZSBkZXNjcmliZW4gZXN0YXMgbnVldmFzIHZhcmlhYmxlcyB1c2FuZG8gbG9zIGNvbWFuZG9zIGB0YWJsZWAgcGFyYSBnZW5lcmFyIGxhcyBmcmVjdWVuY2lhcyBhYnNvbHV0YXMsIGBwcm9wLnRhYmxlYCBwYXJhIGxhcyBmcmVjdWVuY2lhcyByZWxhdGl2YXMgeSBgcm91bmRgIHBhcmEgcmVkb25kZWFyIGxvcyBkZWNpbWFsZXMuCkVzdG9zIGNvbWFuZG9zIHNlIHZlcsOhbiBlbiBtw6FzIGRldGFsbGUgZW4gbG9zIHNpZ3VpZW50ZXMgZG9jdW1lbnRvcy4KCmBgYHtyIHVzdWFyaW9zLCBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9CmxhcG9wMTgkZmJfdXNlciA8LSBpZmVsc2UobGFwb3AxOCRzbWVkaWExPT0xICYgbGFwb3AxOCRzbWVkaWEyPD00LCAxLCAwKQpsYXBvcDE4JHR3X3VzZXIgPC0gaWZlbHNlKGxhcG9wMTgkc21lZGlhND09MSAmIGxhcG9wMTgkc21lZGlhNTw9NCwgMSwgMCkKbGFwb3AxOCR3YV91c2VyIDwtIGlmZWxzZShsYXBvcDE4JHNtZWRpYTc9PTEgJiBsYXBvcDE4JHNtZWRpYTg8PTQsIDEsIDApCnJvdW5kKHByb3AudGFibGUodGFibGUobGFwb3AxOCRmYl91c2VyKSkqMTAwLCAxKQpyb3VuZChwcm9wLnRhYmxlKHRhYmxlKGxhcG9wMTgkdHdfdXNlcikpKjEwMCwgMSkKcm91bmQocHJvcC50YWJsZSh0YWJsZShsYXBvcDE4JHdhX3VzZXIpKSoxMDAsIDEpCmBgYAoKRXN0b3MgcmVzdWx0YWRvcyBzb24gbG9zIHF1ZSBzZSBwcmVzZW50YW4gZW4gZWwgR3LDoWZpY28gMy4xIGRlbCByZXBvcnRlIGVuIGZvcm1hIGRlIGdyw6FmaWNvcyBjaXJjdWxhcmVzLgpFc3RlIHRpcG8gZGUgZ3LDoWZpY29zIHNlIHZlcsOhbiBlbiBsYSBzZWNjacOzbiBzaWd1aWVudGUuCgohW10oR3JhZjMuMS5wbmcpe3dpZHRoPSIzMjMifQoKIyBPYnNlcnZhY2nDs24gZGVsIGVmZWN0byBkZSBkaXNlw7FvCgpUYW50byBsb3MgcmVzdWx0YWRvcyBwYXJhIGFwb3lvIGFsIHNpc3RlbWEsIGNvbW8gbG9zIGRlIHVzdWFyaW9zIGRlIHJlZGVzIHNvY2lhbGVzIGRpZmllcmVuIGRlIGxvcyBxdWUgYXBhcmVjZW4gZW4gZWwgcmVwb3J0ZSBwb3IgZG9zIG1vdGl2b3MuCkVuIHByaW1lciBsdWdhciwgcGFyYSBhcG95byBhbCBzaXN0ZW1hLCBkZWJpZG8gYSBxdWUgIkxvcyB2YWxvcmVzIGEgbG8gbGFyZ28gZGVsIHRpZW1wbyBzZSBjYWxjdWxhbiBpbmNsdXllbmRvIMO6bmljYW1lbnRlIGxvcyBwYcOtc2VzIHF1ZSBlbCBCYXLDs21ldHJvIGRlIGxhcyBBbcOpcmljYXMgaGEgZXN0dWRpYWRvIHJlZ3VsYXJtZW50ZSBkZXNkZSAyMDA2OiBBcmdlbnRpbmEsIEJyYXNpbCwgQm9saXZpYSwgQ2hpbGUsIENvbG9tYmlhLCBDb3N0YSBSaWNhLCBSZXDDumJsaWNhIERvbWluaWNhbmEsIEVjdWFkb3IsIEVsIFNhbHZhZG9yLCBHdWF0ZW1hbGEsIEhvbmR1cmFzLCBKYW1haWNhLCBNw6l4aWNvLCBOaWNhcmFndWEsIFBhbmFtw6EsIFBhcmFndWF5LCBQZXLDuiwgVXJ1Z3VheSIgKHAuNDYpLgpFbCBjw7NkaWdvIHNvbG8gZmlsdHJhIGxhIMO6bHRpbWEgcm9uZGEsIHF1ZSBpbmNsdXllIHBhw61zZXMgcXVlIG5vIGVzdMOhbiBlbiBlc2EgbGlzdGEsIGNvbW8gRXN0YWRvcyBVbmlkb3MgbyBDYW5hZMOhLgpEZSBvdHJvIGxhZG8sIGxvcyBjw6FsY3Vsb3MgcmVwb3J0YWRvcyBlbiBsYSBwdWJsaWNhY2nDs24gaW5jbHV5ZW4gZWwgdXNvIGRlIGZhY3RvcmVzIGRlIGV4cGFuc2nDs24sIHF1ZSBubyBzZSBoYW4gaW5jbHVpZG8gZW4gZXN0b3MgY8OhbGN1bG9zLCBwZXJvIHF1ZSBlbiBvdHJvcyBkb2N1bWVudG9zIHNlIGluY29ycG9yYXLDoW4gKHZlciBbYXF1w61dKGh0dHBzOi8vcnB1YnMuY29tL2FydHVyb19tYWxkb25hZG8vNzI4NjI2KSkuCgojIFJlc3VtZW4KCkVuIGVzdGUgZG9jdW1lbnRvIHNlIGhhbiB2aXN0byBsb3MgZWxlbWVudG9zIGLDoXNpY29zIGRlIGxhIG1hbmlwdWxhY2nDs24geSB0cmFuc2Zvcm1hY2nDs24gZGUgZGF0b3MgdXNhbmRvIGVsIEJhcsOzbWV0cm8gZGUgbGFzIEFtw6lyaWNhcy4KU2UgaGEgcmVjb2RpZmljYWRvIHVuYSB2YXJpYWJsZSB1c2FuZG8gZWwgY29tYW5kbyBgcmVjb2RlYCwgc2UgaGEgc2VsZWNjaW9uYWRvIGNhc29zIHVzYW5kbyBgc3Vic2V0YCB5IHNlIGhhIGNhbGN1bGFkbyB1bmEgbnVldmEgdmFyaWFibGUgYWxnZWJyYWljYW1lbnRlIHkgY29uIGVsIGNvbWFuZG8gYMOsZmVsc2VgLgo=</div>

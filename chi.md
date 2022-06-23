@@ -253,7 +253,7 @@ ggplot(data=count_pais, aes(x=Freq, y=pais, fill=Var2))+
 
 Desde la página 20 del reporte *El Pulso de la Democracia* de la ronda 2018/19 se hace una evaluación de la democracia en la práctica.
 En particular, esta sección del reporte usa la variable "pn4".
-Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en \[país\]?"
+Esta variable está fraseada de la siguiente manera: "En general, ¿usted diría que está muy satisfecho(a), satisfecho(a), insatisfecho(a) o muy insatisfecho(a) con la forma en que la democracia funciona en (país)?"
 
 En el reporte se indica que esta variable se recodifica como una variable dicotómica para poder trabajar con porcentajes.
 En esta sección vamos a trabajar con la variable original, que es una variable categórica (o de factor) ordinal.
@@ -515,7 +515,7 @@ Los sectores "muy satisfechos" (en rosado) y "satisfechos" (en verde) disminuyen
 En todos los ejemplos que se han mostrado, se pueden observar diferencias porcentuales en una variable por categorías de otra variable.
 Estos porcentajes se pueden comparar directamente, pero para formalizar si existe una relación estadística entre ambas variables se tiene que correr una prueba de significancia.
 
-# Prueba de independencia de chi-cuadrado 
+# Prueba de independencia de chi-cuadrado
 
 Se dice que dos variables categóricas con estadísticamente independientes si las distribuciones condicionales (poblacionales) son idénticas por cada categoría de la variable independiente En la relación bivariada anterior, esto significa que ser hombre o mujer no cambia las opiniones con respecto a la satisfacción con la democracia.
 A medida que estas distribuciones condicionales difieren más entre sí, se dice que ambas variables están más relacionadas o son más dependientes.
@@ -602,7 +602,7 @@ prueba1$expected
 
 Para evaluar la fuerza de la relación, se usa la librería `vcd` que cuenta con el comando `assocstats` que nos ofrece una serie de medidas de asociación adecuadas para el cruce entre una variable ordinal como "countfair1" y una variable nominal como "pais".
 
-El comando `assocstats` no puede calculos las medidas de asociación si se tiene celdas en la tabla cruzada con valores de cero.
+El comando `assocstats` no puede calcular las medidas de asociación si se tiene celdas en la tabla cruzada con valores de cero.
 Como se tiene algunos países donde no se hizo la pregunta "countfair1" entonces se tiene que indicar que no se use las observaciones de esos países.
 Para esto creamos una nueva variable de país, donde las observaciones de estos países se ponen como NAs.
 

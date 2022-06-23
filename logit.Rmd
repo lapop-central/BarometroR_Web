@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 En la sección anterior vimos los aspectos básicos del modelo logístico para analizar la relación entre una variable dependiente binaria y una variable independiente.
 
-En esta sección se seguirá replicando los análisis del capítulo "Redes sociales y actitudes políticas" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
+En esta sección se seguirá replicando los análisis del capítulo "Redes sociales y actitudes políticas" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf) de la ronda 2018/19.
 En ese capítulo se analiza una medición de apoyo a la democracia.
 
 # Sobre la base de datos
@@ -226,4 +226,4 @@ plot_summs(modelo2, coefs=c("Nivel de riqueza"="riqueza", "Años de educación"=
                             "Edad"="edad", "Mujer"="mujer", "Área urbana"="urban"))
 ```
 
-De la misma manera que con los resultados que no incluyen el efecto de diseño, este gráfico es similar al reportado en el informe, pero no es exactamente igual.
+De la misma manera que con los resultados que no incluyen el efecto de diseño, este gráfico es similar al reportado en el informe, aunque no es exactamente igual.

@@ -850,7 +850,7 @@ summary(modelo.anova1)
 Para calcular la prueba de anova de este modelo, se puede usar el comando `aov` que usa como argumento el objeto con el modelo lineal.
 Estos resultados, a su vez, se guardan en otro objeto "anova.w1".
 Se puede presentar un `summary` de estos resultados, los que muestran los datos para sacar conclusiones de anova.
-Como el p-value (Pr>F) es menor a 0.05, se concluye que al menos un par de medias son diferentes.
+Como el p-value (Pr\>F) es menor a 0.05, se concluye que al menos un par de medias son diferentes.
 
 
 ```r

@@ -25,7 +25,7 @@ En la sección anterior vimos los aspectos básicos del modelo de mínimos cuadr
 En esta sección se expandirá el análisis, desde un análisis bivariado a un análisis multivariado.
 Es decir, se usará el método de mínimos cuadrados ordinarios para analizar la relación de una variable dependiente numérica con varias variables independientes.
 
-En esta sección se seguirá replicando los análisis del capítulo "Legitimidad democrática" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
+En esta sección se seguirá replicando los análisis del capítulo "Legitimidad democrática" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf) de la ronda 2018/19.
 En ese capítulo se analiza una medición de apoyo a la democracia.
 
 # Sobre la base de datos
@@ -683,7 +683,7 @@ summary(modelo7)
 ```
 
 El Gráfico 2.10 incluye estos controles, pero no los presenta en el gráfico.
-Esto se puede replicar con el comando `polt_summs`, que puede graficar el modelo 7, pero se le indica qué coeficientes incluir en el gráfico con el comando `coefs`.
+Esto se puede replicar con el comando `plot_summs`, que puede graficar el modelo 7, pero se le indica qué coeficientes incluir en el gráfico con el comando `coefs`.
 
 
 ```r

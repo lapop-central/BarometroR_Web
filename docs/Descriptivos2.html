@@ -444,7 +444,8 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Estadística descriptiva usando el Barómetro de las Américas (2)</h1>
+<h1 class="title toc-ignore">Estadística descriptiva usando el Barómetro
+de las Américas (2)</h1>
 
 </div>
 
@@ -455,12 +456,32 @@ h1 {color: #3366CC;}
 </style>
 <div id="introducción" class="section level1">
 <h1>Introducción</h1>
-<p>En este documento vamos a continuar usando el último informe regional “El pulso de la democracia”, disponible <a href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>, donde se presentan los principales hallazgos de la ronda 2018/19 del Barómetro de las Américas. Una de las secciones de este informe, reporta los datos sobre redes sociales y actitudes políticas. En esta sección, se presentan datos sobre el uso de internet y el uso de redes sociales, en general y por país. En este caso vamos a trabajar con la frecuencia de uso de las redes sociales. En este documento vamos a analizar descriptivamente estas variables sobre frecuencia de uso de redes sociales, variables de tipo ordinal (o de factor, en el lenguaje de R).</p>
+<p>En este documento vamos a continuar usando el último informe regional
+“El pulso de la democracia”, disponible <a
+href="https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf">aquí</a>,
+donde se presentan los principales hallazgos de la ronda 2018/19 del
+Barómetro de las Américas. Una de las secciones de este informe, reporta
+los datos sobre redes sociales y actitudes políticas. En esta sección,
+se presentan datos sobre el uso de internet y el uso de redes sociales,
+en general y por país. En este caso vamos a trabajar con la frecuencia
+de uso de las redes sociales. En este documento vamos a analizar
+descriptivamente estas variables sobre frecuencia de uso de redes
+sociales, variables de tipo ordinal (o de factor, en el lenguaje de
+R).</p>
 </div>
 <div id="sobre-la-base-de-datos" class="section level1">
 <h1>Sobre la base de datos</h1>
-<p>Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org. En este documento se carga nuevamente una base de datos recortada. Para reproducir los resultados mostrados en esta sección se debe limpiar en Environment.</p>
-<p>Esta base de datos se encuentra alojada en el repositorio “materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería <code>rio</code> y el comando <code>import</code> se puede importar esta base de datos desde este repositorio. Además, se seleccionan los datos de países con códigos menores o iguales a 35, es decir, se elimina las observaciones de Estados Unidos y Canadá.</p>
+<p>Los datos que vamos a usar deben citarse de la siguiente manera:
+Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de
+América Latina (LAPOP), wwww.LapopSurveys.org. En este documento se
+carga nuevamente una base de datos recortada. Para reproducir los
+resultados mostrados en esta sección se debe limpiar en Environment.</p>
+<p>Esta base de datos se encuentra alojada en el repositorio
+“materials_edu” de la cuenta de LAPOP en GitHub. Mediante la librería
+<code>rio</code> y el comando <code>import</code> se puede importar esta
+base de datos desde este repositorio. Además, se seleccionan los datos
+de países con códigos menores o iguales a 35, es decir, se elimina las
+observaciones de Estados Unidos y Canadá.</p>
 <pre class="r"><code>library(rio)
 lapop18 &lt;- import(&quot;https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav&quot;)
 lapop18 &lt;- subset(lapop18, pais&lt;=35)</code></pre>
@@ -470,45 +491,78 @@ lapop21 &lt;- subset(lapop21, pais&lt;=35)</code></pre>
 </div>
 <div id="describir-y-graficar-las-variables" class="section level1">
 <h1>Describir y graficar las variables</h1>
-<p>En el documento sobre estadística descriptiva, que se puede ver <a href="https://rpubs.com/arturo_maldonado/696770">aquí</a>, se trabajó con variables nominales, con opciones de respuesta dicotómica (Sí/No). En este documento se va a trabajar con variables ordinales politómicas.</p>
+<p>En el documento sobre estadística descriptiva, que se puede ver <a
+href="https://rpubs.com/arturo_maldonado/696770">aquí</a>, se trabajó
+con variables nominales, con opciones de respuesta dicotómica (Sí/No).
+En este documento se va a trabajar con variables ordinales
+politómicas.</p>
 </div>
 <div id="los-votos-son-contados-correctamente" class="section level1">
 <h1>Los votos son contados correctamente</h1>
-<p>En esta sección se va a usar la variable COUNTFAIR1. Los votos son contados correcta y justamente. ¿Diría usted que sucede siempre, algunas veces o nunca? El gráfico 2.5 del reporte el Pulso de la Democracia, disponible <a href="https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf">aquí</a>, presenta los resultados de esta variable por país.</p>
+<p>En esta sección se va a usar la variable COUNTFAIR1. Los votos son
+contados correcta y justamente. ¿Diría usted que sucede siempre, algunas
+veces o nunca? El gráfico 2.5 del reporte el Pulso de la Democracia,
+disponible <a
+href="https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf">aquí</a>,
+presenta los resultados de esta variable por país.</p>
 <p><img src="Figure2.5.png" width="519" /></p>
-<p>De la misma manera que con las variables nominales, estas variables tienen que ser declaradas como “factor” en nuevas variables.</p>
+<p>De la misma manera que con las variables nominales, estas variables
+tienen que ser declaradas como “factor” en nuevas variables.</p>
 <pre class="r"><code>library(haven)
 lapop21$countfair1r = as.factor(lapop21$countfair1)</code></pre>
-<p>Luego, estas variables se tienen que etiquetar y generar las tablas descriptivas básicas, con el comando <code>table</code>.</p>
+<p>Luego, estas variables se tienen que etiquetar y generar las tablas
+descriptivas básicas, con el comando <code>table</code>.</p>
 <pre class="r"><code>levels(lapop21$countfair1r) &lt;- c(&quot;Siempre&quot;, &quot;Algunas veces&quot;, &quot;Nunca&quot;)
 table(lapop21$countfair1r)</code></pre>
 <pre><code>## 
 ##       Siempre Algunas veces         Nunca 
 ##          3477          5235          1698</code></pre>
-<p>Para calcular las tablas con porcentajes, redondeados a un decimal, usamos <code>prop.table</code> y <code>round</code>. Nuevamente, estos porcentajes no son exactamente iguales a los presentados en el reporte debido a que estos cálculos no incluyen el factor de expansión.</p>
+<p>Para calcular las tablas con porcentajes, redondeados a un decimal,
+usamos <code>prop.table</code> y <code>round</code>. Nuevamente, estos
+porcentajes no son exactamente iguales a los presentados en el reporte
+debido a que estos cálculos no incluyen el factor de expansión.</p>
 <pre class="r"><code>round(prop.table(table(lapop21$countfair1r)), 3)*100</code></pre>
 <pre><code>## 
 ##       Siempre Algunas veces         Nunca 
 ##          33.4          50.3          16.3</code></pre>
-<p>Como se mencionó en la sección anterior, se puede graficar esta variable usando el comando <code>barplot</code>.</p>
+<p>Como se mencionó en la sección anterior, se puede graficar esta
+variable usando el comando <code>barplot</code>.</p>
 <pre class="r"><code>barplot(prop.table(table(lapop21$countfair1r))*100)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/barras1-1.png" /><!-- --></p>
-<p>Otra opción es elaborar el gráfico de barras usando la librería <code>ggplot</code>. Una primera opción es trabajar directamente de la base de datos. El siguiente código, sin embargo, muestra una gran barra del porcentaje de casos perdidos. Esto se debe a que esta pregunta se realizó a la mitad de la muestra. Se registra NA a la otra mitad a la que no se le hizo esta pregunta.</p>
+<p><img
+src="Descriptivos2_files/figure-html/barras1-1.png" /><!-- --></p>
+<p>Otra opción es elaborar el gráfico de barras usando la librería
+<code>ggplot</code>. Una primera opción es trabajar directamente de la
+base de datos. El siguiente código, sin embargo, muestra una gran barra
+del porcentaje de casos perdidos. Esto se debe a que esta pregunta se
+realizó a la mitad de la muestra. Se registra NA a la otra mitad a la
+que no se le hizo esta pregunta.</p>
 <pre class="r"><code>library(ggplot2)
 ggplot(data=lapop21, aes(x=countfair1r))+
   geom_bar(aes(y=..prop..*100, group=1), width=0.5)+
   labs(x=&quot;¿Los votos son contados correctamente?&quot;, y=&quot;Porcentaje&quot;, 
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)+
   coord_cartesian(ylim=c(0, 100))</code></pre>
-<p><img src="Descriptivos2_files/figure-html/ggbarras1a-1.png" /><!-- --></p>
-<p>Para evitar que el gráfico presente la barra de NAs, estas observaciones se tienen que filtrar antes de producir el gráfico. Tal como indicamos en el módulo anterior, se filtra los NAs de la variable “countfair1r” con el comando <code>subset</code> y la especificación <code>!is.na</code>.</p>
+<p><img
+src="Descriptivos2_files/figure-html/ggbarras1a-1.png" /><!-- --></p>
+<p>Para evitar que el gráfico presente la barra de NAs, estas
+observaciones se tienen que filtrar antes de producir el gráfico. Tal
+como indicamos en el módulo anterior, se filtra los NAs de la variable
+“countfair1r” con el comando <code>subset</code> y la especificación
+<code>!is.na</code>.</p>
 <pre class="r"><code>ggplot(data=subset(lapop21, !is.na(countfair1r)), aes(x=countfair1r))+
   geom_bar(aes(y=..prop..*100, group=1), width=0.5)+
   labs(x=&quot;¿Los votos son contados correctamente?&quot;, y=&quot;Porcentaje&quot;, 
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)+
   coord_cartesian(ylim=c(0, 60))</code></pre>
-<p><img src="Descriptivos2_files/figure-html/ggbarras1b-1.png" /><!-- --></p>
-<p>Otra opción, que simplifica el código, es crear una tabla de frecuencias de esta variable con el comando <code>table</code> y <code>prop.table</code>. Esta table se redondea a un decimal con el comando <code>round</code> y se guarda como un dataframe con el comando <code>as.data.frame</code> en un objeto “count”. Esta tabla almacena dos columnas, la primera llamada “Var1” con las etiquetas de la variable y la segunda llamada “Freq” con los porcentajes.</p>
+<p><img
+src="Descriptivos2_files/figure-html/ggbarras1b-1.png" /><!-- --></p>
+<p>Otra opción, que simplifica el código, es crear una tabla de
+frecuencias de esta variable con el comando <code>table</code> y
+<code>prop.table</code>. Esta table se redondea a un decimal con el
+comando <code>round</code> y se guarda como un dataframe con el comando
+<code>as.data.frame</code> en un objeto “count”. Esta tabla almacena dos
+columnas, la primera llamada “Var1” con las etiquetas de la variable y
+la segunda llamada “Freq” con los porcentajes.</p>
 <pre class="r"><code>count &lt;- as.data.frame(round(prop.table(table(lapop21$countfair1r)), 3)*100)
 count</code></pre>
 <div data-pagedtable="false">
@@ -516,23 +570,46 @@ count</code></pre>
 {"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"Siempre","2":"33.4"},{"1":"Algunas veces","2":"50.3"},{"1":"Nunca","2":"16.3"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Podemos usar esta tabla “count” para producir el gráfico de barras con el comando <code>ggplot</code>. En la especificación <code>aes</code> se define que los valores de la columna “Var1” se presenten en el eje X y los valores de la columna a “Freq” en el eje Y. Se define un gráfico de barras simple, usando el comando <code>geom_bar()</code>, donde internamente se define el ancho de la barra. Con la especificación <code>labs</code> se define las etiquetas de ejes y el “caption”.</p>
+<p>Podemos usar esta tabla “count” para producir el gráfico de barras
+con el comando <code>ggplot</code>. En la especificación
+<code>aes</code> se define que los valores de la columna “Var1” se
+presenten en el eje X y los valores de la columna a “Freq” en el eje Y.
+Se define un gráfico de barras simple, usando el comando
+<code>geom_bar()</code>, donde internamente se define el ancho de la
+barra. Con la especificación <code>labs</code> se define las etiquetas
+de ejes y el “caption”.</p>
 <pre class="r"><code>ggplot(data=count, aes(x=Var1, y=Freq))+
   geom_bar(stat=&quot;identity&quot;, width=0.5)+
   geom_text(aes(label=paste(Freq, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
             position=position_stack(vjust=0.5), size=3)+
   labs(x=&quot;Los votos se cuentan justamente&quot;, y=&quot;Porcentaje&quot;, 
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/ggbarras1c-1.png" /><!-- --></p>
-<p>El gráfico 2.5 presenta una barra apilada con los datos por cada país. Primero presentaremos el gráfico de barras apilado usando los datos de toda la ronda 2021 del Barómetro de las Américas, es decir de todos los países. Para producir una barra apilada horizontal, se usará la variable “Freq” ahora en el eje X. Se usará la opción <code>fill</code> para dividir esta barra por los valores de la variable “Var1”. Como en el eje Y no se mostrará una variable se define como <code>""</code>. De la misma manera que se cambiaron las variables en los ejes, también se cambian las etiquetas en <code>labs</code>. En esta especificación se cambia la etiqueta de la leyenda con <code>fill</code>.</p>
+<p><img
+src="Descriptivos2_files/figure-html/ggbarras1c-1.png" /><!-- --></p>
+<p>El gráfico 2.5 presenta una barra apilada con los datos por cada
+país. Primero presentaremos el gráfico de barras apilado usando los
+datos de toda la ronda 2021 del Barómetro de las Américas, es decir de
+todos los países. Para producir una barra apilada horizontal, se usará
+la variable “Freq” ahora en el eje X. Se usará la opción
+<code>fill</code> para dividir esta barra por los valores de la variable
+“Var1”. Como en el eje Y no se mostrará una variable se define como
+<code>""</code>. De la misma manera que se cambiaron las variables en
+los ejes, también se cambian las etiquetas en <code>labs</code>. En esta
+especificación se cambia la etiqueta de la leyenda con
+<code>fill</code>.</p>
 <pre class="r"><code>ggplot(data=count, aes(fill=Var1, x=Freq, y=&quot;&quot;))+
   geom_bar(stat=&quot;identity&quot;, width=0.3)+
   geom_text(aes(label=paste(Freq, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
             position=position_stack(vjust=0.5), size=3)+
   labs(x=&quot;Porcentaje&quot;, y=&quot;&quot;, fill=&quot;Los votos se cuentan justamente&quot;,
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/ggbarras1d-1.png" /><!-- --></p>
-<p>Para replicar el gráfico comparativo por país se requiere crear la tabla de contingencia entre la variable “countfair” y “pais”. Esta tabla cruzada se guarda en un objeto “count_pais”. Se debe notar que el dataframe que se crea crea una fila por cada valor de “countfair” en cada país. De esta manera tenemos 3 opciones x 20 países = 60 filas.</p>
+<p><img
+src="Descriptivos2_files/figure-html/ggbarras1d-1.png" /><!-- --></p>
+<p>Para replicar el gráfico comparativo por país se requiere crear la
+tabla de contingencia entre la variable “countfair” y “pais”. Esta tabla
+cruzada se guarda en un objeto “count_pais”. Se debe notar que el
+dataframe que se crea crea una fila por cada valor de “countfair” en
+cada país. De esta manera tenemos 3 opciones x 20 países = 60 filas.</p>
 <pre class="r"><code>count_pais = as.data.frame(round(prop.table(table(lapop21$pais, lapop21$countfair1r), 1), 3)*100)
 count_pais</code></pre>
 <div data-pagedtable="false">
@@ -540,7 +617,14 @@ count_pais</code></pre>
 {"columns":[{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Var2"],"name":[2],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"1","2":"Siempre","3":"NaN"},{"1":"2","2":"Siempre","3":"NaN"},{"1":"3","2":"Siempre","3":"NaN"},{"1":"4","2":"Siempre","3":"NaN"},{"1":"5","2":"Siempre","3":"26.2"},{"1":"6","2":"Siempre","3":"52.3"},{"1":"7","2":"Siempre","3":"27.6"},{"1":"8","2":"Siempre","3":"18.1"},{"1":"9","2":"Siempre","3":"21.5"},{"1":"10","2":"Siempre","3":"24.5"},{"1":"11","2":"Siempre","3":"25.1"},{"1":"12","2":"Siempre","3":"25.9"},{"1":"13","2":"Siempre","3":"64.1"},{"1":"14","2":"Siempre","3":"80.0"},{"1":"15","2":"Siempre","3":"48.1"},{"1":"17","2":"Siempre","3":"31.5"},{"1":"21","2":"Siempre","3":"25.2"},{"1":"22","2":"Siempre","3":"NaN"},{"1":"23","2":"Siempre","3":"17.9"},{"1":"24","2":"Siempre","3":"17.0"},{"1":"1","2":"Algunas veces","3":"NaN"},{"1":"2","2":"Algunas veces","3":"NaN"},{"1":"3","2":"Algunas veces","3":"NaN"},{"1":"4","2":"Algunas veces","3":"NaN"},{"1":"5","2":"Algunas veces","3":"49.4"},{"1":"6","2":"Algunas veces","3":"40.2"},{"1":"7","2":"Algunas veces","3":"57.1"},{"1":"8","2":"Algunas veces","3":"50.4"},{"1":"9","2":"Algunas veces","3":"59.1"},{"1":"10","2":"Algunas veces","3":"59.2"},{"1":"11","2":"Algunas veces","3":"61.1"},{"1":"12","2":"Algunas veces","3":"48.3"},{"1":"13","2":"Algunas veces","3":"30.1"},{"1":"14","2":"Algunas veces","3":"16.9"},{"1":"15","2":"Algunas veces","3":"35.7"},{"1":"17","2":"Algunas veces","3":"51.0"},{"1":"21","2":"Algunas veces","3":"60.1"},{"1":"22","2":"Algunas veces","3":"NaN"},{"1":"23","2":"Algunas veces","3":"67.9"},{"1":"24","2":"Algunas veces","3":"65.1"},{"1":"1","2":"Nunca","3":"NaN"},{"1":"2","2":"Nunca","3":"NaN"},{"1":"3","2":"Nunca","3":"NaN"},{"1":"4","2":"Nunca","3":"NaN"},{"1":"5","2":"Nunca","3":"24.4"},{"1":"6","2":"Nunca","3":"7.5"},{"1":"7","2":"Nunca","3":"15.4"},{"1":"8","2":"Nunca","3":"31.5"},{"1":"9","2":"Nunca","3":"19.4"},{"1":"10","2":"Nunca","3":"16.3"},{"1":"11","2":"Nunca","3":"13.8"},{"1":"12","2":"Nunca","3":"25.8"},{"1":"13","2":"Nunca","3":"5.8"},{"1":"14","2":"Nunca","3":"3.0"},{"1":"15","2":"Nunca","3":"16.1"},{"1":"17","2":"Nunca","3":"17.5"},{"1":"21","2":"Nunca","3":"14.7"},{"1":"22","2":"Nunca","3":"NaN"},{"1":"23","2":"Nunca","3":"14.2"},{"1":"24","2":"Nunca","3":"17.8"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>En esta tabla se calculan los datos por cada valor de la variable “pais”, incluso cuando no se tiene datos de la variable “countfair”, debido a que la pregunta no se realizó en ese país. Por este motivo se tienen que eliminar las filas de los países en los que no se recogió esta información. Esto se hace con la especificación <code>[-c(filas),]</code>. Luego se crea un vector con los nombres de los países. Esta lista se repite 3 veces (15 países restantes x 3 opciones). Este vector se agrega al dataframe en una columna “pais”.</p>
+<p>En esta tabla se calculan los datos por cada valor de la variable
+“pais”, incluso cuando no se tiene datos de la variable “countfair”,
+debido a que la pregunta no se realizó en ese país. Por este motivo se
+tienen que eliminar las filas de los países en los que no se recogió
+esta información. Esto se hace con la especificación
+<code>[-c(filas),]</code>. Luego se crea un vector con los nombres de
+los países. Esta lista se repite 3 veces (15 países restantes x 3
+opciones). Este vector se agrega al dataframe en una columna “pais”.</p>
 <pre class="r"><code>count_pais = count_pais[-c(1:4,18,21:24,38,41:44,58),]
 pais = c(&quot;Nicaragua&quot;,&quot;Costa Rica&quot;, &quot;Panamá&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Bolivia&quot;, &quot;Perú&quot;,
         &quot;Paraguay&quot;, &quot;Chile&quot;, &quot;Uruguay&quot;, &quot;Brasil&quot;, &quot;Argentina&quot;, &quot;Rep. Dom.&quot;,&quot;Jamaica&quot;, &quot;Guyana&quot;, &quot;Nicaragua&quot;,&quot;Costa Rica&quot;, &quot;Panamá&quot;, &quot;Colombia&quot;, &quot;Ecuador&quot;, &quot;Bolivia&quot;, &quot;Perú&quot;,
@@ -553,18 +637,26 @@ count_pais</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Var1"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Var2"],"name":[2],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["pais"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"5","2":"Siempre","3":"26.2","4":"Nicaragua","_rn_":"5"},{"1":"6","2":"Siempre","3":"52.3","4":"Costa Rica","_rn_":"6"},{"1":"7","2":"Siempre","3":"27.6","4":"Panamá","_rn_":"7"},{"1":"8","2":"Siempre","3":"18.1","4":"Colombia","_rn_":"8"},{"1":"9","2":"Siempre","3":"21.5","4":"Ecuador","_rn_":"9"},{"1":"10","2":"Siempre","3":"24.5","4":"Bolivia","_rn_":"10"},{"1":"11","2":"Siempre","3":"25.1","4":"Perú","_rn_":"11"},{"1":"12","2":"Siempre","3":"25.9","4":"Paraguay","_rn_":"12"},{"1":"13","2":"Siempre","3":"64.1","4":"Chile","_rn_":"13"},{"1":"14","2":"Siempre","3":"80.0","4":"Uruguay","_rn_":"14"},{"1":"15","2":"Siempre","3":"48.1","4":"Brasil","_rn_":"15"},{"1":"17","2":"Siempre","3":"31.5","4":"Argentina","_rn_":"16"},{"1":"21","2":"Siempre","3":"25.2","4":"Rep. Dom.","_rn_":"17"},{"1":"23","2":"Siempre","3":"17.9","4":"Jamaica","_rn_":"19"},{"1":"24","2":"Siempre","3":"17.0","4":"Guyana","_rn_":"20"},{"1":"5","2":"Algunas veces","3":"49.4","4":"Nicaragua","_rn_":"25"},{"1":"6","2":"Algunas veces","3":"40.2","4":"Costa Rica","_rn_":"26"},{"1":"7","2":"Algunas veces","3":"57.1","4":"Panamá","_rn_":"27"},{"1":"8","2":"Algunas veces","3":"50.4","4":"Colombia","_rn_":"28"},{"1":"9","2":"Algunas veces","3":"59.1","4":"Ecuador","_rn_":"29"},{"1":"10","2":"Algunas veces","3":"59.2","4":"Bolivia","_rn_":"30"},{"1":"11","2":"Algunas veces","3":"61.1","4":"Perú","_rn_":"31"},{"1":"12","2":"Algunas veces","3":"48.3","4":"Paraguay","_rn_":"32"},{"1":"13","2":"Algunas veces","3":"30.1","4":"Chile","_rn_":"33"},{"1":"14","2":"Algunas veces","3":"16.9","4":"Uruguay","_rn_":"34"},{"1":"15","2":"Algunas veces","3":"35.7","4":"Brasil","_rn_":"35"},{"1":"17","2":"Algunas veces","3":"51.0","4":"Argentina","_rn_":"36"},{"1":"21","2":"Algunas veces","3":"60.1","4":"Rep. Dom.","_rn_":"37"},{"1":"23","2":"Algunas veces","3":"67.9","4":"Jamaica","_rn_":"39"},{"1":"24","2":"Algunas veces","3":"65.1","4":"Guyana","_rn_":"40"},{"1":"5","2":"Nunca","3":"24.4","4":"Nicaragua","_rn_":"45"},{"1":"6","2":"Nunca","3":"7.5","4":"Costa Rica","_rn_":"46"},{"1":"7","2":"Nunca","3":"15.4","4":"Panamá","_rn_":"47"},{"1":"8","2":"Nunca","3":"31.5","4":"Colombia","_rn_":"48"},{"1":"9","2":"Nunca","3":"19.4","4":"Ecuador","_rn_":"49"},{"1":"10","2":"Nunca","3":"16.3","4":"Bolivia","_rn_":"50"},{"1":"11","2":"Nunca","3":"13.8","4":"Perú","_rn_":"51"},{"1":"12","2":"Nunca","3":"25.8","4":"Paraguay","_rn_":"52"},{"1":"13","2":"Nunca","3":"5.8","4":"Chile","_rn_":"53"},{"1":"14","2":"Nunca","3":"3.0","4":"Uruguay","_rn_":"54"},{"1":"15","2":"Nunca","3":"16.1","4":"Brasil","_rn_":"55"},{"1":"17","2":"Nunca","3":"17.5","4":"Argentina","_rn_":"56"},{"1":"21","2":"Nunca","3":"14.7","4":"Rep. Dom.","_rn_":"57"},{"1":"23","2":"Nunca","3":"14.2","4":"Jamaica","_rn_":"59"},{"1":"24","2":"Nunca","3":"17.8","4":"Guyana","_rn_":"60"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Con este dataframe “count_pais” ya tenemos los elementos para replicar el gráfico de barras apiladas. En la especificación <code>aes</code> se define que en el eje X se grafiquen los porcentajes, en el eje Y los países y cada barra se divida por la columna Var2.</p>
+<p>Con este dataframe “count_pais” ya tenemos los elementos para
+replicar el gráfico de barras apiladas. En la especificación
+<code>aes</code> se define que en el eje X se grafiquen los porcentajes,
+en el eje Y los países y cada barra se divida por la columna Var2.</p>
 <pre class="r"><code>ggplot(data=count_pais, aes(x=Freq, y=pais, fill=Var2))+
   geom_bar(stat=&quot;identity&quot;, width=0.3)+
   geom_text(aes(label=paste(Freq, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
             position=position_stack(vjust=0.5), size=2)+
   labs(x=&quot;Porcentaje&quot;, y=&quot;País&quot;, fill=&quot;Los votos se cuentan justamente&quot;,
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/ggbarras1e-1.png" /><!-- --></p>
+<p><img
+src="Descriptivos2_files/figure-html/ggbarras1e-1.png" /><!-- --></p>
 </div>
 <div id="frecuencia-de-uso-de-redes-sociales" class="section level1">
 <h1>Frecuencia de uso de redes sociales</h1>
-<p>En la ronda 2018/19 se evaluó el uso de redes sociales. De esta manera, se analizaron las variables SMEDIA2. ¿Con qué frecuencia ve contenido en Facebook?, SMEDIA5.¿Con qué frecuencia ve contenido en Twitter? y SMEDIA8.¿Con qué frecuencia usa Whatsapp? Estas variables tienen como opciones de respuesta:</p>
+<p>En la ronda 2018/19 se evaluó el uso de redes sociales. De esta
+manera, se analizaron las variables SMEDIA2. ¿Con qué frecuencia ve
+contenido en Facebook?, SMEDIA5.¿Con qué frecuencia ve contenido en
+Twitter? y SMEDIA8.¿Con qué frecuencia usa Whatsapp? Estas variables
+tienen como opciones de respuesta:</p>
 <ol style="list-style-type: decimal">
 <li>Diariamente</li>
 <li>Algunas veces a la semana</li>
@@ -572,18 +664,27 @@ count_pais</code></pre>
 <li>Algunas veces al año</li>
 <li>Nunca</li>
 </ol>
-<p>De la misma manera que con las variables nominales, estas variables tienen que ser declaradas como “factor” en nuevas variables.</p>
+<p>De la misma manera que con las variables nominales, estas variables
+tienen que ser declaradas como “factor” en nuevas variables.</p>
 <pre class="r"><code>lapop18$smedia2r = as.factor(lapop18$smedia2)
 lapop18$smedia5r = as.factor(lapop18$smedia5)
 lapop18$smedia8r = as.factor(lapop18$smedia8)</code></pre>
-<p>La nota a pie 15 del reporte indica que “los entrevistados que reportan nunca ver contenido en Facebook y Twitter, y quienes indican que nunca usan Whatsapp, son considerados como no usuarios de estas redes sociales” (p. 64). Por este motivo, el gráfico 3.3 de frecuencia de uso de redes sociales (pag. 57) solo incluyen las categorías “Diariamente”, “Algunas veces a la semana”, “Algunas veces al mes” y “Algunas veces al año”. Se excluya la categoría “Nunca”.</p>
+<p>La nota a pie 15 del reporte indica que “los entrevistados que
+reportan nunca ver contenido en Facebook y Twitter, y quienes indican
+que nunca usan Whatsapp, son considerados como no usuarios de estas
+redes sociales” (p. 64). Por este motivo, el gráfico 3.3 de frecuencia
+de uso de redes sociales (pag. 57) solo incluyen las categorías
+“Diariamente”, “Algunas veces a la semana”, “Algunas veces al mes” y
+“Algunas veces al año”. Se excluya la categoría “Nunca”.</p>
 <p><img src="Graf3.3.png" width="398" /></p>
-<p>En las nuevas variables vamos a declarar el valor 5, correspondiente a “nunca”, como “NA”, es decir, como valor perdido en R.</p>
+<p>En las nuevas variables vamos a declarar el valor 5, correspondiente
+a “nunca”, como “NA”, es decir, como valor perdido en R.</p>
 <pre class="r"><code>library(car)
 lapop18$smedia2r = car::recode(lapop18$smedia2r, &quot;5=NA&quot;)
 lapop18$smedia5r = car::recode(lapop18$smedia5r, &quot;5=NA&quot;)
 lapop18$smedia8r = car::recode(lapop18$smedia8r, &quot;5=NA&quot;)</code></pre>
-<p>Luego, estas variables se tienen que etiquetar y generar las tablas descriptivas básicas, con el comando <code>table</code>.</p>
+<p>Luego, estas variables se tienen que etiquetar y generar las tablas
+descriptivas básicas, con el comando <code>table</code>.</p>
 <pre class="r"><code>levels(lapop18$smedia2r) &lt;- c(&quot;Diariamente&quot;, &quot;Algunas veces a la semana&quot;, 
                             &quot;Algunas veces al mes&quot;, &quot;Algunas veces al año&quot;)
 levels(lapop18$smedia5r) &lt;- c(&quot;Diariamente&quot;, &quot;Algunas veces a la semana&quot;, 
@@ -608,7 +709,10 @@ table(lapop18$smedia2r)</code></pre>
 ##                     14151                      2646                       495 
 ##      Algunas veces al año 
 ##                        50</code></pre>
-<p>Para calcular las tablas con porcentajes, redondeados a un decimal, usamos <code>prop.table</code> y <code>round</code>. Nuevamente, estos porcentajes no son exactamente iguales a los presentados en el reporte debido a que estos cálculos no incluyen el factor de expansión.</p>
+<p>Para calcular las tablas con porcentajes, redondeados a un decimal,
+usamos <code>prop.table</code> y <code>round</code>. Nuevamente, estos
+porcentajes no son exactamente iguales a los presentados en el reporte
+debido a que estos cálculos no incluyen el factor de expansión.</p>
 <pre class="r"><code>round(prop.table(table(lapop18$smedia2r)), 3)*100</code></pre>
 <pre><code>## 
 ##               Diariamente Algunas veces a la semana      Algunas veces al mes 
@@ -627,7 +731,12 @@ table(lapop18$smedia2r)</code></pre>
 ##                      81.6                      15.3                       2.9 
 ##      Algunas veces al año 
 ##                       0.3</code></pre>
-<p>Para presentar todos los datos en una tabla conjunta, se guarda la tabla de cada red social en un nuevo objeto de R (llamado como cada red social). Luego, todas estas tablas parciales, que contienen las mismas opciones de respuesta, se unen como filas con el comando <code>rbind</code>. Esta nueva tabla conjunta se guarda como un nuevo dataframe “tabla”.</p>
+<p>Para presentar todos los datos en una tabla conjunta, se guarda la
+tabla de cada red social en un nuevo objeto de R (llamado como cada red
+social). Luego, todas estas tablas parciales, que contienen las mismas
+opciones de respuesta, se unen como filas con el comando
+<code>rbind</code>. Esta nueva tabla conjunta se guarda como un nuevo
+dataframe “tabla”.</p>
 <pre class="r"><code>Facebook &lt;- round(prop.table(table(lapop18$smedia2r)), 3)*100
 Twitter &lt;- round(prop.table(table(lapop18$smedia5r)), 3)*100
 Whatsapp &lt;- round(prop.table(table(lapop18$smedia8r)), 3)*100
@@ -638,7 +747,9 @@ tabla</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Diariamente"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Algunas veces a la semana"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Algunas veces al mes"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Algunas veces al año"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"57.1","2":"32.6","3":"8.5","4":"1.9","_rn_":"Facebook"},{"1":"37.2","2":"34.1","3":"19.7","4":"9.0","_rn_":"Twitter"},{"1":"81.6","2":"15.3","3":"2.9","4":"0.3","_rn_":"Whatsapp"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Para tener una mejor presentación de la tabla, se puede usar el comando <code>kable</code> del paquete <code>knitr</code> o el comando <code>formattable</code> del paquete del mismo nombre.</p>
+<p>Para tener una mejor presentación de la tabla, se puede usar el
+comando <code>kable</code> del paquete <code>knitr</code> o el comando
+<code>formattable</code> del paquete del mismo nombre.</p>
 <pre class="r"><code>library(knitr)
 kable(head(tabla), format=&quot;markdown&quot;, digits=1)</code></pre>
 <table>
@@ -757,9 +868,26 @@ Whatsapp
 </tr>
 </tbody>
 </table>
-<p>Para graficar esta variable no vamos a seguir el mismo procedimiento que en el módulo anterior. En este módulo vamos a trabajar directamente desde la tabla creada con los porcentajes de las tres redes sociales. Esta tabla tiene a cada red social en las filas y las opciones de respuesta en las columnas. Para poder graficar estos datos se requiere que las redes sociales estén en las columnas y las opciones de respuesta en las filas, por lo que en primer lugar vamos a transponer esta tabla. Este procedimiento lo hacemos usando la librería <code>data.table</code> y el comando <code>transpose</code>. Estos datos transpuestos los guardamos en una nueva tabla “tabla_tr”.</p>
-<p>Este comando transpone los datos, pero deja sin nombrar las filas y columnas. Primero se nombran las columnas con el comando <code>colnames</code> usando los nombres de las filas de “tabla”. Luego se nombran las filas con el comando <code>rownames</code> usando los nombres de las columnas de “tabla”.</p>
-<p>Finalmente, requerimos una columna dentro de “tabla_tr” que incluya las etiquetas de respuesta de las preguntas de smedia. Estas etiquetas están como nombres de filas. Para incluirlas como una variable más, se agrega una variable “tabla_tr$lab” al que se le asigna los nombres de las filas con <code>row.names</code>.</p>
+<p>Para graficar esta variable no vamos a seguir el mismo procedimiento
+que en el módulo anterior. En este módulo vamos a trabajar directamente
+desde la tabla creada con los porcentajes de las tres redes sociales.
+Esta tabla tiene a cada red social en las filas y las opciones de
+respuesta en las columnas. Para poder graficar estos datos se requiere
+que las redes sociales estén en las columnas y las opciones de respuesta
+en las filas, por lo que en primer lugar vamos a transponer esta tabla.
+Este procedimiento lo hacemos usando la librería <code>data.table</code>
+y el comando <code>transpose</code>. Estos datos transpuestos los
+guardamos en una nueva tabla “tabla_tr”.</p>
+<p>Este comando transpone los datos, pero deja sin nombrar las filas y
+columnas. Primero se nombran las columnas con el comando
+<code>colnames</code> usando los nombres de las filas de “tabla”. Luego
+se nombran las filas con el comando <code>rownames</code> usando los
+nombres de las columnas de “tabla”.</p>
+<p>Finalmente, requerimos una columna dentro de “tabla_tr” que incluya
+las etiquetas de respuesta de las preguntas de smedia. Estas etiquetas
+están como nombres de filas. Para incluirlas como una variable más, se
+agrega una variable “tabla_tr$lab” al que se le asigna los nombres de
+las filas con <code>row.names</code>.</p>
 <pre class="r"><code>library(data.table)
 tabla_tr = data.frame(t(tabla[]))
 colnames(tabla_tr) = rownames(tabla)
@@ -771,7 +899,24 @@ tabla_tr</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Facebook"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Twitter"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Whatsapp"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["lab"],"name":[4],"type":["chr"],"align":["left"]}],"data":[{"1":"57.1","2":"37.2","3":"81.6","4":"Diariamente","_rn_":"Diariamente"},{"1":"32.6","2":"34.1","3":"15.3","4":"Algunas veces a la semana","_rn_":"Algunas veces a la semana"},{"1":"8.5","2":"19.7","3":"2.9","4":"Algunas veces al mes","_rn_":"Algunas veces al mes"},{"1":"1.9","2":"9.0","3":"0.3","4":"Algunas veces al año","_rn_":"Algunas veces al año"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>En segundo lugar, se activa la librería <code>ggplot2</code> para graficar los datos guardados en “tabla_tr” con el comando <code>ggplot</code>. Dentro de este comando se especifica que se trabajará con el dataframe “tabla_tr” (no con lapop18) y se especifica la “estética”, es decir que en el eje X no se incluirá una variable, que en el eje Y se incluirá los datos de “Facebook” del dataframe “tabla_tr” y que se dividirá por categorías de la variable guardadas en “lab”. Luego se añade la capa <code>geom_bar</code> para indicar que se graficará en barras de ancho (<code>width</code>) 1 y que la barra replicará lo especificado en la estética (<code>stat="identity"</code>). Con <code>geom_text</code> se agrega las etiquetas de los datos, con el símbolo de porcentaje, y se especifica la posición del texto con <code>position=position_stack(…)</code> y el tamaño con <code>size=3</code>. Con <code>coord_polar</code> se transforma las barras en un gráfico circular de sectores. Finalmente, se define el “tema” con <code>theme_void</code> indicando un fondo blanco y se modifica la etiqueta de la leyenda con <code>scale_fill_discrete</code>.</p>
+<p>En segundo lugar, se activa la librería <code>ggplot2</code> para
+graficar los datos guardados en “tabla_tr” con el comando
+<code>ggplot</code>. Dentro de este comando se especifica que se
+trabajará con el dataframe “tabla_tr” (no con lapop18) y se especifica
+la “estética”, es decir que en el eje X no se incluirá una variable, que
+en el eje Y se incluirá los datos de “Facebook” del dataframe “tabla_tr”
+y que se dividirá por categorías de la variable guardadas en “lab”.
+Luego se añade la capa <code>geom_bar</code> para indicar que se
+graficará en barras de ancho (<code>width</code>) 1 y que la barra
+replicará lo especificado en la estética (<code>stat="identity"</code>).
+Con <code>geom_text</code> se agrega las etiquetas de los datos, con el
+símbolo de porcentaje, y se especifica la posición del texto con
+<code>position=position_stack(…)</code> y el tamaño con
+<code>size=3</code>. Con <code>coord_polar</code> se transforma las
+barras en un gráfico circular de sectores. Finalmente, se define el
+“tema” con <code>theme_void</code> indicando un fondo blanco y se
+modifica la etiqueta de la leyenda con
+<code>scale_fill_discrete</code>.</p>
 <pre class="r"><code>library(ggplot2)
 ggplot(data=tabla_tr, aes(x=&quot;&quot;, y=Facebook, fill=lab))+
   geom_bar(width=1, stat=&quot;identity&quot;)+
@@ -780,8 +925,14 @@ ggplot(data=tabla_tr, aes(x=&quot;&quot;, y=Facebook, fill=lab))+
   coord_polar(&quot;y&quot;, start=0)+
   theme_void()+
   scale_fill_discrete(name=&quot;Frecuencia de uso de Facebook&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/grafico%20pie-1.png" /><!-- --></p>
-<p>En el gráfico 3.3 del reporte “El Pulso de la Democracia” se presenta un gráfico circular tipo “donna”. Para reproducir exactamente este tipo de gráfico, se tiene que acomodar unos detalles de la sintaxis anterior. Se establece “x=2” en la “estética” y se establece límites en el eje X, entre 0.5 y 2.5, para que cuando se rote el eje, se cree el “hueco” dentro del círculo.</p>
+<p><img
+src="Descriptivos2_files/figure-html/grafico%20pie-1.png" /><!-- --></p>
+<p>En el gráfico 3.3 del reporte “El Pulso de la Democracia” se presenta
+un gráfico circular tipo “donna”. Para reproducir exactamente este tipo
+de gráfico, se tiene que acomodar unos detalles de la sintaxis anterior.
+Se establece “x=2” en la “estética” y se establece límites en el eje X,
+entre 0.5 y 2.5, para que cuando se rote el eje, se cree el “hueco”
+dentro del círculo.</p>
 <pre class="r"><code>ggplot(data=tabla_tr, aes(x=2, y=Facebook, fill=lab))+
   geom_bar(stat=&quot;identity&quot;)+
   geom_text(aes(label=paste(Facebook, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
@@ -793,21 +944,48 @@ ggplot(data=tabla_tr, aes(x=&quot;&quot;, y=Facebook, fill=lab))+
         caption=&quot;Barómetro de las Américas por LAPOP, 2018/19&quot;)+
   xlim(0.5, 2.5)</code></pre>
 <p><img src="Descriptivos2_files/figure-html/dona-1.png" /><!-- --></p>
-<p>Para replicar el gráfico de barras, se hacen algunas modificaciones en el código anterior. Por ejemplo, en la “estética”, ahora se indica que en el eje X va la variable “smedia2r” y en el eje Y el porcentaje “per”. Se elimina, además, la especificación de las coordenadas polares. Se agrega un título al gráfico, etiquetas a los ejes y un caption con la especificación <code>labs</code>. Finalmente, se define el eje Y entre 0 y 60 con la especificación <code>coord_cartesian</code>. Un tema importante es que este gráfico también se puede guardar en un objeto en R, que llamaremos “graf1”.</p>
+<p>Para replicar el gráfico de barras, se hacen algunas modificaciones
+en el código anterior. Por ejemplo, en la “estética”, ahora se indica
+que en el eje X va la variable “smedia2r” y en el eje Y el porcentaje
+“per”. Se elimina, además, la especificación de las coordenadas polares.
+Se agrega un título al gráfico, etiquetas a los ejes y un caption con la
+especificación <code>labs</code>. Finalmente, se define el eje Y entre 0
+y 60 con la especificación <code>coord_cartesian</code>. Un tema
+importante es que este gráfico también se puede guardar en un objeto en
+R, que llamaremos “graf1”.</p>
 <pre class="r"><code>graf1 &lt;- ggplot(tabla_tr, aes(x=lab, y=Facebook))+
   geom_bar(stat=&quot;identity&quot;,  width=0.5)+
   geom_text(aes(label=paste(Facebook, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;black&quot;, vjust=-0.5)+
   labs(title=&quot;Frecuencia de uso de redes sociales&quot;, x=&quot;Frecuencia de uso de Facebook&quot;, y=&quot;Porcentaje&quot;, caption=&quot;Barómetro de las Américas por LAPOP, 2018/19&quot;)+
   coord_cartesian(ylim=c(0, 60))
 graf1</code></pre>
-<p><img src="Descriptivos2_files/figure-html/grafico%20de%20barras-1.png" /><!-- --></p>
-<p>Guardar un gráfico en un objeto nos permite luego incorporar más capas o mejoras en el gráfico. El gráfico anterior, por ejemplo, tiene las etiquetas de “Frecuencia de uso” en una sola línea, por lo se podrían trasponer. Para mejorar esta visualización se puede inclinar estas etiquetas, pero si se quisiera mantener la horizontalidad para facilitar la lectura, lo que se puede hacer es separar las etiquetas largas en dos o más líneas. Esto se puede hacer, por ejemplo, creando un vector con las nuevas etiquetas. Las etiquetas largas se pueden partir en líneas mediante la inclusión de <code>\n</code> entre los textos que se quiera separar. Luego, al objeto “graf1” se le puede agregar una nueva capa para reemplazar las etiquetas con las nuevas divididas en líneas. Esto se hace con la especificación <code>scale_x_discrete</code> donde se indica que las etiquetas usen el vector creado.</p>
+<p><img
+src="Descriptivos2_files/figure-html/grafico%20de%20barras-1.png" /><!-- --></p>
+<p>Guardar un gráfico en un objeto nos permite luego incorporar más
+capas o mejoras en el gráfico. El gráfico anterior, por ejemplo, tiene
+las etiquetas de “Frecuencia de uso” en una sola línea, por lo se
+podrían trasponer. Para mejorar esta visualización se puede inclinar
+estas etiquetas, pero si se quisiera mantener la horizontalidad para
+facilitar la lectura, lo que se puede hacer es separar las etiquetas
+largas en dos o más líneas. Esto se puede hacer, por ejemplo, creando un
+vector con las nuevas etiquetas. Las etiquetas largas se pueden partir
+en líneas mediante la inclusión de <code>\n</code> entre los textos que
+se quiera separar. Luego, al objeto “graf1” se le puede agregar una
+nueva capa para reemplazar las etiquetas con las nuevas divididas en
+líneas. Esto se hace con la especificación <code>scale_x_discrete</code>
+donde se indica que las etiquetas usen el vector creado.</p>
 <pre class="r"><code>etiq &lt;- c(&quot;Diariamente&quot;, &quot;Algunas veces\na la semana&quot;, &quot;Algunas veces\nal mes&quot;, 
           &quot;Algunas veces\nal año&quot;)
 graf1 +
   scale_x_discrete(labels=etiq)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/etiquetas%20superpuestas-1.png" /><!-- --></p>
-<p>De esta manera el gráfico queda más legible. Hasta aquí se ha replicado las tablas y gráficos que se usaron con las variables nominales, ahora usando variables ordinales. Si se quiere replicar el gráfico circular de las otras redes sociales, se puede ejecutar el mismo código, pero cambiando la columna de la red social. Para Twitter, por ejemplo, se tendría.</p>
+<p><img
+src="Descriptivos2_files/figure-html/etiquetas%20superpuestas-1.png" /><!-- --></p>
+<p>De esta manera el gráfico queda más legible. Hasta aquí se ha
+replicado las tablas y gráficos que se usaron con las variables
+nominales, ahora usando variables ordinales. Si se quiere replicar el
+gráfico circular de las otras redes sociales, se puede ejecutar el mismo
+código, pero cambiando la columna de la red social. Para Twitter, por
+ejemplo, se tendría.</p>
 <pre class="r"><code>graf2 &lt;- ggplot(data=tabla_tr, aes(x=2, y=Twitter, fill=lab))+
   geom_bar(stat=&quot;identity&quot;)+
   geom_text(aes(label=paste(Twitter, &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
@@ -819,12 +997,21 @@ graf1 +
         caption=&quot;Barómetro de las Américas por LAPOP, 2018/19&quot;)+
   xlim(0.5, 2.5)
 graf2</code></pre>
-<p><img src="Descriptivos2_files/figure-html/grafico%20Twitter-1.png" /><!-- --></p>
+<p><img
+src="Descriptivos2_files/figure-html/grafico%20Twitter-1.png" /><!-- --></p>
 <div id="cruce-de-variables" class="section level2">
 <h2>Cruce de variables</h2>
-<p>En la tabla 3.1 (pag. 55) del reporte “El pulso de la democracia” se presenta los porcentajes de uso de las redes sociales por país. Luego, en la página 56 se presenta un cuadro con el porcentaje de usuarios de redes sociales por características sociodemográficas, por ejemplo, urbano/rural, hombre, edad promedio, riqueza promedio y años de estudio.</p>
+<p>En la tabla 3.1 (pag. 55) del reporte “El pulso de la democracia” se
+presenta los porcentajes de uso de las redes sociales por país. Luego,
+en la página 56 se presenta un cuadro con el porcentaje de usuarios de
+redes sociales por características sociodemográficas, por ejemplo,
+urbano/rural, hombre, edad promedio, riqueza promedio y años de
+estudio.</p>
 <p><img src="tabla3.1.png" width="481" /></p>
-<p>Empezaremos replicando los datos generales del uso de redes sociales que se reporta en el gráfico 3.1. Para replicar esta tabla primero se tiene que definir la variable “pais” y las variables de uso de redes sociales (smedia1, smedia4 y smedia7).</p>
+<p>Empezaremos replicando los datos generales del uso de redes sociales
+que se reporta en el gráfico 3.1. Para replicar esta tabla primero se
+tiene que definir la variable “pais” y las variables de uso de redes
+sociales (smedia1, smedia4 y smedia7).</p>
 <pre class="r"><code>lapop18$smedia1r = as.factor(lapop18$smedia1)
 lapop18$smedia4r = as.factor(lapop18$smedia4)
 lapop18$smedia7r = as.factor(lapop18$smedia7)
@@ -849,11 +1036,14 @@ table(lapop18$pais) #País</code></pre>
 <pre><code>## 
 ##    Sí    No 
 ## 15389 11573</code></pre>
-<p>Sin embargo, la variable “usuario” de cada red social se calcula como condición de dos variables, como se vio en el documento sobre manejo de datos, con el siguiente código.</p>
+<p>Sin embargo, la variable “usuario” de cada red social se calcula como
+condición de dos variables, como se vio en el documento sobre manejo de
+datos, con el siguiente código.</p>
 <pre class="r"><code>lapop18$fb_user &lt;- ifelse(lapop18$smedia1==1 &amp; lapop18$smedia2&lt;=4, 1, 0)
 lapop18$tw_user &lt;- ifelse(lapop18$smedia4==1 &amp; lapop18$smedia5&lt;=4, 1, 0)
 lapop18$wa_user &lt;- ifelse(lapop18$smedia7==1 &amp; lapop18$smedia8&lt;=4, 1, 0)</code></pre>
-<p>Esta variables son graficadas en el reporte en el Gráfico 3.1. Para reproducir estos datos, se puede describir estas variables.</p>
+<p>Esta variables son graficadas en el reporte en el Gráfico 3.1. Para
+reproducir estos datos, se puede describir estas variables.</p>
 <pre class="r"><code>prop.table(table(lapop18$fb_user))*100</code></pre>
 <pre><code>## 
 ##       0       1 
@@ -866,8 +1056,21 @@ lapop18$wa_user &lt;- ifelse(lapop18$smedia7==1 &amp; lapop18$smedia8&lt;=4, 1, 
 <pre><code>## 
 ##        0        1 
 ## 35.76561 64.23439</code></pre>
-<p>Como en gráficos anteriores, con estos datos se puede crear un dataframe que se utilizaría para hacer los gráficos circulares mostrados en el reporte.</p>
-<p>Para replicar el cuadro de uso de redes sociales por país, primero, se crean las tablas bivariadas con el porcentaje de los que usan y el porcentaje de los que no usan cada red social en cada país. Estas tablas se guardan en objetos de R. Luego se unen estos objetos usando los comandos <code>cbind</code> para juntar las columnas y <code>as.data.frame</code> para unir las tablas como un dataframe. Esta tabla presenta también los porcentajes de los que No usan estas redes sociales. Para presentar una tabla que incluya solo a los que sí usan las redes sociales, se eliminan estas columnas, usando la especificación <code>[, c(-1,-3,-5)]</code>, que indica que se quiere eliminar las columnas 1, 3 y 5.Finalmente, se cambia el nombre de las columnas del dataframe.</p>
+<p>Como en gráficos anteriores, con estos datos se puede crear un
+dataframe que se utilizaría para hacer los gráficos circulares mostrados
+en el reporte.</p>
+<p>Para replicar el cuadro de uso de redes sociales por país, primero,
+se crean las tablas bivariadas con el porcentaje de los que usan y el
+porcentaje de los que no usan cada red social en cada país. Estas tablas
+se guardan en objetos de R. Luego se unen estos objetos usando los
+comandos <code>cbind</code> para juntar las columnas y
+<code>as.data.frame</code> para unir las tablas como un dataframe. Esta
+tabla presenta también los porcentajes de los que No usan estas redes
+sociales. Para presentar una tabla que incluya solo a los que sí usan
+las redes sociales, se eliminan estas columnas, usando la especificación
+<code>[, c(-1,-3,-5)]</code>, que indica que se quiere eliminar las
+columnas 1, 3 y 5.Finalmente, se cambia el nombre de las columnas del
+dataframe.</p>
 <pre class="r"><code>fbpais &lt;- round(prop.table(table(lapop18$pais, lapop18$fb_user), 1), 3)*100
 twpais &lt;- round(prop.table(table(lapop18$pais, lapop18$tw_user), 1), 3)*100
 whpais &lt;- round(prop.table(table(lapop18$pais, lapop18$wa_user), 1), 3)*100
@@ -881,7 +1084,9 @@ tablapais</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Usa Facebook"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Usa Twitter"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Usa Whatsapp"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"47.9","2":"7.6","3":"55.1","_rn_":"México"},{"1":"43.2","2":"6.5","3":"47.6","_rn_":"Guatemala"},{"1":"56.2","2":"6.7","3":"56.0","_rn_":"El Salvador"},{"1":"44.6","2":"4.8","3":"46.9","_rn_":"Honduras"},{"1":"48.1","2":"5.8","3":"47.7","_rn_":"Nicaragua"},{"1":"66.6","2":"8.0","3":"81.6","_rn_":"Costa Rica"},{"1":"34.6","2":"5.8","3":"56.7","_rn_":"Panamá"},{"1":"60.0","2":"10.7","3":"63.5","_rn_":"Colombia"},{"1":"66.9","2":"11.2","3":"60.2","_rn_":"Ecuador"},{"1":"57.9","2":"5.6","3":"63.5","_rn_":"Bolivia"},{"1":"61.4","2":"7.6","3":"58.6","_rn_":"Perú"},{"1":"60.5","2":"8.0","3":"69.2","_rn_":"Paraguay"},{"1":"62.9","2":"9.2","3":"75.5","_rn_":"Chile"},{"1":"66.5","2":"9.8","3":"80.0","_rn_":"Uruguay"},{"1":"59.2","2":"7.9","3":"74.9","_rn_":"Brasil"},{"1":"67.3","2":"12.9","3":"78.9","_rn_":"Argentina"},{"1":"61.9","2":"9.5","3":"68.2","_rn_":"Rep. Dom."},{"1":"45.9","2":"4.5","3":"68.1","_rn_":"Jamaica"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Para tener una mejor presentación de la tabla se tienen dos alternativas: la primera con la librería <code>knitr</code> y la otra con la librería <code>formattable</code>.</p>
+<p>Para tener una mejor presentación de la tabla se tienen dos
+alternativas: la primera con la librería <code>knitr</code> y la otra
+con la librería <code>formattable</code>.</p>
 <pre class="r"><code>library(knitr)
 kable(head(tablapais), format=&quot;markdown&quot;, digits=1)</code></pre>
 <table>
@@ -1208,25 +1413,38 @@ Jamaica
 </div>
 <div id="cruce-con-variables-sociodemográficas" class="section level2">
 <h2>Cruce con variables sociodemográficas</h2>
-<p>En la página 56 del reporte “El pulso de la democracia” se presenta los resultados del cruce entre las variables uso de redes sociales y variables sociodemográficas como urbano/rural, sexo, edad, riqueza y años de educación.</p>
+<p>En la página 56 del reporte “El pulso de la democracia” se presenta
+los resultados del cruce entre las variables uso de redes sociales y
+variables sociodemográficas como urbano/rural, sexo, edad, riqueza y
+años de educación.</p>
 <p><img src="Tabla3.2.png" width="663" /></p>
-<p>La variable “q1” registra el género del entrevistado. Esta variable está codificada de la siguiente manera:</p>
+<p>La variable “q1” registra el género del entrevistado. Esta variable
+está codificada de la siguiente manera:</p>
 <ol style="list-style-type: decimal">
 <li>Hombre</li>
 <li>Mujer</li>
 </ol>
-<p>Para construir una variable “dummy” llamada “hombre”, de tal manera que hombre sea 1 y mujer sea 0, una forma de hacerlo es de manera algebraica (2-variable q1). De esta manera, ahora los hombres mantiene el valor 1 (2-1) y las mujeres pasar a ser 0 (2-2). En este caso, la nueva variable “hombre” se crea como una una variable numérica. Vamos a mantener a la variable como “num” para, más abajo, poder calcular la media de esta variable (cosa que no se puede hacer de una variable declarada como factor).</p>
+<p>Para construir una variable “dummy” llamada “hombre”, de tal manera
+que hombre sea 1 y mujer sea 0, una forma de hacerlo es de manera
+algebraica (2-variable q1). De esta manera, ahora los hombres mantiene
+el valor 1 (2-1) y las mujeres pasar a ser 0 (2-2). En este caso, la
+nueva variable “hombre” se crea como una una variable numérica. Vamos a
+mantener a la variable como “num” para, más abajo, poder calcular la
+media de esta variable (cosa que no se puede hacer de una variable
+declarada como factor).</p>
 <pre class="r"><code>lapop18$hombre &lt;- 2-lapop18$q1
 table(lapop18$hombre)</code></pre>
 <pre><code>## 
 ##     0     1 
 ## 14084 13943</code></pre>
-<p>La variable urbano/rural se llama “ur” en la base de datos y está codificada de la siguiente manera:</p>
+<p>La variable urbano/rural se llama “ur” en la base de datos y está
+codificada de la siguiente manera:</p>
 <ol style="list-style-type: decimal">
 <li>Urbano</li>
 <li>Rural</li>
 </ol>
-<p>De la misma manera que con género, se usa la fórmula 2- variable ur, pero esta variable sí se convierte en factor y se etiqueta.</p>
+<p>De la misma manera que con género, se usa la fórmula 2- variable ur,
+pero esta variable sí se convierte en factor y se etiqueta.</p>
 <pre class="r"><code>lapop18$urban &lt;- 2-lapop18$ur
 lapop18$urban = as.factor(lapop18$urban)
 levels(lapop18$urban) &lt;- c(&quot;Rural&quot;, &quot;Urbano&quot;)
@@ -1234,7 +1452,26 @@ table(lapop18$urban)</code></pre>
 <pre><code>## 
 ##  Rural Urbano 
 ##   8089  19953</code></pre>
-<p>Se presentará las tablas cruzadas del uso de redes sociales por alguno de las variable sociodemográficas, para entender mejor cómo se construye la tabla general. Por ejemplo, el reporte muestra en la Tabla 3.2, luego de la columna de población general, las columnas para usuarios y no usuarios de Whatsapp (variable “wa_user”) y en las filas, la primera corresponde a urbano (variable “urban”, donde 0 es rural y 1 urbano). Se presenta que entre los usuarios de Whatsapp, el 76.7% son urbanos y entre los no usuarios, el 62% son urbanos. Estos datos se generan con el comando <code>table</code> que permite hacer una tabla de contingencia de 2 variables. En este caso se tiene que notar que cada variable tiene un título. De esta manera el comando es <code>table(título1 = var1, título2 = var2)</code>. Luego, se usa el comando <code>prop.table</code> para que no se muestre las observaciones, sino los porcentajes. Este comando permite calcular los porcentajes sobre el total (la opción por defecto), sobre las filas y sobre las columnas. Para calcular sobre las columnas se debe especificar <code>prop.table(table(...), 2)</code>. Si se quisiera el porcentaje sobre las filas, el código sería <code>prop.table(table(...), 1)</code>. Esta tabla se pueden guardar como un dataframe con el comando <code>as.data.frame</code> en un nuevo objeto “t1”.</p>
+<p>Se presentará las tablas cruzadas del uso de redes sociales por
+alguno de las variable sociodemográficas, para entender mejor cómo se
+construye la tabla general. Por ejemplo, el reporte muestra en la Tabla
+3.2, luego de la columna de población general, las columnas para
+usuarios y no usuarios de Whatsapp (variable “wa_user”) y en las filas,
+la primera corresponde a urbano (variable “urban”, donde 0 es rural y 1
+urbano). Se presenta que entre los usuarios de Whatsapp, el 76.7% son
+urbanos y entre los no usuarios, el 62% son urbanos. Estos datos se
+generan con el comando <code>table</code> que permite hacer una tabla de
+contingencia de 2 variables. En este caso se tiene que notar que cada
+variable tiene un título. De esta manera el comando es
+<code>table(título1 = var1, título2 = var2)</code>. Luego, se usa el
+comando <code>prop.table</code> para que no se muestre las
+observaciones, sino los porcentajes. Este comando permite calcular los
+porcentajes sobre el total (la opción por defecto), sobre las filas y
+sobre las columnas. Para calcular sobre las columnas se debe especificar
+<code>prop.table(table(...), 2)</code>. Si se quisiera el porcentaje
+sobre las filas, el código sería <code>prop.table(table(...), 1)</code>.
+Esta tabla se pueden guardar como un dataframe con el comando
+<code>as.data.frame</code> en un nuevo objeto “t1”.</p>
 <pre class="r"><code>t1 &lt;- as.data.frame(round(prop.table(table(Urbano = lapop18$urban, Usuario = lapop18$wa_user), 2)*100, 1))
 t1</code></pre>
 <div data-pagedtable="false">
@@ -1242,8 +1479,23 @@ t1</code></pre>
 {"columns":[{"label":["Urbano"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Usuario"],"name":[2],"type":["fct"],"align":["left"]},{"label":["Freq"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"Rural","2":"0","3":"37.9"},{"1":"Urbano","2":"0","3":"62.1"},{"1":"Rural","2":"1","3":"23.3"},{"1":"Urbano","2":"1","3":"76.7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>La filas correspondientes a “Urbano” de esta tabla reproducen los datos de la Tabla 3.2: 62.1% son urbanos entre los no usuarios de Whatsapp y 76.7% son urbanos entre los usuarios.</p>
-<p>Ahora se presentará la tabla entre usuarios de Facebook (variable “fb_user”) y hombre (variable “hombre”), pero presentando solo los porcentajes usados en la tabla y ahora usando el estilo de código del Tidyverse, usando el operador “pipe”. Lo primero es definir la variable “fb_user” como un factor y etiquetarla. Luego, se usa el comando <code>subset</code> para filtrar los casos perdidos en la variable “fb_user”. Luego se pide que los resultados se agrupen por categorías de la variable “fb_user”. Con el comando <code>summarise</code> se guarda en la columna “hombre” el promedio de la variable “hombre”, con el comando <code>mean</code> que incluye la especificación <code>na.rm=T</code> para no incluir en el cálculo los valores perdidos. En este caso se aprovecha que la variable “hombre” es una variable dummy, de tal manera que el promedio corresponde a la proporción de hombres.</p>
+<p>La filas correspondientes a “Urbano” de esta tabla reproducen los
+datos de la Tabla 3.2: 62.1% son urbanos entre los no usuarios de
+Whatsapp y 76.7% son urbanos entre los usuarios.</p>
+<p>Ahora se presentará la tabla entre usuarios de Facebook (variable
+“fb_user”) y hombre (variable “hombre”), pero presentando solo los
+porcentajes usados en la tabla y ahora usando el estilo de código del
+Tidyverse, usando el operador “pipe”. Lo primero es definir la variable
+“fb_user” como un factor y etiquetarla. Luego, se usa el comando
+<code>subset</code> para filtrar los casos perdidos en la variable
+“fb_user”. Luego se pide que los resultados se agrupen por categorías de
+la variable “fb_user”. Con el comando <code>summarise</code> se guarda
+en la columna “hombre” el promedio de la variable “hombre”, con el
+comando <code>mean</code> que incluye la especificación
+<code>na.rm=T</code> para no incluir en el cálculo los valores perdidos.
+En este caso se aprovecha que la variable “hombre” es una variable
+dummy, de tal manera que el promedio corresponde a la proporción de
+hombres.</p>
 <pre class="r"><code>lapop18$fb_user = as.factor(lapop18$fb_user)
 levels(lapop18$fb_user) &lt;- c(&quot;No usuario&quot;, &quot;Usuario&quot;)
 tabla1 &lt;- subset(lapop18, !is.na(fb_user)) %&gt;% #Para no incluir al grupo de NA de usuarios de Facebook
@@ -1255,11 +1507,27 @@ tabla1</code></pre>
 {"columns":[{"label":["fb_user"],"name":[1],"type":["fct"],"align":["left"]},{"label":["Hombre"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"No usuario","2":"49.89404"},{"1":"Usuario","2":"49.68915"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Estos son los porcentajes para los usuarios de Facebook, en la fila de la variable Hombre de la Tabla 3.2. Es decir, entre los no usuarios, 49.9% son hombres y entre los usuarios este porcentaje es 49.7%. Hasta aquí se ha reconstruido algunos resultados de la Tabla 3.2. Los demás datos pueden seguir siendo reconstruidos mediante combinaciones de las variables de usuarios de redes sociales y las variables sociodemográficas.</p>
+<p>Estos son los porcentajes para los usuarios de Facebook, en la fila
+de la variable Hombre de la Tabla 3.2. Es decir, entre los no usuarios,
+49.9% son hombres y entre los usuarios este porcentaje es 49.7%. Hasta
+aquí se ha reconstruido algunos resultados de la Tabla 3.2. Los demás
+datos pueden seguir siendo reconstruidos mediante combinaciones de las
+variables de usuarios de redes sociales y las variables
+sociodemográficas.</p>
 </div>
 <div id="gráfico-de-barras-de-dos-variables" class="section level2">
 <h2>Gráfico de barras de dos variables</h2>
-<p>El cruce entre usuarios de Whatsapp y la variable urbano se puede ver también en un gráfico de barras agrupadas. Lo primero que haremos es definir la variable “wa_user” como factor y etiquetarla. Luego, se requiere crear una tabla con los datos agrupados. Se puede usar el dataframe “t1” creado anteriormente, pero aquí usaremos nuevamente el operador “pipe” para recrear los datos. Para esto, se agrupa tanto por uso de Whatsapp como por urbano/rural, es decir, en cuatro combinaciones. En cada subgrupo se calcula el n. Dado que los % se tienen que calcular por cada grupo de “wa_user”, se vuelve a agrupar y se calcula los % de cada subgrupo, de tal manera que los porcentajes sumen 100% en cada subgrupo de “wa_user”.</p>
+<p>El cruce entre usuarios de Whatsapp y la variable urbano se puede ver
+también en un gráfico de barras agrupadas. Lo primero que haremos es
+definir la variable “wa_user” como factor y etiquetarla. Luego, se
+requiere crear una tabla con los datos agrupados. Se puede usar el
+dataframe “t1” creado anteriormente, pero aquí usaremos nuevamente el
+operador “pipe” para recrear los datos. Para esto, se agrupa tanto por
+uso de Whatsapp como por urbano/rural, es decir, en cuatro
+combinaciones. En cada subgrupo se calcula el n. Dado que los % se
+tienen que calcular por cada grupo de “wa_user”, se vuelve a agrupar y
+se calcula los % de cada subgrupo, de tal manera que los porcentajes
+sumen 100% en cada subgrupo de “wa_user”.</p>
 <pre class="r"><code>lapop18$wa_user = as.factor(lapop18$wa_user)
 levels(lapop18$wa_user) &lt;- c(&quot;No usuario&quot;, &quot;Usuario&quot;)
 face &lt;- subset(lapop18, !is.na(wa_user)) %&gt;% #Se usa !is.na para que no se reporte los NA en la tabla
@@ -1273,35 +1541,64 @@ face</code></pre>
 {"columns":[{"label":["wa_user"],"name":[1],"type":["fct"],"align":["left"]},{"label":["urban"],"name":[2],"type":["fct"],"align":["left"]},{"label":["n"],"name":[3],"type":["int"],"align":["right"]},{"label":["porcentaje"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"No usuario","2":"Rural","3":"3661","4":"37.9"},{"1":"No usuario","2":"Urbano","3":"5995","4":"62.1"},{"1":"Usuario","2":"Rural","3":"4037","4":"23.3"},{"1":"Usuario","2":"Urbano","3":"13305","4":"76.7"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Los datos se esta nueva tabla son exactamente iguales a los de “t1”. Con la tabla lista, se usa el comando <code>ggplot</code> definiendo que “wa_user” sea la variable en el eje X, que el eje Y sea el porcentaje y que los subgrupos se formen por la variable “urban” con la especificación <code>fill</code>. Se usa la especificación <code>dodge</code> en <code>geom_bar</code> para tener las barras separadas por cada grupo.</p>
+<p>Los datos se esta nueva tabla son exactamente iguales a los de “t1”.
+Con la tabla lista, se usa el comando <code>ggplot</code> definiendo que
+“wa_user” sea la variable en el eje X, que el eje Y sea el porcentaje y
+que los subgrupos se formen por la variable “urban” con la
+especificación <code>fill</code>. Se usa la especificación
+<code>dodge</code> en <code>geom_bar</code> para tener las barras
+separadas por cada grupo.</p>
 <pre class="r"><code>ggplot(data=face, aes(x=wa_user, y=porcentaje, fill=urban, ymax=100))+
   geom_bar(position=&quot;dodge&quot;, stat=&quot;identity&quot;)+
   geom_text(aes(label=paste(porcentaje, &quot;%&quot;, sep=&quot;&quot;)), 
             position=position_dodge(width=0.9), vjust=-0.25)+
   ylab(&quot;Porcentaje&quot;)+
   xlab(&quot;Usuario de Whatsapp&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/grafico%20agrupado-1.png" /><!-- --></p>
-<p>Si quisiéramos hacer el gráfico con barras apiladas, se tiene que cambiar la especificación de <code>position="stack"</code> en <code>geom_bar</code> y la especificación <code>position=position_stack()</code> de <code>geom_text</code>.</p>
+<p><img
+src="Descriptivos2_files/figure-html/grafico%20agrupado-1.png" /><!-- --></p>
+<p>Si quisiéramos hacer el gráfico con barras apiladas, se tiene que
+cambiar la especificación de <code>position="stack"</code> en
+<code>geom_bar</code> y la especificación
+<code>position=position_stack()</code> de <code>geom_text</code>.</p>
 <pre class="r"><code>ggplot(data=face, aes(x=wa_user, y=porcentaje, fill=urban, ymax=100))+
   geom_bar(position=&quot;stack&quot;, stat=&quot;identity&quot;)+
   geom_text(aes(label=paste(porcentaje, &quot;%&quot;, sep=&quot;&quot;)), 
             position=position_stack(), vjust=2.5)+
   ylab(&quot;Porcentaje&quot;)+
   xlab(&quot;Usuario de Whatsapp&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/barras%20apiladas-1.png" /><!-- --></p>
-<p>En ambos casos las barras celestes indican los porcentajes reportados en la tabla 3.2 del reporte y corresponden a la proporción de personas que viven en el ámbito urbano entre los usuarios y los no usuarios.</p>
+<p><img
+src="Descriptivos2_files/figure-html/barras%20apiladas-1.png" /><!-- --></p>
+<p>En ambos casos las barras celestes indican los porcentajes reportados
+en la tabla 3.2 del reporte y corresponden a la proporción de personas
+que viven en el ámbito urbano entre los usuarios y los no usuarios.</p>
 </div>
 </div>
 <div id="resumen" class="section level1">
 <h1>Resumen</h1>
-<p>En este documento se ha trabajado con variable categóricas ordinales, como la frecuencia de uso de redes sociales. También se ha introducido al uso de tablas de contingencia de dos variables categóricas y la creación de gráficos de barras agrupadas para 2 variables.</p>
+<p>En este documento se ha trabajado con variable categóricas ordinales,
+como la frecuencia de uso de redes sociales. También se ha introducido
+al uso de tablas de contingencia de dos variables categóricas y la
+creación de gráficos de barras agrupadas para 2 variables.</p>
 </div>
-<div id="cálculos-incluyendo-el-efecto-de-diseño" class="section level1">
+<div id="cálculos-incluyendo-el-efecto-de-diseño"
+class="section level1">
 <h1>Cálculos incluyendo el efecto de diseño</h1>
 <div id="ejemplo-con-datos-de-la-ronda-2021" class="section level2">
 <h2>Ejemplo con datos de la ronda 2021</h2>
-<p>Con los datos de la ronda 2021 del Barómetro de las Américas, hemos calculado los porcentajes de la variable que mide si los votos se han contado justamente. El gráfico que hemos creado ha sido para el total de la muestra, es decir, de todos los países. El Gráfico 2.5 del reporte El Pulso de la Democracia presenta los resultados para cada país.</p>
-<p>Si calculáramos los porcentajes con el comando <code>table</code> y <code>prop.table</code> tendríamos resultados diferentes a los mostrados en el gráfico. Por ejemplo, en el país 5, que es Nicaragua, los resultados indican que 26% de ciudadanos de ese país indica que los votos siempre se cuentan justamente, 49% que algunas veces se cuentan justamente y 24.4% que nunca. Sin embargo, el gráfico indica que en Nicaragua, 29% indica que nunca de cuenta justamente, 45% indica que algunas veces y 25% que siempre. Estos porcentajes no corresponden a los que se encuentran con estos comandos.</p>
+<p>Con los datos de la ronda 2021 del Barómetro de las Américas, hemos
+calculado los porcentajes de la variable que mide si los votos se han
+contado justamente. El gráfico que hemos creado ha sido para el total de
+la muestra, es decir, de todos los países. El Gráfico 2.5 del reporte El
+Pulso de la Democracia presenta los resultados para cada país.</p>
+<p>Si calculáramos los porcentajes con el comando <code>table</code> y
+<code>prop.table</code> tendríamos resultados diferentes a los mostrados
+en el gráfico. Por ejemplo, en el país 5, que es Nicaragua, los
+resultados indican que 26% de ciudadanos de ese país indica que los
+votos siempre se cuentan justamente, 49% que algunas veces se cuentan
+justamente y 24.4% que nunca. Sin embargo, el gráfico indica que en
+Nicaragua, 29% indica que nunca de cuenta justamente, 45% indica que
+algunas veces y 25% que siempre. Estos porcentajes no corresponden a los
+que se encuentran con estos comandos.</p>
 <pre class="r"><code>round(prop.table(table(lapop21$pais, lapop21$countfair1r), 1), 3)*100</code></pre>
 <pre><code>##     
 ##      Siempre Algunas veces Nunca
@@ -1325,16 +1622,48 @@ face</code></pre>
 ##   22                            
 ##   23    17.9          67.9  14.2
 ##   24    17.0          65.1  17.8</code></pre>
-<p>Esta diferencia es debido a que los comandos <code>table</code> y <code>prop.table</code> no incluyen el efecto de diseño y el factor de expansión en los cálculos. Más información sobre estas diferencias se encuentra <a href="https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html">aquí</a>.</p>
-<p>Para replicar los resultados del Gráfico 2.5 hay algunas opciones. La primera es mediante la librería especializada <code>survey</code>.</p>
-<p>Para poder usar esta librería, primero debemos preparar la base de datos, eliminando los valores perdidos de las variables que definen el diseño. Un paso adicional es transformar las variables del dataframe. Esto es debido a que cuando se importan, el sistema lee las variables como tipo “haven_labelled”, es decir, mantiene las etiquetas de las variables, con lo que se podría producir un libro de códigos. Esto es útil en otras ocasiones, pero genera problemas con la librería <code>survey</code>. Para esto transformamos las variables a otro tipo con el comando <code>sapply</code>.</p>
+<p>Esta diferencia es debido a que los comandos <code>table</code> y
+<code>prop.table</code> no incluyen el efecto de diseño y el factor de
+expansión en los cálculos. Más información sobre estas diferencias se
+encuentra <a
+href="https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html">aquí</a>.</p>
+<p>Para replicar los resultados del Gráfico 2.5 hay algunas opciones. La
+primera es mediante la librería especializada <code>survey</code>.</p>
+<p>Para poder usar esta librería, primero debemos preparar la base de
+datos, eliminando los valores perdidos de las variables que definen el
+diseño. Un paso adicional es transformar las variables del dataframe.
+Esto es debido a que cuando se importan, el sistema lee las variables
+como tipo “haven_labelled”, es decir, mantiene las etiquetas de las
+variables, con lo que se podría producir un libro de códigos. Esto es
+útil en otras ocasiones, pero genera problemas con la librería
+<code>survey</code>. Para esto transformamos las variables a otro tipo
+con el comando <code>sapply</code>.</p>
 <pre class="r"><code>lapop21 = subset(lapop21, !is.na(weight1500))
 sapply(lapop21, haven::zap_labels)</code></pre>
-<p>Una vez preparada la base de datos, se activa la librería y se define el diseño. En el módulo anterior, también usamos esta librería para calcular los resultados con el efecto de diseño en la ronda 2018. A diferencia de ese código, es que la ronda 2021 del Barómetro de las Américas utilizó la modalidad telefónica, y no cara a cara, por lo que ahora la unidad primaria de muestreo es el individuo, y así está definida en la variable “upm”. La variable que define los estratos es “strata” (y no “estratopri” como en la ronda 2018). La variable de ponderación sigue siendo “weight1500”.</p>
-<p>Con estos datos calculamos guardamos el diseño en un objeto “diseno21”.</p>
+<p>Una vez preparada la base de datos, se activa la librería y se define
+el diseño. En el módulo anterior, también usamos esta librería para
+calcular los resultados con el efecto de diseño en la ronda 2018. A
+diferencia de ese código, es que la ronda 2021 del Barómetro de las
+Américas utilizó la modalidad telefónica, y no cara a cara, por lo que
+ahora la unidad primaria de muestreo es el individuo, y así está
+definida en la variable “upm”. La variable que define los estratos es
+“strata” (y no “estratopri” como en la ronda 2018). La variable de
+ponderación sigue siendo “weight1500”.</p>
+<p>Con estos datos calculamos guardamos el diseño en un objeto
+“diseno21”.</p>
 <pre class="r"><code>library(survey)
 diseno21 = svydesign(ids = ~upm, strata = ~strata, weights = ~weight1500, nest=TRUE, data=lapop21)</code></pre>
-<p>La librería <code>survey</code> incluye comandos nativos para hacer múltiples operaciones que incluyan el efecto de diseño. Uno de esos comandos es <code>svytable</code> que nos permite hacer la tabla cruzada entre la variable “countfair1r” y “pais”, especificando el diseño. Este comando nos devuelve las frecuencias absolutas ponderadas, por lo que se puede anidar en el comando <code>prop.table</code> para calcular los porcentajes desde las frecuencias absolutas ponderadas y dentro del comando <code>count</code> para redondear los porcentajes, y dentro del comando <code>as.data.table</code> para guardar la tabla en un objeto “votoxpais” como un dataframe, que nos permita la manipulación con <code>ggplot</code> luego.</p>
+<p>La librería <code>survey</code> incluye comandos nativos para hacer
+múltiples operaciones que incluyan el efecto de diseño. Uno de esos
+comandos es <code>svytable</code> que nos permite hacer la tabla cruzada
+entre la variable “countfair1r” y “pais”, especificando el diseño. Este
+comando nos devuelve las frecuencias absolutas ponderadas, por lo que se
+puede anidar en el comando <code>prop.table</code> para calcular los
+porcentajes desde las frecuencias absolutas ponderadas y dentro del
+comando <code>count</code> para redondear los porcentajes, y dentro del
+comando <code>as.data.table</code> para guardar la tabla en un objeto
+“votoxpais” como un dataframe, que nos permita la manipulación con
+<code>ggplot</code> luego.</p>
 <pre class="r"><code>votoxpais = as.data.frame(round(prop.table(svytable(~pais+countfair1r, design=diseno21), 1)*100, 0))
 votoxpais$pais = pais
 votoxpais</code></pre>
@@ -1349,13 +1678,25 @@ votoxpais</code></pre>
             position=position_stack(vjust=0.5), size=3)+
   labs(x=&quot;Porcentaje&quot;, y=&quot;País&quot;, fill=&quot;Los votos se cuentan justamente&quot;,
        caption=&quot;Barómetro de las Américas por LAPOP, 2021&quot;)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/grafico%20ponderado-1.png" /><!-- --></p>
-<p>Este gráfico reproduce exactamente los resultados mostrados en el Gráfico 2.5 del reporte, aunque en un orden diferente.</p>
+<p><img
+src="Descriptivos2_files/figure-html/grafico%20ponderado-1.png" /><!-- --></p>
+<p>Este gráfico reproduce exactamente los resultados mostrados en el
+Gráfico 2.5 del reporte, aunque en un orden diferente.</p>
 </div>
-<div id="ejemplo-con-los-datos-de-la-ronda-201819" class="section level2">
+<div id="ejemplo-con-los-datos-de-la-ronda-201819"
+class="section level2">
 <h2>Ejemplo con los datos de la ronda 2018/19</h2>
-<p>La pequeña diferencia entre los porcentajes que se muestran en el Gráfico 3.3 y los mostrados en la sección “Describir las variables” puede deberse a que en todos las tablas y gráficos anteriores no se incluye el factor de expansión. Si se incluyera, usando la variable “weight1500”, se replicarían los porcentajes mostrados en el informe. Por ejemplo, para el uso de Whatsapp, se puede usar el comando <code>freq</code> de la librería <code>descr</code> que permite incluir una variable de ponderación.</p>
-<p>Esta tabla luego se puede guardar en un dataframe, al que se le pueden eliminar las filas y columnas que no se requieren, y se les puede cambiar el nombre a las columnas. y agregar las etiquetas.</p>
+<p>La pequeña diferencia entre los porcentajes que se muestran en el
+Gráfico 3.3 y los mostrados en la sección “Describir las variables”
+puede deberse a que en todos las tablas y gráficos anteriores no se
+incluye el factor de expansión. Si se incluyera, usando la variable
+“weight1500”, se replicarían los porcentajes mostrados en el informe.
+Por ejemplo, para el uso de Whatsapp, se puede usar el comando
+<code>freq</code> de la librería <code>descr</code> que permite incluir
+una variable de ponderación.</p>
+<p>Esta tabla luego se puede guardar en un dataframe, al que se le
+pueden eliminar las filas y columnas que no se requieren, y se les puede
+cambiar el nombre a las columnas. y agregar las etiquetas.</p>
 <pre class="r"><code>tabla2 &lt;- as.data.frame(descr::freq(lapop18$smedia8r, lapop18$weight1500, plot=F))
 tabla2 &lt;- tabla2[-c(5,6), -2]
 colnames(tabla2) &lt;- c(&quot;frec&quot;, &quot;per&quot;)
@@ -1366,7 +1707,8 @@ tabla2</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["frec"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["per"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["lab"],"name":[3],"type":["chr"],"align":["left"]}],"data":[{"1":"13648.84125","2":"81.6626475","3":"Diariamente","_rn_":"Diariamente"},{"1":"2541.42991","2":"15.2056787","3":"Algunas veces a la semana","_rn_":"Algunas veces a la semana"},{"1":"475.89791","2":"2.8473540","3":"Algunas veces al mes","_rn_":"Algunas veces al mes"},{"1":"47.52031","2":"0.2843197","3":"Algunas veces al año","_rn_":"Algunas veces al año"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp, con los datos ponderados, usando el código de <code>ggplot</code>.</p>
+<p>Con este nuevo dataframe, se puede replicar el gráfico de Whatsapp,
+con los datos ponderados, usando el código de <code>ggplot</code>.</p>
 <pre class="r"><code>ggplot(data=tabla2, aes(x=2, y=per, fill=lab))+
   geom_bar(stat=&quot;identity&quot;)+
   geom_text(aes(label=paste(round(per, 1), &quot;%&quot;, sep=&quot;&quot;)), color=&quot;white&quot;, 
@@ -1377,18 +1719,30 @@ tabla2</code></pre>
    labs(title=&quot;Frecuencia con la que ve contenido en Facebook&quot;, 
         caption=&quot;Barómetro de las Américas por LAPOP, 2018/19&quot;)+
   xlim(0.5, 2.5)</code></pre>
-<p><img src="Descriptivos2_files/figure-html/wa%20graf%20pond-1.png" /><!-- --></p>
-<p>Además del comando <code>freq</code>, también se puede usar la librería <code>survey</code> y el comando nativo <code>svytable</code>.</p>
+<p><img
+src="Descriptivos2_files/figure-html/wa%20graf%20pond-1.png" /><!-- --></p>
+<p>Además del comando <code>freq</code>, también se puede usar la
+librería <code>survey</code> y el comando nativo
+<code>svytable</code>.</p>
 <pre class="r"><code>library(survey)
 diseno18&lt;-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)</code></pre>
-<p>Los resultados que se obtienen son iguales que con el método anterior y a los presentados en el reporte. Estos resultados también se pueden guardar en un “dataframe” para hacer el gráfico.</p>
+<p>Los resultados que se obtienen son iguales que con el método anterior
+y a los presentados en el reporte. Estos resultados también se pueden
+guardar en un “dataframe” para hacer el gráfico.</p>
 <pre class="r"><code>prop.table(svytable(~smedia8r, design=diseno18))*100</code></pre>
 <pre><code>## smedia8r
 ##               Diariamente Algunas veces a la semana      Algunas veces al mes 
 ##                81.6626475                15.2056787                 2.8473540 
 ##      Algunas veces al año 
 ##                 0.2843197</code></pre>
-<p>La sección “Cruce con variables” presenta los datos de usuarios de redes sociales por país. Para construir la tabla considerando el efecto de diseño, también se puede usar el comando nativo <code>svytable</code> que permite calcular una tabla bivariada. De la misma manera que en caso no ponderado, las tablas parciales de cada red social se guardan en unos objetos de tipo lista, los que se juntan como un “dataframe” y se edita para presentar solo los datos de los usuarios de cada red social por país.</p>
+<p>La sección “Cruce con variables” presenta los datos de usuarios de
+redes sociales por país. Para construir la tabla considerando el efecto
+de diseño, también se puede usar el comando nativo <code>svytable</code>
+que permite calcular una tabla bivariada. De la misma manera que en caso
+no ponderado, las tablas parciales de cada red social se guardan en unos
+objetos de tipo lista, los que se juntan como un “dataframe” y se edita
+para presentar solo los datos de los usuarios de cada red social por
+país.</p>
 <pre class="r"><code>fbpais_2 &lt;- round(prop.table(svytable(~pais+fb_user, design=diseno18), 1), 3)*100
 twpais_2 &lt;- round(prop.table(svytable(~pais+tw_user, design=diseno18), 1), 3)*100
 wapais_2 &lt;- round(prop.table(svytable(~pais+wa_user, design=diseno18), 1), 3)*100
@@ -1402,7 +1756,13 @@ tablapais_2</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Usa Facebook"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Usa Twitter"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Usa Whatsapp"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"47.9","2":"7.6","3":"55.1","_rn_":"México"},{"1":"43.2","2":"6.5","3":"47.6","_rn_":"Guatemala"},{"1":"56.2","2":"6.7","3":"56.0","_rn_":"El Salvador"},{"1":"44.6","2":"4.8","3":"46.9","_rn_":"Honduras"},{"1":"48.1","2":"5.8","3":"47.7","_rn_":"Nicaragua"},{"1":"66.6","2":"8.0","3":"81.6","_rn_":"Costa Rica"},{"1":"34.6","2":"5.8","3":"56.7","_rn_":"Panamá"},{"1":"60.0","2":"10.7","3":"63.5","_rn_":"Colombia"},{"1":"66.9","2":"11.2","3":"60.2","_rn_":"Ecuador"},{"1":"57.9","2":"5.6","3":"63.5","_rn_":"Bolivia"},{"1":"61.4","2":"7.6","3":"58.6","_rn_":"Perú"},{"1":"60.5","2":"8.0","3":"69.2","_rn_":"Paraguay"},{"1":"62.9","2":"9.2","3":"75.5","_rn_":"Chile"},{"1":"66.5","2":"9.8","3":"80.0","_rn_":"Uruguay"},{"1":"59.7","2":"8.5","3":"76.1","_rn_":"Brasil"},{"1":"67.3","2":"12.9","3":"78.9","_rn_":"Argentina"},{"1":"61.9","2":"9.5","3":"68.2","_rn_":"Rep. Dom."},{"1":"45.9","2":"4.5","3":"68.1","_rn_":"Jamaica"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<p>Por último, la sección “Cruce con variables sociodemográficas” reproduce los resultados de la Tabla 3.2 del reporte. De la misma manera que en el caso anterior, se puede usar el comando nativo <code>svytable</code> para realizar el cruce entre las variables de uso de redes sociales y la variable urbano. Los resultados de la fila Urbano en cada red social corresponderían a la primera fila de resultados de la Tabla 3.2.</p>
+<p>Por último, la sección “Cruce con variables sociodemográficas”
+reproduce los resultados de la Tabla 3.2 del reporte. De la misma manera
+que en el caso anterior, se puede usar el comando nativo
+<code>svytable</code> para realizar el cruce entre las variables de uso
+de redes sociales y la variable urbano. Los resultados de la fila Urbano
+en cada red social corresponderían a la primera fila de resultados de la
+Tabla 3.2.</p>
 <pre class="r"><code>round(prop.table(svytable(~urban+wa_user, design=diseno18), 2), 3)*100</code></pre>
 <pre><code>##         wa_user
 ## urban    No usuario Usuario
@@ -1418,7 +1778,9 @@ tablapais_2</code></pre>
 ## urban       0    1
 ##   Rural  29.7 15.3
 ##   Urbano 70.3 84.7</code></pre>
-<p>De esta manera se pueden calcular las tablas de distribución de frecuencias y las tablas bivariadas (o de contingencia) incluyendo el efecto de diseño o el factor de expansión.</p>
+<p>De esta manera se pueden calcular las tablas de distribución de
+frecuencias y las tablas bivariadas (o de contingencia) incluyendo el
+efecto de diseño o el factor de expansión.</p>
 </div>
 </div>
 
