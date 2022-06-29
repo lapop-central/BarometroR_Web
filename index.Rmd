@@ -66,9 +66,9 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 
 4.  [Regresión logística](https://arturomaldonado.github.io/BarometroEdu_Web/logit.html)
 
-## Extensiones
+## Adicionales
 
-1.  Mapas de resultados
+1.  [Mapas usando los datos del Barómetro de las Américas](https://arturomaldonado.github.io/BarometroEdu_Web/mapas.html)
 :::
 
 ::: col-sm-6
