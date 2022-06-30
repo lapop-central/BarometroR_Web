@@ -104,41 +104,6 @@ mean(lapop18$urban, na.rm=T)*100
 ```
 
 Estos son los datos que se presentan en la primera columna de resultados de la población general, excepto para la variable riqueza ("quintall") que no está disponible en esta versión recortada de la base de datos.
-Los resultados anteriores no incluyen el factor de expansión.
-Para incluirlo en los cálculos se puede usar el comando `weighted.mean`, que es parte de la librería `stats`, que viene precargada con R, por lo que no hay que instalarla.
-
-
-```r
-weighted.mean(lapop18$q2, lapop18$weight1500, na.rm=T)
-```
-
-```
-## [1] 39.98095
-```
-
-```r
-weighted.mean(lapop18$ed, lapop18$weight1500, na.rm=T)
-```
-
-```
-## [1] 9.931417
-```
-
-```r
-weighted.mean(lapop18$hombre, lapop18$weight1500, na.rm=T)*100
-```
-
-```
-## [1] 49.74826
-```
-
-```r
-weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
-```
-
-```
-## [1] 71.11895
-```
 
 # Gráficos descriptivos
 
@@ -204,7 +169,7 @@ mean(lapop18$ed[lapop18$fb_user==1], na.rm=T)
 ## [1] 11.44839
 ```
 
-# Descriptivos de una variable numérica
+# Descriptivos de una variable numérica por grupos
 
 Otra manera de describir una variable numérica es usando el comando `summary`.
 Este comando reporta los estadísticos descriptivos más usados para una variable numérica: mínimo, máximo, cuartiles, media y mediana.
@@ -323,6 +288,127 @@ boxplot(q2 ~ wa_user, data=lapop18, xlab ="Usuario de Whatsapp", ylab="Edad")
 
 # Resumen
 
-En este documento se ha trabajado con variable numéricas, como edad o años de estudio.
+En este documento se ha trabajado con variables numéricas, como edad o años de estudio.
 Se ha calculado estadísticos descriptivos, como la media o la desviación estándar para toda la población o por grupos.
 Finalmente, se ha presentado formas de graficar estas variables, mediante histogramas o boxplots.
+
+# Cálculos incluyendo el efecto de diseño
+
+Los resultados anteriores no incluyen el factor de expansión.
+Para incluirlo en los cálculos se puede usar el comando `weighted.mean`, que es parte de la librería `stats`, que viene precargada con R, por lo que no hay que instalarla.
+
+
+```r
+weighted.mean(lapop18$q2, lapop18$weight1500, na.rm=T)
+```
+
+```
+## [1] 39.98095
+```
+
+```r
+weighted.mean(lapop18$ed, lapop18$weight1500, na.rm=T)
+```
+
+```
+## [1] 9.931417
+```
+
+```r
+weighted.mean(lapop18$hombre, lapop18$weight1500, na.rm=T)*100
+```
+
+```
+## [1] 49.74826
+```
+
+```r
+weighted.mean(lapop18$urban, lapop18$weight1500, na.rm=T)*100
+```
+
+```
+## [1] 71.11895
+```
+
+Otra forma de calcular la media incluyendo el factor de expansión es mediante de el uso de la librería `survey` y el comando nativo `svymean`.
+Para esto se tiene que definir el diseño muestral con el comando `svydesign` y guardar este diseño en un objeto, aquí llamado "lapop.design".
+
+
+```r
+library(survey)
+diseno18 <-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+Para calcular el promedio, se usa el comando `svymean` y se usa la especificación `na.rm=T` debido a que estas variables cuentan con valores perdidos.
+
+
+```r
+svymean(~q2, diseno18, na.rm=T)
+```
+
+```
+##      mean     SE
+## q2 39.981 0.0535
+```
+
+```r
+svymean(~ed, diseno18, na.rm=T)
+```
+
+```
+##      mean   SE
+## ed 9.9314 0.04
+```
+
+Para las variables dummies el procedimiento es el mismo, salvo que se le multiplica por 100 para presentarlo en formato de porcentaje
+
+
+```r
+svymean(~hombre, diseno18, na.rm =T)*100
+```
+
+```
+##          mean    SE
+## hombre 49.748 8e-04
+```
+
+```r
+svymean(~urban, diseno18, na.rm=T)*100
+```
+
+```
+##         mean     SE
+## urban 71.119 0.0076
+```
+
+El paquete `survey` también tiene comandos para replicar gráficos.
+Por ejemplo, para calcular un histograma simple.
+
+
+```r
+svyhist(~ed, diseno18, freq = T)
+```
+
+![](Descriptivos3_files/figure-html/weighted hist-1.png)<!-- -->
+
+Para calcular estadísticos descriptivos por grupos, se puede usar el comando `svyby`, que permite definir la variable numérica que se quiere describir, la variable que define los grupos y el estadístico ponderado que se quiere calcular.
+
+
+```r
+svyby(~ed, ~fb_user, diseno18, svymean, na.rm=T)
+```
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["fb_user"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["ed"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["se"],"name":[3],"type":["dbl"],"align":["right"]}],"data":[{"1":"0","2":"8.066855","3":"0.04903821","_rn_":"0"},{"1":"1","2":"11.439412","3":"0.04152185","_rn_":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+
+Para reproducir un gráfico descriptivo por grupos, se puede usar el comando `svyboxplot` para comparar la distribución de la variable edad entre grupos de una variable de tipo factor, como usuarios de Whatsapp.
+
+
+```r
+svyboxplot(~q2~factor(wa_user), diseno18, all.outliers = T)
+```
+
+![](Descriptivos3_files/figure-html/weighted boxplot por grupos-1.png)<!-- -->

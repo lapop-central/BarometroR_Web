@@ -57,7 +57,7 @@ lapop18 <- subset(lapop18, pais<=35)
 Como vimos en la sección sobre [manejo de datos](https://arturomaldonado.github.io/BarometroEdu_Web/Manipulacion.html#Calcular_una_variable), para calcular este índice de apoyo al sistema se trabaja con un conjunto de cinco variables:
 
 **B1.** ¿Hasta qué punto cree usted que los tribunales de justicia de (país) garantizan un juicio justo?
-[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio].
+\[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio\].
 
 **B2.** ¿Hasta qué punto tiene usted respeto por las instituciones políticas de (país)?
 
@@ -200,25 +200,65 @@ library(jtools)
 summ(modelo1)
 ```
 
-```
-## MODEL INFO:
-## Observations: 26143 (1899 missing obs. deleted)
-## Dependent Variable: apoyo
-## Type: OLS linear regression 
-## 
-## MODEL FIT:
-## F(1,26141) = 10503.71, p = 0.00
-## R² = 0.29
-## Adj. R² = 0.29 
-## 
-## Standard errors: OLS
-## ------------------------------------------------
-##                      Est.   S.E.   t val.      p
-## ----------------- ------- ------ -------- ------
-## (Intercept)         33.78   0.19   177.55   0.00
-## ejec                 0.35   0.00   102.49   0.00
-## ------------------------------------------------
-```
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Observations </td>
+   <td style="text-align:right;"> 26143 (1899 missing obs. deleted) </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Dependent variable </td>
+   <td style="text-align:right;"> apoyo </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Type </td>
+   <td style="text-align:right;"> OLS linear regression </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> F(1,26141) </td>
+   <td style="text-align:right;"> 10503.71 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> R² </td>
+   <td style="text-align:right;"> 0.29 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Adj. R² </td>
+   <td style="text-align:right;"> 0.29 </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Est. </th>
+   <th style="text-align:right;"> S.E. </th>
+   <th style="text-align:right;"> t val. </th>
+   <th style="text-align:right;"> p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> (Intercept) </td>
+   <td style="text-align:right;"> 33.78 </td>
+   <td style="text-align:right;"> 0.19 </td>
+   <td style="text-align:right;"> 177.55 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> ejec </td>
+   <td style="text-align:right;"> 0.35 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 102.49 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+</tbody>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: OLS</td></tr></tfoot>
+</table>
 
 En la información básica del modelo se encuentra que se ha calculado este modelo bivariado sobre 26,143 observaciones.
 Es decir, del total de observaciones de la base de datos 1,899 se han perdido debido a valores perdidos en alguna de las variables, por lo que esas observaciones no se incluyen en el modelo.
@@ -300,3 +340,116 @@ En un análisis multivariado, este test de significancia sería el primer paso e
 
 En este documento se ha trabajado un modelo de regresión lineal simple, usando una variable independiente numérica para explicar una variable dependiente numérica.
 Luego se ha presentado los principales elementos del modelo de regresión lineal simple, como si existe relación, la dirección de la relación, el coeficiente de determinación, la ecuación de la recta y la predicción.
+
+# Incluyendo el efecto de diseño
+
+Los cálculos realizados no incluyen el efecto de diseño muestral.
+Para hacer esto se debe considerar el factor de expansión.
+Se hizo una introducción al uso del factor de expansión [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html).
+En este parte usaremos la librería `survey`.
+
+Usaremos el comando `svydesign` (similar al comando svyset en STATA).
+Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión.
+Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
+
+
+```r
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+La librería `survey` incluye el comando `svyglm` que permite calcular un modelo de regresión lineal.
+Las mismas variables usadas en el modelo 1 se pueden incluir en este comando.
+Se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos.
+Este cálculo se guarda en un objeto "modelo2".
+Se usa el comando `summary` para describir el modelo.
+
+
+```r
+modelo2 <- svyglm(apoyo~ejec, lapop.design)
+summary(modelo2)
+```
+
+```
+## 
+## Call:
+## svyglm(formula = apoyo ~ ejec, design = lapop.design)
+## 
+## Survey design:
+## svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, 
+##     nest = TRUE, data = lapop18)
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 33.780515   0.222170  152.05   <2e-16 ***
+## ejec         0.350397   0.003722   94.15   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for gaussian family taken to be 389.4621)
+## 
+## Number of Fisher Scoring iterations: 2
+```
+
+Con el comando `summ` de la librería `jtools` se puede presentar el modelo, incluyendo el dato del $R^2$ ponderado por el factor de expansión.
+
+
+```r
+summ(modelo2)
+```
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Observations </td>
+   <td style="text-align:right;"> 26143 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Dependent variable </td>
+   <td style="text-align:right;"> apoyo </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Type </td>
+   <td style="text-align:right;"> Survey-weighted linear regression </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> R² </td>
+   <td style="text-align:right;"> 0.29 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> Adj. R² </td>
+   <td style="text-align:right;"> -13.05 </td>
+  </tr>
+</tbody>
+</table> <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;border-bottom: 0;">
+ <thead>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> Est. </th>
+   <th style="text-align:right;"> S.E. </th>
+   <th style="text-align:right;"> t val. </th>
+   <th style="text-align:right;"> p </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> (Intercept) </td>
+   <td style="text-align:right;"> 33.78 </td>
+   <td style="text-align:right;"> 0.22 </td>
+   <td style="text-align:right;"> 152.05 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;font-weight: bold;"> ejec </td>
+   <td style="text-align:right;"> 0.35 </td>
+   <td style="text-align:right;"> 0.00 </td>
+   <td style="text-align:right;"> 94.15 </td>
+   <td style="text-align:right;"> 0.00 </td>
+  </tr>
+</tbody>
+<tfoot><tr><td style="padding: 0; " colspan="100%">
+<sup></sup> Standard errors: Robust</td></tr></tfoot>
+</table>

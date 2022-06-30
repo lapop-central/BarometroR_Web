@@ -1,4 +1,3 @@
-base
 rio
 carData
 car
@@ -6,3 +5,7 @@ lattice
 plyr
 Rmisc
 ggplot2
+dplyr
+descr
+vcd
+oii

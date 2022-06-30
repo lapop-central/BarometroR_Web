@@ -27,7 +27,7 @@ En la sección anterior vimos los aspectos básicos del modelo de mínimos cuadr
 En esta sección se expandirá el análisis, desde un análisis bivariado a un análisis multivariado.
 Es decir, se usará el método de mínimos cuadrados ordinarios para analizar la relación de una variable dependiente numérica con varias variables independientes.
 
-En esta sección se seguirá replicando los análisis del capítulo "Legitimidad democrática" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
+En esta sección se seguirá replicando los análisis del capítulo "Legitimidad democrática" del reporte [El Pulso de la Democracia](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf) de la ronda 2018/19.
 En ese capítulo se analiza una medición de apoyo a la democracia.
 
 # Sobre la base de datos
@@ -165,6 +165,145 @@ En nuestro ejemplo el valor de $R^2=0.401$.
 Este valor no es igual al que se presenta en el reporte (0.44) debido a que el modelo de nuestro ejemplo no incluye los controles socioeconómicos y demográficos.
 El resultado de nuestro ejemplo indica que el modelo reduce un 40.1% el error de usar solamente el promedio para estimar el apoyo al sistema.
 
+# Incluyendo variables "dummy"
+
+El reporte indica que "se controla por los mismos indicadores socioeconómicos y demográficos y por efectos fijos por país".
+Aunque los coeficientes para estas variables no se muestran, los resultados mostrados en el Gráfico 2.10 incluyen el efecto de estas variables.
+
+Antes de replicar el modelo completo, se explicará el rol de las variables "dummy".
+Una variable dummy es aquella que está codificada como 0 y 1.
+En la base de datos "lapop18" tenemos una variable llamada "mujer", que identifica con 1 a aquellas entrevistadas mujeres y con 0 a todos los demás.
+
+En esta sección se puede querer comparar el apoyo al sistema entre mujeres y los demás.
+En la sección referente a la [prueba t](https://arturomaldonado.github.io/BarometroEdu_Web/pruebat.html) se explicó el procedimiento para comparar una variable dependiente numérica entre grupos de una variable dicotómica.
+Aquí seguiremos un procedimiento similar.
+En primer lugar se calcula la prueba de Levene de igualdad de varianzas.
+
+```{r Levene}
+library(DescTools)
+LeveneTest(lapop18$psar, lapop18$mujer)
+```
+
+Con este resultado no se puede rechazar la hipótesis cero de igualdad de varianzas, por lo que asumiremos que las varianzas son iguales en la prueba t.
+
+```{r prueba t}
+t.test(psar ~ mujer, data = lapop18, var.equal=T)
+```
+
+Los resultados indican que el grupo de mujeres presenta un mayor apoyo al sistema (49.6) que el grupo de hombres (48.2), y que esta diferencia es estadísticamente significativa con un p-value menor a 0.05 (2.17x10-6).
+
+Estos resultados se pueden replicar mediante un análisis de regresión lineal simple, usando apoyo al sistema, una variable numérica, como variable dependiente, y mujer, una variable dummy, como variable independiente.
+
+```{r regresion dummy}
+modelo2 <- lm(psar ~ mujer, data=lapop18)
+summary(modelo2)
+```
+
+El estimado para el intercepto, cuando X=0, es decir, para los hombres replica el resultado obtenido en la prueba t del promedio de apoyo al sistema para los hombres.
+Para el caso del promedio de las mujeres se tiene que reemplazar X=1 en la ecuación del modelo, con lo que se tendría 48.22+1.33 = 49.55, similar al resultado obtenido en la prueba t.
+El p-value del coeficiente de la variable dummy, a su vez, también replica el p-value obtenido en la prueba t.
+
+De esta manera se ve que mediante un modelo de regresión lineal simple se puede replicar los resultados de una prueba t, pues ambos evalúan si existen diferencias en la media de una variable numérica entre dos grupos.
+
+Se puede hacer la evaluación con una variable que indique alguno de los países incluidos en la ronda 2018/19.
+Por ejemplo, si se quisiera evaluar si existen diferencias entre los ciudadanos mexicanos y los no mexicanos en sus niveles de apoyo al sistema se tendría que crear esta variable dummy y luego proceder de la misma manera que con la variable "mujer".
+
+En primer lugar se crea la variable dummy "mexico" con valores 1 si la persona entrevistado es de México y 0 en cualquier otro caso.
+
+```{r mexico}
+lapop18$mexico = ifelse(lapop18$pais==1, 1, 0)
+```
+
+Con esta variable, se puede evaluar las diferencias en el apoyo al sistema entre los mexicanos y el resto de entrevistados.
+
+```{r levenemex}
+LeveneTest(lapop18$psar, lapop18$mexico)
+```
+
+```{r pruebatmex}
+t.test(psar ~ mexico, data = lapop18, var.equal=F)
+```
+
+Este resultado es similar al que se obtiene con una regresión lineal simple
+
+```{r regresionmex}
+modelo3 <- lm(psar ~ mexico, data=lapop18)
+summary(modelo3)
+```
+
+# Incluyendo variables categóricas
+
+El cálculo del apoyo al sistema para los mexicanos implicó la creación de una variable "dummy" a partir de la variable categórica "pais".
+Esta variable es una de tipo "factor", que incluye a los 18 países incluidos en esta base de datos.
+
+Si se quisiera evaluar el apoyo al sistema en cada país, primero se podría crear una variable "dummy" para cada grupo.
+En el análisis de regresión lineal simple, se evalúa la diferencia en el apoyo al sistema entre los ciudadanos del país incluido y el resto de entrevistados.
+
+Otra forma de hacer esta evaluación es incluir todas las variables "dummy" (excepto una) en un modelo de regresión lineal múltiple.
+La variable excluida actuará como variable de referencia y se evaluarán los demás grupos en función de esta variable.
+
+En lugar de crear las 18 variables "dummy" por cada país, se puede usar la función `factor` dentro de la función `lm` para indicar que esta es una variable de tipo categórica y que se evalúe cada grupo por separado.
+Por defecto se toma el primer grupo (es decir, pais=1, México) como referencia.
+
+```{r regresionpais}
+modelo4 <- lm(psar ~ factor(pais), data=lapop18)
+summary(modelo4)
+```
+
+Los resultados indican que el intercepto es 55.44, que es la media de apoyo al sistema para el grupo de referencia, México, tal como se calculó en los procedimientos anteriores.
+La media de apoyo al sistema para el resto de países se puede calcular sumando (o restando) el valor del coeficiente del país del valor de referencia.
+
+Por ejemplo, Guatemala es el país 2.
+Para calcular la media de apoyo al sistema en ese país se tiene que calcular 55.44-4.88=50.56.
+No solo eso, el p-value correspondiente al país 2 indica que la diferencia en el apoyo al sistema entre Guatemala y México es estadísticamente significativa.
+
+Otro ejemplo, Perú es el país 11.
+La media de apoyo al sistema en Perú sería 55.44-13.63=41.81 y es estadísticamente diferente de la media de apoyo en México.
+
+# Incluyendo variables de control
+
+La inclusión de variables "dummy" por cada país nos permite analizar la media de apoyo al sistema en cada grupo y saber si hay diferencias estadísticamente significativas con el país de referencia.
+Muchas veces estas variables "dummy" se incluyen como parte de un análisis más general.
+Tal es el caso del Gráfico 2.10, donde se analiza el efecto de cinco variables independientes en el apoyo al sistema y "se controla por los mismos indicadores socioeconómicos y demográficos y por efectos fijos por país".
+Estos llamados "efectos fijos por país" se refiere a la inclusión de estas variables "dummy" como variables de control en una regresión lineal múltiple.
+Estas variables capturan efectos idiosincráticos presentes en cada país.
+
+Por ejemplo, si se quisiera evaluar la relación entre la eficacia externa y el apoyo al sistema, incluyendo efectos fijos por país, se tendría que calcular un modelo de regresión lineal múltiple con el apoyo al sistema como variable dependiente, la eficacia externa como principal variable independiente y las variables "dummy" por cada país, excepto la del país de referencia.
+
+```{r efectosfijos}
+modelo5 <- lm(psar ~ eff1r + factor(pais), data=lapop18)
+summary(modelo5)
+```
+
+Se puede calcular otro modelo incluyendo las cinco variables independientes de interés y los efectos fijos por país.
+
+```{r cincoivefectosfijos}
+modelo6 <- lm(psar ~ eff1r + ejec + tolr + it1r + b32r + factor(pais), data=lapop18)
+summary(modelo6)
+```
+
+Para replicar el modelo presentado en el Gráfico 2.10 hace falta agregar los controles sociodemográficos: nivel de educación, quintiles de riqueza, lugar de residencia, género y edad (en grupos).
+El siguiente modelo incluye todos estos controles.
+Como se trata de variables de variables categóricas, se incluye el comando `factor` para hacer variables "dummy" por cada categoría de la variable, dejando como categoría de referencia al primer grupo de cada variable.
+
+```{r modelo completo}
+modelo7 <- lm(psar ~ eff1r + ejec + tolr + it1r + b32r + factor(pais)
+              + factor(edr) + factor(quintall) + factor(urban) + factor(mujer)
+              + factor(edad), data=lapop18)
+summary(modelo7)
+```
+
+El Gráfico 2.10 incluye estos controles, pero no los presenta en el gráfico.
+Esto se puede replicar con el comando `plot_summs`, que puede graficar el modelo 7, pero se le indica qué coeficientes incluir en el gráfico con el comando `coefs`.
+
+```{r grafico modelo completo}
+plot_summs(modelo7, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecutivo"= "ejec",
+                            "Tolerancia política"="tolr", "Confianza en la comunidad"="it1r",
+                            "Confianza en el gobierno local"="b32r"))
+```
+
+De esta manera se ha creado un modelo de regresión lineal múltiple, en el que se han incluido cinco variables independientes numéricas de interés y una serie de controles sociodemográficos y efectos fijos por país.
+
 # Resumen
 
 En esta sección hemos usado el método de mínimos cuadrados para calcular un modelo multivariado.
@@ -172,3 +311,42 @@ En particular, se ha presentado un modelo con cinco predictores del apoyo al sis
 Este modelo se ha presentado de manera estándar en una tabla de resultados y mediante un gráfico similar al Gráfico 2.10 del reporte.
 
 De acuerdo a los resultados de este modelo multivariado, se ha explicado la validez del modelo, la prueba de inferencia para evaluar la relación entre cada variable independiente con la variable dependiente, la dirección de la relación y la disminución del error mediante el coeficiente de determinación.
+
+Luego, se ha incluido variables "dummy" de control y efectos fijos por país en el modelo multivariado para replicar el Gráfico 2.10.
+
+# Incluyendo el efecto de diseño
+
+Los cálculos realizados no incluyen el efecto de diseño muestral.
+Para hacer esto se debe considerar el factor de expansión.
+Se hizo una introducción al uso del factor de expansión [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html).
+En este parte usaremos la librería `survey`.
+
+Usaremos el comando `svydesign` (similar al comando svyset en STATA).
+Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión.
+Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
+
+```{r diseno, message=FALSE, warning=FALSE}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+La librería `survey` incluye el comando `svyglm` que permite calcular un modelo de regresión lineal múltiple.
+Las mismas variables usadas en el modelo 7 se pueden incluir en este comando.
+Se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos.
+Este cálculo se guarda en un objeto "modelo8".
+Se usa el comando `summ` de la librería `jtools` para describir el modelo.
+
+```{r modelow}
+modelo8 <- svyglm(psar ~ eff1r + ejec + tolr + it1r + b32r + factor(pais) + 
+    factor(edr) + factor(quintall) + factor(urban) + factor(mujer) + 
+    factor(edad), design=lapop.design, na.action = na.omit)
+summ(modelo8)
+```
+
+De la misma manera que con el modelo 7, estos resultados también se pueden graficar usando el comando `plot_summs`, seleccionando las variables que se quieren mostrar.
+
+```{r graficow}
+plot_summs(modelo8, coefs=c("Eficacia externa"="eff1r", "Confianza en el ejecutivo"= "ejec",
+                            "Tolerancia política"="tolr", "Confianza en la comunidad"="it1r",
+                            "Confianza en el gobierno local"="b32r"))
+```

@@ -33,45 +33,55 @@ Al final se incluye una nota acerca de los cálculos estadísticos considerando 
 
 Los datos que vamos a usar deben citarse de la siguiente manera: Fuente: Barómetro de las Américas por el Proyecto de Opinión Pública de América Latina (LAPOP), wwww.LapopSurveys.org.
 
-En este documento se carga una base de datos recortada.
-Esta base de datos se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
+En este documento se carga una base que se encuentra alojada en el repositorio "materials_edu" de la cuenta de LAPOP en GitHub.
 Mediante la librería `rio` y el comando `import` se puede importar esta base de datos desde este repositorio, usando el siguiente código.
-Se importa la base de datos en un objeto "lapop18".
+Se importa la base de datos en un objeto "lapop21".
+Esta base de datos tiene extensión .RData y cuando se importa, carga las variables como del tipo double ("dbl"), que es un tipo de variable numérica que acepta decimales, a diferencia del tipo integer, "int", que solo acepta enteros.
 
-```{r base}
+```{r base21, message=FALSE, warning=FALSE}
 library(rio)
+lapop21 = import("lapop21.RData")
+```
+
+En este repositorio también se encuentra la base de datos de la ronda anterior, la que también podemos cargar y llamarla "lapop18".
+Es necesario aclarar que esta base de datos, importada desde un archivo SPSS, carga las variables como del tipo numéricas ("num").
+
+```{r base18}
 lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP_AB_Merge_2018_v1.0.sav")
 ```
 
-Es necesario aclarar que esta base de datos, importada desde un archivo SPSS, carga las variables como del tipo numéricas ("num").
-
 # Recodificación de una variable
 
-En esta sección usaremos el reporte "El Pulso de la Democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
+En esta sección usaremos el reporte "El Pulso de la Democracia", con los resultados de la última ronda 2021 del Barómetro de las Américas, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2021/2021_LAPOP_AmericasBarometer_Pulse_of_Democracy.pdf).
 Este reporte presenta los resultados acerca del apoyo a la democracia en las Américas.
 Estos resultados se basan en la variable ING4 de la base de datos.
 Esta variable está fraseada de la siguiente manera:
 
-ING4.
-*Cambiando de nuevo de tema, puede que la democracia tenga problemas, pero es mejor que cualquier otra forma de gobierno. ¿Hasta qué punto está de acuerdo o en desacuerdo con esta frase?*
+**ING4.** *Cambiando de nuevo de tema, puede que la democracia tenga problemas, pero es mejor que cualquier otra forma de gobierno. ¿Hasta qué punto está de acuerdo o en desacuerdo con esta frase?*
 
-Como indica el reporte "los entrevistados evalúan esta frase dando una respuesta que va de 1 a 7, donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo" (p.11). Para ver la distribución de respuestas a esta variable, se puede usar el comando `table`.
+Esta variable está medida en una escala del 1 a 7, donde 1 significa "muy en desacuerdo" y 7 significa "muy de acuerdo".
+Luego, los valores entre 5 a 7 son recodificados como apoyo a la democracia.
+Para ver la distribución de respuestas a esta variable, se puede usar el comando `table`.
 
 ```{r describir ing4}
-table(lapop18$ing4)
+table(lapop21$ing4)
 ```
 
 De esta manera se calculan las observaciones (frecuencias absolutas) por cada valor de la variable.
-El reporte nos indica la forma de recodificación: "Se consideran las respuestas en la porción de la escala que indica estar de acuerdo, esto es los valores de 5 a 7, para indicar el porcentaje que apoya a la democracia" (p.11).
+Para calcular el porcentaje de personas que apoya a la democracia se tiene que recodificar esta variable y crear una nueva.
 Es decir, la variable original ING4, en una escala de 1-7, se tiene que recodificar en una nueva variable, siguiendo la siguiente regla:
 
 1.  Valores entre 1-4 de ING4 se transforman en 0 en una nueva variable ing4r
 2.  Valores entre 5-7 de ING4 se transformen en 1 en una nueva variable ing4r
 
-Un ejemplo de cómo se presentan estos datos recodificados en el reporte se puede ver en el Gráfico 1.2.
+Un ejemplo de cómo se presentan estos datos recodificados en el reporte se puede ver en el Gráfico 1.1.
 Este muestra el porcentaje de ciudadanos que apoya a la democracia por país.
 Es decir, se muestra el porcentaje de entrevistados que respondieron entre 5 y 7 a la pregunta ING4 en cada país.
 De acuerdo a la recodificación planteada, este gráfico representaría el porcentaje de entrevistados que registra un 1 en la variable recodificada.
+
+![](Figure1.1.png){width="539"}
+
+En el informe El Pulso de la Democracia de la ronda 2018/19, disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf), también se presenta un gráfico similar, usando la misma variable y la misma regla de recodificacíon.
 
 ![](Graf1.2.png){width="350"}
 
@@ -79,33 +89,67 @@ Para recodificar una variable en R hay varias formas.
 Una de las formas más eficientes de hacerlo es usando el comando `recode` del paquete `car`.
 El paquete `dplyr` tiene un comando `recode` que puede confundir a R.
 Para evitar confusiones usaremos la sintaxis `car::recode` para la recodificación, es decir para especificar que se use el comando `recode`del paquete `car` y no de otro.
-Se guarda la variable recodificada como "lapop18\$ing4rec".
+Se guarda la variable recodificada como "lapop21\$ing4rec".
 Luego, se usa el comando `table` para describir esta nueva variable.
 
-```{r recodificación}
+```{r recodificacion, message=FALSE, warning=FALSE}
 library(car)
-lapop18$ing4rec <- car::recode(lapop18$ing4, "1:4=0; 5:7=1")
-table(lapop18$ing4rec)
+lapop21$ing4rec <- car::recode(lapop21$ing4, "1:4=0; 5:7=1")
+table(lapop21$ing4rec)
 ```
 
-Si se suman las observaciones entre 1 y 4 de la variable original (1699+1470+3003+6089), vemos que es el resultado que se tiene en el valor 0 de la nueva variable (12261), tal como se escribió en la recodificación.
-También se debe notar que la base de datos en el Environment ahora tiene una variable más, totalizando 85 variables.
+Si se suman las observaciones entre 1 y 4 de la variable original (5704+2567+4980+8177), vemos que es el resultado que se tiene en el valor 0 de la nueva variable (21428), tal como se escribió en la recodificación.
+También se debe notar que la base de datos en el Environment ahora tiene una variable más, totalizando 1826 variables.
 
 # Selección de casos
 
-El reporte indica que "El Gráfico 1.2 muestra el porcentaje de personas en cada país que expresa apoyar la democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45% en Honduras a un máximo de 76.2% en Uruguay" (p.11).
-
-Para replicar estos resultados acerca de Honduras y acerca de Uruguay para 2018/19, se podría seleccionar los datos de estos dos países.
-De acuerdo al cuestionario, que se puede ver [aquí](https://www.vanderbilt.edu/lapop/ab2018/AB2018-v12.0-Spa-190131_W.pdf), Honduras es el país 4 y Uruguay es el país 14 de la variable "pais", que también se ha importando como una variable numérica.
+El gráfico 1.1 muestra que el apoyo a la democracia va de un máximo de 80% en Uruguay a un mínimo de 46% en Haití.
+Para replicar el resultado correspondiente a Uruguay se puede seleccionar las observaciones de ese país.
+De acuerdo a la codificación de la variable "pais", Uruguay tiene el código 14.
 
 ![](pais.png){width="552"}
 
 La selección de casos en R se puede hacer de múltiples maneras.
-Una forma es usar los corchetes [ ].
+Una forma es usar los corchetes \[ \].
 Otra forma es usando el comando `subset`.
-Con este comando seleccionamos las observaciones de estos países y guardamos esta selección en un nuevo dataframe "lapop2" usando este último comando (adicionalmente se incluye un comentario, que se marca con \#, que incluye la sintaxis si se quisiera hacer con [ ]).
+Con este comando seleccionamos las observaciones de este país y guardamos esta selección en un nuevo dataframe "lapop2" usando este último comando.
+Se tiene 3009 observaciones en Uruguay.
+
+```{r seleccionar Uru}
+lapop1 <- subset(lapop21, pais==14)
+table(lapop1$pais)
+```
+
+Con esta selección de datos, se puede calcular el porcentaje (frecuencias relativas) usando el comando `prop.table`.
+Este comando nos brinda las frecuencias relativas (en valores entre 0 y 1) de una tabla de frecuencias calculada con `table`.
+Estas frecuencias relativas se multiplican por 100 para reproducir el porcentaje en cada país.
+En este caso se usan los \[ \] para hacer la selección de casos de cada país.
+
+```{r porcentaje Uru}
+prop.table(table(lapop1$ing4rec[lapop1$pais==14]))*100
+```
+
+Estos resultados son porcentajes (entre 0 y 100), pero incluyen muchos decimales.
+Para redondear a un decimal, como se muestra en el Gráfico 1.2, se puede usar el comando `round`, donde se anida toda la sintaxis anterior.
+En este comando, además, se tiene que especificar el número de decimales que se quiere, que en este caso es 1.
+
+```{r redondear Uru}
+round(prop.table(table(lapop1$ing4rec[lapop1$pais==14]))*100, 1)
+```
+
+Según este resultado 84.5% de uruguayos apoya a la democracia.
+Este resultado es distinto al que se reporta en el gráfico 1.1, donde el valor reportado es 80%.
+Esta diferencia es debido a que estos primeros procedimientos no incluyen el efecto de diseño.
+Más abajo se verá el procedimiento para reproducir el resultado exacto reportado.
+
+En el reporte de la ronda 2018/19 el reporte indica que "El Gráfico 1.2 muestra el porcentaje de personas en cada país que expresa apoyar la democracia en 2018/19. El apoyo a la democracia va de un mínimo de 45% en Honduras a un máximo de 76.2% en Uruguay" (p.11).
+
+Para replicar estos resultados acerca de Honduras y acerca de Uruguay para 2018/19, se podría seleccionar los datos de estos dos países.
+De acuerdo al cuestionario, que se puede ver [aquí](https://www.vanderbilt.edu/lapop/ab2018/AB2018-v12.0-Spa-190131_W.pdf), Honduras es el país 4 y Uruguay es el país 14 de la variable "pais", que también se ha importando como una variable numérica.
+
 Se incluye el operador "o", que en R se denota con "\|".
 De esta manera se indica que se selecciones las observaciones de Honduras o de Uruguay (`pais==4 | pais==14`).
+La descripción de la variable "pais" muestra que solo incluye los casos de Honduras (2) y Uruguay (14).
 
 ```{r seleccionar Hon y Uru}
 # lapop2 <- lapop18[lapop18$pais == 4 | lapop18$pais==14, ]
@@ -113,30 +157,30 @@ lapop2 <- subset(lapop18, pais==4 | pais==14)
 table(lapop2$pais)
 ```
 
-El nuevo dataframe "lapop2" tiene 3141 observaciones y 85 variables.
-La descripción de la variable "pais" muestra que solio incluye los casos de Honduras (2) y Uruguay (14).
-Con esta selección de datos, se puede calcular los porcentajes (frecuencias relativas) usando el comando `prop.table`.
-Este comando nos brinda las frecuencias relativas (en valores entre 0 y 1) de una tabla de frecuencias calculada con `table`.
-Estas frecuencias relativas se multiplican por 100 para reproducir el porcentaje en cada país.
-En este caso se usan los [ ] para hacer la selección de casos de cada país.
+El nuevo dataframe "lapop2" tiene 3141 observaciones y 84 variables debido a que no se ha creado la variable recodificada.
 
-```{r porcentajes}
+```{r apoyo Hon y Uru}
+lapop2$ing4rec <- car::recode(lapop2$ing4, "1:4=0; 5:7=1")
+```
+
+Con esta variable se pueden seguir los mismos procedimientos anteriormente descritos: producir la tabla de frecuencias relativas.
+
+```{r porcentajes Hon y Uru}
 prop.table(table(lapop2$ing4rec[lapop2$pais==4]))*100
 prop.table(table(lapop2$ing4rec[lapop2$pais==14]))*100
 ```
 
-Estos resultados son porcentajes (entre 0 y 100), pero incluyen muchos decimales.
-Para redondear a un decimal, como se muestra en el Gráfico 1.2, se puede usar el comando `round`, donde se anida toda la sintaxis anterior.
-En este comando, además, se tiene que especificar el número de decimales que se quiere, que en este caso es 1.
+Y luego incluir el redondeo.
 
-```{r redondear}
+```{r redondear Hon y Uru}
 round(prop.table(table(lapop2$ing4rec[lapop2$pais==4]))*100, 1)
 round(prop.table(table(lapop2$ing4rec[lapop2$pais==14]))*100, 1)
 ```
 
 Con este código se ha reproducido los resultados de los países en los extremos del Gráfico 1.2 del reporte.
+En este caso, los resultados sí son similares a los reportados en el gráfico.
 
-El reporte también indica que se excluye de los cálculos a Estados Unidos y Canadá.
+Ambos reportes también indican que se excluye de los cálculos a Estados Unidos y Canadá.
 La base de datos cargada como "lapop18" incluye a todos los países de la ronda.
 Para excluir a estos dos países, se tiene que seleccionar los países que NO son EE.UU.
 y Canadá.
@@ -146,12 +190,18 @@ tiene el código 40 y Canadá, el código 41 en la variable "pais".
 Para excluirlos se tiene que incluir a los países que tengan un código menor a 40 (o de 35 o menos).
 Para esto nuevamente podemos usar el comando `subset`.
 
-```{r eliminar USA y Canadá}
+```{r eliminar USA y Canada 18}
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
 Se puede observar en el Environment que se reducen las observaciones del dataframe "lapop18" luego de correr este código, pues se han eliminado las observaciones de entrevistados en estos dos países.
 El número de observaciones pasa de 31,050 a 28,042, número que coincide con el de la base de datos en formato .RData que usamos en el módulo anterior y que indicamos que no incluía a estos países.
+
+De la misma manera se puede proceder en la base de datos de la ronda 2021, con lo que disminuyen las observaciones a 60661.
+
+```{r eliminar USA y Canada 21}
+lapop21 <- subset(lapop21, pais<=35)
+```
 
 # Calcular una variable
 
@@ -160,7 +210,7 @@ El capítulo sobre legitimidad democrática del reporte brinda ejemplos de este 
 Para calcular este índice de apoyo al sistema se trabaja con un conjunto de cinco variables:
 
 B1.
-*¿Hasta qué punto cree usted que los tribunales de justicia de (país) garantizan un juicio justo? [Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio].*
+*¿Hasta qué punto cree usted que los tribunales de justicia de (país) garantizan un juicio justo? \[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio\].*
 
 B2.
 *¿Hasta qué punto tiene usted respeto por las instituciones políticas de (país)?*

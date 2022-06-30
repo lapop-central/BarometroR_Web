@@ -10,7 +10,7 @@ editor_options:
 
 ### Consultas sobre esta web
 
-Para consultas sobre los materiales incluidos en esta web o sobre "bugs"
+Para consultas sobre los materiales incluidos en esta web o sobre bugs
 en alguno de los procedimientos, pueden contactar con
 [arturo.maldonado\@vanderbilt.edu](mailto:arturo.maldonado@vanderbilt.edu).
 

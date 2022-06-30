@@ -1,4 +1,3 @@
-base
 rio
 knitr
 descr
@@ -6,3 +5,13 @@ ggplot2
 scales
 dplyr
 janitor
+Matrix
+survival
+survey
+carData
+car
+lattice
+plyr
+Rmisc
+vcd
+oii

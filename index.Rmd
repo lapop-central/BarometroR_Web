@@ -19,7 +19,7 @@ output:
 ```
 <div class="row" style="padding-top: 30px;">
 
-::: {.col-sm-6}
+::: col-sm-6
 # **Usando los datos del Barómetro de las Américas**
 
 En esta web encontrará secciones donde se usan los datos del Barómetro de las Américas en R y RStudio. Se replicarán resultados de varios informes producidos por LAPOP que tienen por objetivo dar un panorama de cómo usar nuestros datos para producir resultados estadísticos.
@@ -63,9 +63,15 @@ En esta web encontrará secciones donde se usan los datos del Barómetro de las 
 2.  [Regresión lineal simple](https://arturomaldonado.github.io/BarometroEdu_Web/regresion1.html)
 
 3.  [Regresión lineal multivariada](https://arturomaldonado.github.io/BarometroEdu_Web/regresion2.html)
+
+4.  [Regresión logística](https://arturomaldonado.github.io/BarometroEdu_Web/logit.html)
+
+## Adicionales
+
+1.  [Mapas usando los datos del Barómetro de las Américas](https://arturomaldonado.github.io/BarometroEdu_Web/mapas.html)
 :::
 
-::: {.col-sm-6}
+::: col-sm-6
 ### [The Latin American Public Opinion Project](https://www.vanderbilt.edu/lapop/)
 
 <a href = "https://www.vanderbilt.edu/lapop/"> ![](images/logo.png) </a>

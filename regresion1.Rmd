@@ -58,7 +58,7 @@ lapop18 <- subset(lapop18, pais<=35)
 Como vimos en la sección sobre [manejo de datos](https://arturomaldonado.github.io/BarometroEdu_Web/Manipulacion.html#Calcular_una_variable), para calcular este índice de apoyo al sistema se trabaja con un conjunto de cinco variables:
 
 **B1.** ¿Hasta qué punto cree usted que los tribunales de justicia de (país) garantizan un juicio justo?
-[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio].
+\[Sondee: Si usted cree que los tribunales no garantizan para nada la justicia escoja el número 1; si cree que los tribunales garantizan mucho la justicia, escoja el número 7 o escoja un puntaje intermedio\].
 
 **B2.** ¿Hasta qué punto tiene usted respeto por las instituciones políticas de (país)?
 
@@ -159,7 +159,7 @@ summary(modelo1)
 Estos resultados pueden ser presentados de una manera más formal mediante diferentes comandos.
 Aquí proponemos usar el comando `summ` de la librería `jtools`.
 
-```{r ml 2}
+```{r ml2}
 library(jtools)
 summ(modelo1)
 ```
@@ -244,3 +244,36 @@ En un análisis multivariado, este test de significancia sería el primer paso e
 
 En este documento se ha trabajado un modelo de regresión lineal simple, usando una variable independiente numérica para explicar una variable dependiente numérica.
 Luego se ha presentado los principales elementos del modelo de regresión lineal simple, como si existe relación, la dirección de la relación, el coeficiente de determinación, la ecuación de la recta y la predicción.
+
+# Incluyendo el efecto de diseño
+
+Los cálculos realizados no incluyen el efecto de diseño muestral.
+Para hacer esto se debe considerar el factor de expansión.
+Se hizo una introducción al uso del factor de expansión [aquí](https://arturomaldonado.github.io/BarometroEdu_Web/Expansion.html).
+En este parte usaremos la librería `survey`.
+
+Usaremos el comando `svydesign` (similar al comando svyset en STATA).
+Con este comando se crea un nuevo objeto llamado "lapop.design", que guarda la información de las variables contenidas en el dataframe, incluyendo en los cálculos el factor de expansión.
+Por tanto, si luego se creara una nueva variable, se tendría que calcular nuevamente esté comando para que este objeto "lapop.design" incluya esta nueva variable.
+
+```{r diseno, message=FALSE, warning=FALSE}
+library(survey)
+lapop.design<-svydesign(ids = ~upm, strata = ~estratopri, weights = ~weight1500, nest=TRUE, data=lapop18)
+```
+
+La librería `survey` incluye el comando `svyglm` que permite calcular un modelo de regresión lineal.
+Las mismas variables usadas en el modelo 1 se pueden incluir en este comando.
+Se tiene que especificar el diseño que se utiliza y el tratamiento de los valores perdidos.
+Este cálculo se guarda en un objeto "modelo2".
+Se usa el comando `summary` para describir el modelo.
+
+```{r modelow}
+modelo2 <- svyglm(apoyo~ejec, lapop.design)
+summary(modelo2)
+```
+
+Con el comando `summ` de la librería `jtools` se puede presentar el modelo, incluyendo el dato del $R^2$ ponderado por el factor de expansión.
+
+```{r resumenw}
+summ(modelo2)
+```

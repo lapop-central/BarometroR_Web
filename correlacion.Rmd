@@ -49,6 +49,19 @@ lapop18 <- import("https://raw.github.com/lapop-central/materials_edu/main/LAPOP
 lapop18 <- subset(lapop18, pais<=35)
 ```
 
+También cargamos la base de datos de la ronda 2021.
+
+```{r base21}
+lapop21 = import("lapop21.RData") 
+lapop21 <- subset(lapop21, pais<=35)
+```
+
+# Confianza en las elecciones y evaluaciones de expertos
+
+El reporte *El Pulso de la Democracia* de la ronda 2021 presenta el gráfico 2.4 que relaciona el porcentaje de confianza en las elecciones por país con
+
+![](Figure2.4.png){width="519"}
+
 # Apoyo a la democracia y nivel de democracia
 
 En esta sección seguiremos usando el reporte "El pulso de la democracia", disponible [aquí](https://www.vanderbilt.edu/lapop/ab2018/2018-19_AmericasBarometer_Regional_Report_Spanish_W_03.27.20.pdf).
@@ -57,7 +70,7 @@ En este informe, se presenta el Gráfico 1.3.
 Este es un gráfico de dispersión que relaciona la variable apoyo a la democracia (del Barómetro de las Américas) con el índice de democracia electoral del proyecto [V-Dem](https://www.v-dem.net/en/).
 Este gráfico muestra "la relación entre el nivel de apoyo a la democracia y la calificación de la democracia en cada país" (p. 12).
 
-![](Graf1.3.png){width="492"}
+![](Graf1.3.png){width="523"}
 
 Para reproducir este gráfico se tiene que agregar los resultados por país de la variable ING4.
 "Cambiando de tema, la democracia puede tener problemas, pero es mejor que cualquier otra forma de gobierno. ¿En qué medida está de acuerdo o en desacuerdo con esta afirmación?".

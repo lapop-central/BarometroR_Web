@@ -42,6 +42,12 @@ navbar:
         href: regresion1.html
       - text: "Regresión lineal multivariada"
         href: regresion2.html
+      - text: "Regresión logística"
+        href: logit.html
+    - text: "Adicionales"
+      menu:
+      - text: "Mapas"
+        href: mapas.html
     - text: "Contacto"
       href: Links.html
 output_dir: "docs"
